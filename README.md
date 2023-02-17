@@ -5,9 +5,9 @@ Tube model of vocal tract - resonance frequency estimation
 
 This program will calculate the formant frequencies of a vocal tract and synthesize static vowels. The vocal tract area function is given by two lists specifying the *lengths* and *cross-sectional areas* of a number of straigt tube segments, from lips to glottis. 
 
-The program can plot the area function and vocal tract transfer function, and synthesize a wav-file with a static vowel. 
+The program can plot the area function and vocal tract transfer function, and synthesize a `.wav` file with a static vowel. 
 
-The tube-to-formant calculation algorithms are from Liljencrantz & Fant (1975). The two methods described (*determinant* and *phase*) should give very similar results, both are included for completeness. 
+The tube-to-formant calculation algorithms are from [Liljencrantz & Fant (1975)](#references). The two methods described (*determinant* and *phase*) should give identical or very similar results, both are included for completeness. 
 
 
 ## Usage
