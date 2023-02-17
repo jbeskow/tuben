@@ -1,9 +1,9 @@
-# tuben
+# Tuben
 Tube model of vocal tract - resonance frequency estimation
 
 ## What is it?
 
-This program will calculate the formant frequencies of a vocal tract and synthesize static vowels. The vocal tract is represented by it's area function. which is given by two lists specifying the *lengths* and *cross-sectional areas* of a number of straigt tube segments, from lips to glottis. 
+This program will calculate the formant frequencies of a vocal tract and synthesize static vowels. The vocal tract area function is given by two lists specifying the *lengths* and *cross-sectional areas* of a number of straigt tube segments, from lips to glottis. 
 
 The program can plot the area function and vocal tract transfer function, and synthesize a wav-file with a static vowel. 
 
@@ -36,4 +36,4 @@ Some vowel sounds
 
 ## References
 
-*Liljencrants, J., & Fant, G. (1975). Computer program for VT-resonance frequency calculations. STL-QPSR, 16, 15-21.*
+[*Liljencrants, J., & Fant, G. (1975). Computer program for VT-resonance frequency calculations. STL-QPSR, 16, 15-21.*](https://www.speech.kth.se/prod/publications/files/qpsr/1975/1975_16_4_015-020.pdf)
