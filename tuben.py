@@ -33,19 +33,11 @@ def wormfrek_phase_vec(L,A,F,c):
     y = np.sin(vnp)**2
     return y
 
-def find_formants(L,A,method,topfreq,maxnrformants,c):
+# use one of the two methods to find resonances of tube
+
+def find_formants(L,A,F,method,maxnrformants,c):
     l = [0]+L[:]
     a = [1]+A[:] 
-
-    if len(L)!=len(A):
-        print('the "lengths" and "areas" lists must be of equal length')
-        exit(1)
-
-    topfreq = args.samplerate/2
-
-    # F: array of frequnecies to sample
-    F = np.arange(1,topfreq)
-    c = args.c
 
     if method=='determinant':
         Y = wormfrek_det_vec(l,a,F,c)
@@ -58,7 +50,7 @@ def find_formants(L,A,method,topfreq,maxnrformants,c):
     # find the peaks of Y, these correspond to the formant locations
     fmt,_ = sig.find_peaks(Y,distance=100)
     fmt = fmt[:maxnrformants]
-    return fmt
+    return fmt,Y
 
 
 if __name__ == '__main__':
@@ -77,20 +69,23 @@ if __name__ == '__main__':
     parser.add_argument('-c',help='speed of sound in cm/s',type=float,default=35300)
     args = parser.parse_args()
 
-    # aa: --lengths 2,6,6,2 --areas 0.5,5,1,2
-    # ii: --lengths 2,6,6,2 --areas 0.5,0.2,3,0.2
-    # oo: --lengths 4,3,9,2 --areas 0.1,6,1,0.2
-    # the tube segments are defined by the lists L (lengths, cm) and A (areas, cm^2)
+    # python tuben.py --lengths 2,6,6,2 --areas 2,5,0.2,2 -o aa.wav
+    # python tuben.py --lengths 2,6,6,2 --areas 0.1,5,1,2 -o oo.wav
+    # python tuben.py --lengths 2,6,6,2 --areas 2,0.2,5,2 -o ii.wav
+
+    # the tube segments are defined by the lists L (lengths, cm) and A (areas, cm^2) lip-to-glottis
     L = [float(l) for l in args.lengths.split(',')]
     A = [float(a) for a in args.areas.split(',')]
+    # F: array of frequnecies to sample
+    F = np.arange(1,args.samplerate/2)
 
-    if len(L)!=len(A):
+    if len(L) != len(A):
         print('the "lengths" and "areas" lists must be of equal length')
         exit(1)
 
     topfreq = args.samplerate/2
 
-    fmt = find_formants(L,A,args.method,topfreq,args.maxnrformants,args.c)
+    fmt,Y = find_formants(L,A,F,args.method,args.maxnrformants,args.c)
 
     print('formant frequencies (Hz): ', ', '.join([str(x) for x in fmt]))
 

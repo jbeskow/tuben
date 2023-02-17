@@ -31,7 +31,9 @@ Some vowel sounds
     
     python tuben.py --lengths 2,6,6,2 --areas 0.1,5,1,2 -o oo.wav
 
-`i:`, with plotting
+`i:` - with plotting
 
-    `python tuben.py --lengths 2,6,6,2 --areas 2,0.2,5,2 -o ii.wav` --plot
+    python tuben.py --lengths 2,6,6,2 --areas 2,0.2,5,2 -o ii.wav --plot
 
+
+![Example plot](images/plot.png)
