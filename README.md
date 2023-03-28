@@ -3,7 +3,7 @@ Tube model of vocal tract - resonance frequency estimation
 
 ## What is it?
 
-This program will calculate the formant frequencies of a vocal tract and synthesize static vowels. The vocal tract area function is given by two lists specifying the *lengths* and *cross-sectional areas* of a number of straigt tube segments, from lips to glottis. 
+This program will calculate the formant frequencies of a vocal tract and synthesize static vowels. The vocal tract area function is given by two lists specifying the *lengths* and *cross-sectional areas* of a number of straight tube segments, from lips to glottis. 
 
 The program can plot the area function and vocal tract transfer function, and synthesize a `.wav` file with a static vowel. 
 
@@ -11,8 +11,8 @@ The tube-to-formant calculation algorithms are from [Liljencrantz & Fant (1975)]
 
 
 ## Usage
-`python tuben.py [-h] [-l LENGTHS] [-a AREAS] [-m METHOD] [-n MAXNRFORMANTS] [-p] [-o OUTPUT]
-             [--synt-f0 SYNT_F0] [--synt-dur SYNT_DUR] [-fs SAMPLERATE] [-c C]`
+    
+    python tuben.py [-h] [-l LENGTHS] [-a AREAS] [-m METHOD] [-n MAXNRFORMANTS] [-p] [-o OUTPUT] [--synt-f0 SYNT_F0] [--synt-dur SYNT_DUR] [-fs SAMPLERATE] [-c C]
 
 ## Examples
 

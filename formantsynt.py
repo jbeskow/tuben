@@ -61,6 +61,19 @@ def ffilter(fs,x,fmt,bw=100,normalize=True,plot=False):
         y /= np.max(np.abs(y))
     return y
 
+def get_transfer_function(fs,fmt,bw=100):
+
+    if not isinstance(bw,list):
+        bw = [bw]*len(fmt)
+    sos = []
+    for f,b in zip(fmt,bw):
+        sos.append(formant(f/fs,b/fs)) 
+    
+    w,h=sig.sosfreqz(sos,fs)
+    f = w*fs/(2*np.pi)    
+    hdb = 20*np.log10(np.maximum(np.abs(h), 1e-3))
+    return f,hdb
+
 # impulse train source function
 def impulsetrain(fs,f,duration):
     t = np.arange(int(fs*duration))
