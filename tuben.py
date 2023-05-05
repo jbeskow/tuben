@@ -47,6 +47,9 @@ class tuben:
         return y
 
     def set_tube(self,L,A):
+        if type(L)!=list or type(A)!=list:
+            print('bad input')
+            import pdb;pdb.set_trace()
         self.L = L
         self.A = A
         self.updated = False
@@ -57,7 +60,6 @@ class tuben:
         if not self.updated:
             l = [0]+self.L[:]
             a = [1]+self.A[:] 
-
             if self.method=='determinant':
                 self.Y = self._wormfrek_det_vec(l,a)
             elif self.method=='phase':
@@ -72,9 +74,11 @@ class tuben:
             self.updated = True
     
     def get_formants(self,L=None,A=None):
-        if L and A:
+        if L is not None and A is not None:
+            #print('L:',L,len(L),'A:',A,len(A))
             self.set_tube(L,A)
         self.update()
+        #print('FMT:',self.fmt)
         return self.fmt,self.Y
 
     def plot(self):
@@ -92,13 +96,13 @@ class tuben:
         ax[0].set_xlim([0,x])
         ax[0].set_ylim([0,max(self.A)*1.1])
         ax[0].set_title('tube')
-        ax[0].set_xlabel('distancce from lips (cm)')
+        ax[0].set_xlabel('distance from lips (cm)')
         ax[0].set_ylabel('area ($cm^2$)')
 
         # plot function & peaks
         ax[1].plot(self.F,self.Y,':')
         ax[1].plot(self.F[self.fmt],self.Y[self.fmt],'.')
-        ax[1].set_title('peakfunction:' + args.method)
+        ax[1].set_title('peakfunction:' + self.method)
         ax[1].set_xlabel('frequency (Hz)')
 
         ax[2].set_title('transfer function')
