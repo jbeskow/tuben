@@ -3,6 +3,7 @@ import numpy as np
 from tuben import tuben
 
 def test_tuben_init():
+    print('test')
     tub = tuben()
     assert tub.method == 'determinant'
     assert tub.maxnrformants == 4
