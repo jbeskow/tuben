@@ -49,7 +49,6 @@ class tuben:
     def set_tube(self,L,A):
         if type(L)!=list or type(A)!=list:
             print('bad input')
-            print("bad")
             import pdb;pdb.set_trace()
         self.L = L
         self.A = A
