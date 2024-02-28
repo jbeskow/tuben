@@ -126,6 +126,9 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.scene.addItem(pixmap_item)
 
     def menu_3d(self):
+        if self.L is None or self.A is None:
+            print('no input value')
+            exit(1)
         cy_test.tubemaker_3d(self.L, self.A)
 
 
