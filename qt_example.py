@@ -1,7 +1,9 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QMainWindow
+import math
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem
+from PyQt5.QtGui import QColor
 from qt_test import Ui_MainWindow
 import scipy.io.wavfile as wav
 import sounddevice as sd
@@ -23,14 +25,13 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_sound.clicked.connect(self.menu_sound)
         self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
+        self.pushButton_3dfile.clicked.connect(self.menu_3d)
         self.L = None
         self.A = None
         self.audio_name = ''
         # 创建 QGraphicsScene
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
-        self.pushButton_3dfile.clicked.connect(self.menu_3d)
-
 
     def menu_add(self):
         lengths = self.lengths.toPlainText()
@@ -45,6 +46,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             print('the "lengths" and "areas" lists must be of equal length')
             exit(1)
         print(self.L, self.A)
+        self.visualization(self.L, self.A)
 
     def menu_remove(self):
         if self.L is None or self.A is None:
@@ -53,9 +55,18 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.L.pop()
         self.A.pop()
         print(self.L, self.A)
+        self.visualization(self.L, self.A)
 
-    # def visualization(self):
-        # for i in range(len(self.L)):
+    def visualization(self, l, a):
+        self.scene.clear()
+        diameter = [2*math.sqrt(i/3.14) for i in a]
+        x_offset = 0
+        for length, width in zip(l, diameter):
+            rect = QGraphicsRectItem(x_offset, 0, length*25, width*25)
+            rect.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
+            self.scene.addItem(rect)
+            x_offset += length*25
+        self.graphicsView.update()
 
     def menu_sound(self):
         if self.L is None or self.A is None:
@@ -118,12 +129,14 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         plt.savefig(self.audio_name + '.png')
 
     def menu_illustrate(self):
+        self.scene.clear()
         self.generate_image()
         # 创建 QPixmap 并加载 PNG 图像
         pixmap = QtGui.QPixmap(self.audio_name + '.png')
         # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
         pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
         self.scene.addItem(pixmap_item)
+        self.graphicsView.update()
 
     def menu_3d(self):
         if self.L is None or self.A is None:
