@@ -10,6 +10,7 @@ import numpy as np
 from matplotlib.patches import Rectangle
 import formantsynt
 from tuben_gui import Tuben
+import cy_test
 
 
 # Create a subclass of QMainWindow to setup the GUI
@@ -28,6 +29,8 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         # 创建 QGraphicsScene
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
+        self.pushButton_3dfile.clicked.connect(self.menu_3d)
+
 
     def menu_add(self):
         lengths = self.lengths.toPlainText()
@@ -41,7 +44,6 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         if len(self.L) != len(self.A):
             print('the "lengths" and "areas" lists must be of equal length')
             exit(1)
-        # for i in range(len(L)):
         print(self.L, self.A)
 
     def menu_remove(self):
@@ -51,6 +53,9 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.L.pop()
         self.A.pop()
         print(self.L, self.A)
+
+    # def visualization(self):
+        # for i in range(len(self.L)):
 
     def menu_sound(self):
         if self.L is None or self.A is None:
@@ -119,6 +124,9 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
         pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
         self.scene.addItem(pixmap_item)
+
+    def menu_3d(self):
+        cy_test.tubemaker_3d(self.L, self.A)
 
 
 # Main entry point of the application
