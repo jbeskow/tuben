@@ -2,7 +2,32 @@ import numpy as np
 import trimesh
 
 
-def create_tube_mesh(inner_radius, height, thickness, segments=32):
+def create_detachable_section_mesh(square_length, height, inner_radius, filename='tao',segments=256):
+    outer_mesh = trimesh.creation.box((square_length, square_length, height))
+    inner_mesh = trimesh.creation.cylinder(radius=inner_radius, height=height, sections=segments)
+    tube_mesh = outer_mesh.difference(inner_mesh)
+    stl_file_path = filename+'.stl'
+    tube_mesh.export(stl_file_path)
+
+    print(f"STL file created: {stl_file_path}")
+    return tube_mesh
+
+
+def detachable_tubemaker_3d(length_list, area_list):
+    assert len(length_list) == len(area_list)
+    # get radius from area
+    radius_list = np.sqrt(np.array(area_list) / np.pi)
+
+    # for 3d printer, may not be univerisal
+    radius_list = 10 * radius_list
+    length_list = 10 * np.array(length_list)
+
+    square_length = 2.5*max(radius_list)
+    for i in range(len(length_list)):
+        create_detachable_section_mesh(square_length, length_list[i], radius_list[i], str(i+1))
+
+
+def create_tube_mesh(inner_radius, height, thickness, segments=256):
     """
     Creates a mesh for a tube (pipe) with the given inner radius, height, and wall thickness.
 
@@ -26,21 +51,29 @@ def create_tube_mesh(inner_radius, height, thickness, segments=32):
 
     return tube_mesh
 
-def get_tube_specs(length_list, area_list, thickness=0.1):
 
-    assert len(length_list)==len(area_list)
-    #get radius from area
-    radius_list = np.sqrt(np.array(area_list)/np.pi)
+def get_tube_specs(length_list, area_list, thickness=1):
+    assert len(length_list) == len(area_list)
+    # get radius from area
+    radius_list = np.sqrt(np.array(area_list) / np.pi)
+
+    # for 3d printer, may not be univerisal
+    radius_list = 10 * radius_list
+    length_list = 10 * np.array(length_list)
+
     tube_specs = [(radius_list[0], length_list[0], thickness)]
-    for i in range(len(length_list)-1):
-        tube_specs.append((min(radius_list[i], radius_list[i+1]),
+    for i in range(len(length_list) - 1):
+        # the
+        tube_specs.append((min(radius_list[i], radius_list[i + 1]),
                            thickness,
-                           np.abs(radius_list[i]-radius_list[i+1])+thickness))
-        tube_specs.append((radius_list[i+1], length_list[i+1], thickness))
-    #print(tube_specs)
+                           np.abs(radius_list[i] - radius_list[i + 1]) + thickness))
+        # the actual tube section
+        tube_specs.append((radius_list[i + 1], length_list[i + 1], thickness))
+    # print(tube_specs)
     return tube_specs
 
-def tubemaker_3d(length_list, area_list, thickness=0.1):
+
+def tubemaker_3d(length_list, area_list, thickness=1):
     # Initial position for the first tube
     z_position = 0
 
@@ -59,7 +92,7 @@ def tubemaker_3d(length_list, area_list, thickness=0.1):
         (2.5, 5, 0.1)  # Inner Radius 2.5, Height 5, Thickness 0.1
     ]
     '''
-    tube_specs = get_tube_specs(length_list,area_list,thickness)
+    tube_specs = get_tube_specs(length_list, area_list, thickness)
     # Create and position tubes
     for inner_radius, height, thickness in tube_specs:
         tube = create_tube_mesh(inner_radius=inner_radius, height=height, thickness=thickness)
@@ -75,5 +108,8 @@ def tubemaker_3d(length_list, area_list, thickness=0.1):
     combined_mesh.export(stl_file_path)
 
     print(f"STL file created: {stl_file_path}")
+
+
 if __name__ == '__main__':
-    tubemaker_3d([2,6,6,2],[0.1,5,1,2])
+    #tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
+    detachable_tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
