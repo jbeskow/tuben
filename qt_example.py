@@ -26,7 +26,7 @@ class MyRectItem(QGraphicsRectItem):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            # print("Rectangle clicked! Index:", self.index)
+            print("Rectangle clicked! Index:", self.index)
             self.isClicked = True
         super().mousePressEvent(event)
 
@@ -57,7 +57,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             for item in self.rect_items:
                 if item.isClicked:
                     self.index = item.index
-                    print("Rectangle clicked! Index:", self.index)
+                    # print("Rectangle clicked! Index:", self.index)
 
     def menu_add(self):
         self.get_index()
@@ -67,8 +67,9 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.L = [float(l) for l in lengths.split(',')]
             self.A = [float(a) for a in areas.split(',')]
         elif self.index is not None:
-            self.L.insert(self.index, float(lengths))
-            self.A.insert(self.index, float(areas))
+            # 在被选中的方块后面一个位置添加新的方块
+            self.L.insert(self.index+1, float(lengths))
+            self.A.insert(self.index+1, float(areas))
             # self.L += [float(l) for l in lengths.split(',')]
             # self.A += [float(a) for a in areas.split(',')]
         if len(self.L) != len(self.A):
