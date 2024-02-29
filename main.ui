@@ -88,7 +88,7 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>410</y>
+       <y>500</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -132,7 +132,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>200</y>
+       <y>275</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -154,7 +154,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>335</y>
+       <y>425</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -241,13 +241,35 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>270</y>
-       <width>85</width>
-       <height>40</height>
+       <y>350</y>
+       <width>81</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="text">
       <string>play</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_alter">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>200</y>
+       <width>150</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 14pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 14pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Alter</string>
      </property>
     </widget>
    </widget>

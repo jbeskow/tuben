@@ -2,17 +2,29 @@ import sys
 import time
 import math
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QGraphicsView
 from PyQt5.QtGui import QColor
-from qt_test import Ui_MainWindow
+from PyQt5.QtCore import Qt
 import scipy.io.wavfile as wav
 import sounddevice as sd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
+from qt_test import Ui_MainWindow
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
+
+
+class MyRectItem(QGraphicsRectItem):
+    def __init__(self, index, x, y, width, height):
+        super().__init__(x, y, width, height)
+        self.index = index  # 存储索引值
+        self.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
+        self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
+
+    def get_index(self):
+        return self.index  # 获取索引值
 
 
 # Create a subclass of QMainWindow to setup the GUI
@@ -30,6 +42,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.A = None
         self.audio_name = ''
         # 创建 QGraphicsScene
+        self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
 
@@ -46,27 +59,29 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             print('the "lengths" and "areas" lists must be of equal length')
             exit(1)
         print(self.L, self.A)
-        self.visualization(self.L, self.A)
+        self.rect_items = self.visualization(self.L, self.A)
 
     def menu_remove(self):
         if self.L is None or self.A is None:
             print('no input value')
             exit(1)
-        self.L.pop()
-        self.A.pop()
-        print(self.L, self.A)
-        self.visualization(self.L, self.A)
+        index = self.rect_items.get_index()
+
+
 
     def visualization(self, l, a):
         self.scene.clear()
         diameter = [2*math.sqrt(i/3.14) for i in a]
         x_offset = 0
+        index = 0
         for length, width in zip(l, diameter):
-            rect = QGraphicsRectItem(x_offset, 0, length*25, width*25)
-            rect.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
+            rect = MyRectItem(index, x_offset, 0, length*25, width*25)
             self.scene.addItem(rect)
+            self.rect_items.append(rect)
             x_offset += length*25
+            index += 1
         self.graphicsView.update()
+        return self.rect_items
 
     def menu_sound(self):
         if self.L is None or self.A is None:

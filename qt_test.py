@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
         self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_length.setObjectName("hint_length")
         self.pushButton_3dfile = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton_3dfile.setGeometry(QtCore.QRect(50, 410, 150, 50))
+        self.pushButton_3dfile.setGeometry(QtCore.QRect(50, 500, 150, 50))
         self.pushButton_3dfile.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
 "}\n"
@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
 "}")
         self.pushButton_add.setObjectName("pushButton_add")
         self.pushButton_sound = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton_sound.setGeometry(QtCore.QRect(50, 200, 150, 50))
+        self.pushButton_sound.setGeometry(QtCore.QRect(50, 275, 150, 50))
         self.pushButton_sound.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
 "}\n"
@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
 "}")
         self.pushButton_sound.setObjectName("pushButton_sound")
         self.pushButton_illustrate = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton_illustrate.setGeometry(QtCore.QRect(50, 335, 150, 50))
+        self.pushButton_illustrate.setGeometry(QtCore.QRect(50, 425, 150, 50))
         self.pushButton_illustrate.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
 "}\n"
@@ -86,16 +86,26 @@ class Ui_MainWindow(object):
         self.pushButton_remove.setObjectName("pushButton_remove")
         self.lengths = QtWidgets.QTextEdit(self.frame_2)
         self.lengths.setEnabled(True)
-        self.lengths.setGeometry(QtCore.QRect(600, 25, 350, 75))
+        self.lengths.setGeometry(QtCore.QRect(600, 25, 500, 75))
         self.lengths.setStyleSheet("font: 14pt \"Arial\";")
         self.lengths.setObjectName("lengths")
         self.areas = QtWidgets.QTextEdit(self.frame_2)
-        self.areas.setGeometry(QtCore.QRect(600, 125, 350, 75))
+        self.areas.setGeometry(QtCore.QRect(600, 125, 500, 75))
         self.areas.setStyleSheet("font: 14pt \"Arial\";")
         self.areas.setObjectName("areas")
         self.play_audio = QtWidgets.QCommandLinkButton(self.frame_2)
-        self.play_audio.setGeometry(QtCore.QRect(80, 270, 85, 40))
+        self.play_audio.setGeometry(QtCore.QRect(80, 350, 81, 50))
         self.play_audio.setObjectName("play_audio")
+        self.pushButton_alter = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_alter.setGeometry(QtCore.QRect(50, 200, 150, 50))
+        self.pushButton_alter.setStyleSheet("QPushButton{\n"
+"    font: 14pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 14pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.pushButton_alter.setObjectName("pushButton_alter")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -132,13 +142,4 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
         self.play_audio.setText(_translate("MainWindow", "play"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+        self.pushButton_alter.setText(_translate("MainWindow", "Alter"))
