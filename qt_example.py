@@ -2,9 +2,9 @@ import sys
 import time
 import math
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QGraphicsView
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 import scipy.io.wavfile as wav
 import sounddevice as sd
 import matplotlib.pyplot as plt
@@ -17,14 +17,18 @@ import cy_test
 
 
 class MyRectItem(QGraphicsRectItem):
-    def __init__(self, index, x, y, width, height):
-        super().__init__(x, y, width, height)
+    def __init__(self, index, x, y, length, width):
+        super().__init__(x, y, length, width)
         self.index = index  # 存储索引值
         self.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
+        self.isClicked = False
 
-    def get_index(self):
-        return self.index  # 获取索引值
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            # print("Rectangle clicked! Index:", self.index)
+            self.isClicked = True
+        super().mousePressEvent(event)
 
 
 # Create a subclass of QMainWindow to setup the GUI
@@ -34,54 +38,90 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.pushButton_add.clicked.connect(self.menu_add)
         self.pushButton_remove.clicked.connect(self.menu_remove)
+        self.pushButton_alter.clicked.connect(self.menu_alter)
         self.pushButton_sound.clicked.connect(self.menu_sound)
         self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.pushButton_3dfile.clicked.connect(self.menu_3d)
         self.L = None
         self.A = None
+        self.index = None
         self.audio_name = ''
         # 创建 QGraphicsScene
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.graphicsView.setScene(self.scene)
 
+    def get_index(self):
+        if self.rect_items is not None:
+            for item in self.rect_items:
+                if item.isClicked:
+                    self.index = item.index
+                    print("Rectangle clicked! Index:", self.index)
+
     def menu_add(self):
+        self.get_index()
         lengths = self.lengths.toPlainText()
         areas = self.areas.toPlainText()
         if self.L is None or self.A is None:
             self.L = [float(l) for l in lengths.split(',')]
             self.A = [float(a) for a in areas.split(',')]
-        else:
-            self.L += [float(l) for l in lengths.split(',')]
-            self.A += [float(a) for a in areas.split(',')]
+        elif self.index is not None:
+            self.L.insert(self.index, float(lengths))
+            self.A.insert(self.index, float(areas))
+            # self.L += [float(l) for l in lengths.split(',')]
+            # self.A += [float(a) for a in areas.split(',')]
         if len(self.L) != len(self.A):
             print('the "lengths" and "areas" lists must be of equal length')
             exit(1)
         print(self.L, self.A)
-        self.rect_items = self.visualization(self.L, self.A)
+        self.visualization(self.L, self.A)
 
     def menu_remove(self):
         if self.L is None or self.A is None:
             print('no input value')
             exit(1)
-        index = self.rect_items.get_index()
+        self.get_index()
+        if self.index is not None:
+            self.L.pop(self.index)
+            self.A.pop(self.index)
+            print(self.L, self.A)
+            self.visualization(self.L, self.A)
 
-
+    def menu_alter(self):
+        if self.L is None or self.A is None:
+            print('No Input Value')
+            exit(1)
+        self.get_index()
+        new_length = self.lengths.toPlainText()
+        new_area = self.areas.toPlainText()
+        try:
+            self.L[self.index] = float(new_length)
+            self.A[self.index] = float(new_area)
+        except ValueError:
+            print('Invalid Input')
+            exit(1)
+        print(self.L, self.A)
+        self.visualization(self.L, self.A)
 
     def visualization(self, l, a):
         self.scene.clear()
         diameter = [2*math.sqrt(i/3.14) for i in a]
         x_offset = 0
-        index = 0
+        i = 0
         for length, width in zip(l, diameter):
-            rect = MyRectItem(index, x_offset, 0, length*25, width*25)
+            rect = MyRectItem(i, x_offset, 0, length*25, width*25)
             self.scene.addItem(rect)
             self.rect_items.append(rect)
             x_offset += length*25
-            index += 1
+            i += 1
         self.graphicsView.update()
-        return self.rect_items
+        # for index, length, width in enumerate(zip(l, diameter)):
+        #     rect = MyRectItem(index, x_offset, 0, length*25, width*25)
+        #     self.scene.addItem(rect)
+        #     self.rect_items.append(rect)
+        #     x_offset += length*25
+        # self.graphicsView.update()
 
     def menu_sound(self):
         if self.L is None or self.A is None:
