@@ -13,6 +13,58 @@ def create_detachable_section_mesh(square_length, height, inner_radius, filename
     return tube_mesh
 
 
+def create_detachable_section_mesh_lego(square_length, height, inner_radius, hole_depth, filename='tao', segments=256):
+    # Convert hole_depth to float if it's passed as a string
+    hole_depth = float(hole_depth)
+
+    # Create the main cuboid
+    outer_mesh = trimesh.creation.box((square_length, square_length, height))
+
+    # Define the offset for hole and cylinder placement
+    offset = square_length / 2.5
+    # Define the depth/height for the cylinders to ensure they are connected to the cuboid
+    cylinder_height = hole_depth + 0.1  # Making cylinders slightly taller than the hole depth for connection
+
+    # Positions for the holes on the bottom side
+    hole_positions = [
+        (offset, offset, -height/2+hole_depth / 2),  # Adjusted to ensure holes start from the bottom surface
+        (-offset, offset, -height/2+hole_depth/2),
+        (offset, -offset, -height/2+hole_depth/2),
+        (-offset, -offset, -height/2+hole_depth / 2),
+    ]
+
+    # Positions for the cylinders on the top side
+    cylinder_positions = [
+        (offset, offset, height/2 + cylinder_height / 2),  # Adjusted to ensure cylinders are connected to the top surface
+        (-offset, offset, height/2 + cylinder_height / 2),
+        (offset, -offset, height/2 + cylinder_height / 2),
+        (-offset, -offset, height/2 + cylinder_height / 2),
+    ]
+
+    # Subtract holes from the cuboid
+    for x, y, z in hole_positions:
+        hole = trimesh.creation.cylinder(radius=square_length*0.05, height=hole_depth, sections=segments)
+        hole.apply_translation((x, y, z))
+        outer_mesh = outer_mesh.difference(hole)
+
+    inner_mesh = trimesh.creation.cylinder(radius=inner_radius, height=height, sections=segments)
+    outer_mesh = outer_mesh.difference(inner_mesh)
+
+    # Add cylinders to the top side of the cuboid
+    for x, y, z in cylinder_positions:
+        cylinder = trimesh.creation.cylinder(radius=square_length*0.05, height=cylinder_height, sections=segments)
+        cylinder.apply_translation((x, y, z))
+        outer_mesh += cylinder  # Assuming boolean operations work correctly in the environment
+
+    # Export the mesh to an STL file
+    stl_file_path = f'{filename}.stl'
+    outer_mesh.export(stl_file_path)
+
+    print(f"STL file created: {stl_file_path}")
+    return outer_mesh
+
+
+
 def detachable_tubemaker_3d(length_list, area_list):
     assert len(length_list) == len(area_list)
     # get radius from area
@@ -24,7 +76,7 @@ def detachable_tubemaker_3d(length_list, area_list):
 
     square_length = 2.5*max(radius_list)
     for i in range(len(length_list)):
-        create_detachable_section_mesh(square_length, length_list[i], radius_list[i], str(i+1))
+        create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5,str(i+1))
 
 
 def create_tube_mesh(inner_radius, height, thickness, segments=256):
