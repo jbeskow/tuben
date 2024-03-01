@@ -17,24 +17,24 @@ class Ui_MainWindow(object):
         MainWindow.resize(1500, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.frame_2 = QtWidgets.QFrame(self.centralwidget)
-        self.frame_2.setGeometry(QtCore.QRect(0, 0, 1500, 800))
-        self.frame_2.setStyleSheet("background-color: rgb(234, 233, 255);")
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.graphicsView = QtWidgets.QGraphicsView(self.frame_2)
-        self.graphicsView.setGeometry(QtCore.QRect(225, 225, 1100, 500))
-        self.graphicsView.setObjectName("graphicsView")
-        self.hint_area = QtWidgets.QTextBrowser(self.frame_2)
+        self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setGeometry(QtCore.QRect(0, 0, 1500, 800))
+        self.frame.setStyleSheet("background-color: rgb(234, 233, 255);")
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.illustration = QtWidgets.QGraphicsView(self.frame)
+        self.illustration.setGeometry(QtCore.QRect(225, 225, 1100, 500))
+        self.illustration.setObjectName("illustration")
+        self.hint_area = QtWidgets.QTextBrowser(self.frame)
         self.hint_area.setGeometry(QtCore.QRect(225, 125, 325, 75))
         self.hint_area.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_area.setObjectName("hint_area")
-        self.hint_length = QtWidgets.QTextBrowser(self.frame_2)
+        self.hint_length = QtWidgets.QTextBrowser(self.frame)
         self.hint_length.setGeometry(QtCore.QRect(225, 25, 325, 75))
         self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_length.setObjectName("hint_length")
-        self.pushButton_3dfile = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_3dfile = QtWidgets.QPushButton(self.frame)
         self.pushButton_3dfile.setGeometry(QtCore.QRect(50, 500, 150, 50))
         self.pushButton_3dfile.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_3dfile.setObjectName("pushButton_3dfile")
-        self.pushButton_add = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_add = QtWidgets.QPushButton(self.frame)
         self.pushButton_add.setGeometry(QtCore.QRect(50, 50, 150, 50))
         self.pushButton_add.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -54,7 +54,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_add.setObjectName("pushButton_add")
-        self.pushButton_sound = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_sound = QtWidgets.QPushButton(self.frame)
         self.pushButton_sound.setGeometry(QtCore.QRect(50, 275, 150, 50))
         self.pushButton_sound.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_sound.setObjectName("pushButton_sound")
-        self.pushButton_illustrate = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_illustrate = QtWidgets.QPushButton(self.frame)
         self.pushButton_illustrate.setGeometry(QtCore.QRect(50, 425, 150, 50))
         self.pushButton_illustrate.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_illustrate.setObjectName("pushButton_illustrate")
-        self.pushButton_remove = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_remove = QtWidgets.QPushButton(self.frame)
         self.pushButton_remove.setGeometry(QtCore.QRect(50, 125, 150, 50))
         self.pushButton_remove.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -84,19 +84,19 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_remove.setObjectName("pushButton_remove")
-        self.lengths = QtWidgets.QTextEdit(self.frame_2)
+        self.lengths = QtWidgets.QTextEdit(self.frame)
         self.lengths.setEnabled(True)
         self.lengths.setGeometry(QtCore.QRect(600, 25, 500, 75))
         self.lengths.setStyleSheet("font: 14pt \"Arial\";")
         self.lengths.setObjectName("lengths")
-        self.areas = QtWidgets.QTextEdit(self.frame_2)
+        self.areas = QtWidgets.QTextEdit(self.frame)
         self.areas.setGeometry(QtCore.QRect(600, 125, 500, 75))
         self.areas.setStyleSheet("font: 14pt \"Arial\";")
         self.areas.setObjectName("areas")
-        self.play_audio = QtWidgets.QCommandLinkButton(self.frame_2)
+        self.play_audio = QtWidgets.QCommandLinkButton(self.frame)
         self.play_audio.setGeometry(QtCore.QRect(80, 350, 81, 50))
         self.play_audio.setObjectName("play_audio")
-        self.pushButton_alter = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_alter = QtWidgets.QPushButton(self.frame)
         self.pushButton_alter.setGeometry(QtCore.QRect(50, 200, 150, 50))
         self.pushButton_alter.setStyleSheet("QPushButton{\n"
 "    font: 14pt \"Arial\";\n"
@@ -106,6 +106,16 @@ class Ui_MainWindow(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_alter.setObjectName("pushButton_alter")
+        self.input_information_output = QtWidgets.QTextBrowser(self.frame)
+        self.input_information_output.setGeometry(QtCore.QRect(1150, 69, 175, 131))
+        self.input_information_output.setObjectName("input_information_output")
+        self.input_sign = QtWidgets.QLabel(self.frame)
+        self.input_sign.setGeometry(QtCore.QRect(1150, 25, 171, 31))
+        self.input_sign.setStyleSheet("QLabel:{\n"
+"    font: 10pt \"Arial\";\n"
+"    color: rgb(255, 255, 255);\n"
+"}")
+        self.input_sign.setObjectName("input_sign")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -118,14 +128,14 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">Enter the area(s):</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">Separate by comma(,)</span></p></body></html>"))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Enter the area(s):</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
         self.hint_length.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">Enter the length(s):</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">Separate by comma(,)</span></p></body></html>"))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Enter the length(s):</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
         self.pushButton_3dfile.setText(_translate("MainWindow", "3D File"))
         self.pushButton_add.setText(_translate("MainWindow", "Add"))
         self.pushButton_sound.setText(_translate("MainWindow", "Sound"))
@@ -143,3 +153,4 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
         self.play_audio.setText(_translate("MainWindow", "play"))
         self.pushButton_alter.setText(_translate("MainWindow", "Alter"))
+        self.input_sign.setText(_translate("MainWindow", "Input Information"))
