@@ -73,6 +73,8 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.L = [float(l) for l in lengths.split(',')]
             self.A = [float(a) for a in areas.split(',')]
         elif self.index is not None:
+            self.get_message("Index {} clicked\nLength {} Area {}".
+                             format(self.index, self.L[self.index], self.A[self.index]))
             # add a new section after the clicked section
             self.L.insert(self.index+1, float(lengths))
             self.A.insert(self.index+1, float(areas))
@@ -93,6 +95,8 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             exit(1)
         self.get_index()
         if self.index is not None:  # pop the section that has been clicked
+            self.get_message("Index {} clicked\nLength {} Area {}".
+                             format(self.index, self.L[self.index], self.A[self.index]))
             self.L.pop(self.index)
             self.A.pop(self.index)
             # print(self.L, self.A)
@@ -112,13 +116,16 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.get_index()
         new_length = self.lengths.toPlainText()
         new_area = self.areas.toPlainText()
-        try:
-            self.L[self.index] = float(new_length)
-            self.A[self.index] = float(new_area)
-        except ValueError:
-            self.get_message('Invalid Input')
-            # print('Invalid Input')
-            exit(1)
+        if self.index is not None:
+            try:
+                self.get_message("Index {} clicked\nLength {} Area {}".
+                                 format(self.index, self.L[self.index], self.A[self.index]))
+                self.L[self.index] = float(new_length)
+                self.A[self.index] = float(new_area)
+            except ValueError:
+                self.get_message('Invalid Input')
+                # print('Invalid Input')
+                exit(1)
         # print(self.L, self.A)
         self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
         self.visualization(self.L, self.A)
