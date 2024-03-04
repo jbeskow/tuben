@@ -17,17 +17,20 @@ import cy_test
 
 
 class MyRectItem(QGraphicsRectItem):
-    def __init__(self, index, x, y, length, width):
+    def __init__(self, index, x, y, length, width, la, output_method=None):
         super().__init__(x, y, length, width)
         self.index = index  # 存储索引值
+        self.la = la
         self.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
         self.isClicked = False
+        self.output_method = output_method
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            print("Rectangle clicked! Index:", self.index)
             self.isClicked = True
+            if self.output_method:
+                self.output_method('Index: {} clicked\nLength {}\nArea {}'.format(self.index, self.la[0], self.la[1]))
         super().mousePressEvent(event)
 
 
@@ -46,7 +49,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.L = None
         self.A = None
         self.index = None
-        self.audio_name = ''
+        self.audio_name = None
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.illustration.setScene(self.scene)
@@ -60,9 +63,6 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             for item in self.rect_items:
                 if item.isClicked:
                     self.index = item.index
-                    # self.get_message("Index {} clicked\nLength {} Area {}".
-                    #                  format(self.index, self.L[self.index], self.A[self.index]))
-                    # print("Rectangle clicked! Index:", self.index)
 
     def menu_add(self):
         self.get_index()
@@ -73,62 +73,54 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.L = [float(l) for l in lengths.split(',')]
             self.A = [float(a) for a in areas.split(',')]
         elif self.index is not None:
-            self.get_message("Index {} clicked\nLength {} Area {}".
-                             format(self.index, self.L[self.index], self.A[self.index]))
             # add a new section after the clicked section
             self.L.insert(self.index+1, float(lengths))
             self.A.insert(self.index+1, float(areas))
-        elif self.index is None and len(self.L) == len(self.A):
+            self.index = None
+        elif self.index is None and len(self.L) < 4:
             # add more sections at the end of tube if not clicking any tube section
             self.L += [float(l) for l in lengths.split(',')]
             self.A += [float(a) for a in areas.split(',')]
-        if len(self.L) != len(self.A):
-            self.get_message('the "lengths" and "areas" lists must be of equal length')
-            exit(1)
-        # print(self.L, self.A)
-        self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
-        self.visualization(self.L, self.A)
+        if len(self.L) == len(self.A) and len(self.L) <= 4:
+            self.visualization(self.L, self.A)
+        elif len(self.L) > 4:
+            self.get_message('Invalid input: Maximum 4 Tube Sections')
+        else:
+            self.get_message('Invalid input: lengths and areas lists must be of equal length')
 
     def menu_remove(self):
         if self.L is None or self.A is None:
-            self.get_message('no input value')
-            exit(1)
-        self.get_index()
-        if self.index is not None:  # pop the section that has been clicked
-            self.get_message("Index {} clicked\nLength {} Area {}".
-                             format(self.index, self.L[self.index], self.A[self.index]))
-            self.L.pop(self.index)
-            self.A.pop(self.index)
-            # print(self.L, self.A)
-            self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
-            self.visualization(self.L, self.A)
-        else:  # otherwise pop the last section of the tube
-            self.L.pop()
-            self.A.pop()
-            # print(self.L, self.A)
-            self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
-            self.visualization(self.L, self.A)
+            self.get_message('Empty Input Value')
+        else:
+            self.get_index()
+            if self.index is not None:  # pop the section that has been clicked
+                self.L.pop(self.index)
+                self.A.pop(self.index)
+                self.index = None
+            else:  # otherwise pop the last section of the tube
+                self.L.pop()
+                self.A.pop()
+            if len(self.L) == len(self.A) and len(self.L) > 0:
+                self.visualization(self.L, self.A)
+            else:
+                self.scene.clear()
+                self.get_message('Length:[]\nArea:[]')
 
     def menu_alter(self):
         if self.L is None or self.A is None:
-            print('No Input Value')
-            exit(1)
-        self.get_index()
-        new_length = self.lengths.toPlainText()
-        new_area = self.areas.toPlainText()
-        if self.index is not None:
-            try:
-                self.get_message("Index {} clicked\nLength {} Area {}".
-                                 format(self.index, self.L[self.index], self.A[self.index]))
-                self.L[self.index] = float(new_length)
-                self.A[self.index] = float(new_area)
-            except ValueError:
-                self.get_message('Invalid Input')
-                # print('Invalid Input')
-                exit(1)
-        # print(self.L, self.A)
-        self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
-        self.visualization(self.L, self.A)
+            self.get_message('Empty Input Value')
+        else:
+            self.get_index()
+            new_length = self.lengths.toPlainText()
+            new_area = self.areas.toPlainText()
+            if self.index is not None:
+                try:
+                    self.L[self.index] = float(new_length)
+                    self.A[self.index] = float(new_area)
+                    self.visualization(self.L, self.A)
+                    self.index = None
+                except ValueError:
+                    self.get_message('Invalid Input')
 
     def visualization(self, l, a):
         self.scene.clear()
@@ -136,92 +128,96 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         x_offset = 0
         i = 0
         for length, width in zip(l, diameter):
-            rect = MyRectItem(i, x_offset, 0, length*25, width*25)
+            la = [l[i], a[i]]
+            rect = MyRectItem(i, x_offset, 0, length*25, width*25, la, self.get_message)
             self.scene.addItem(rect)
             self.rect_items.append(rect)
             x_offset += length*25
             i += 1
+        self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
         self.illustration.update()
 
     def menu_sound(self):
         if self.L is None or self.A is None:
-            self.get_message('no input value')
-            exit(1)
-        fs = 16000
-        tub = Tuben()
-        print(self.L, self.A)
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
-        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, self.fmt)
-        self.audio_name = str(time.strftime("%H-%M-%S"))
-        wav.write(self.audio_name + '.wav', fs, y)
-        self.get_message('wrote:' + self.audio_name + '.wav')
-        # print('wrote:', self.audio_name + '.wav')
+            self.get_message('Empty Input Value')
+        elif len(self.L) != len(self.A):
+            self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        else:
+            fs = 16000
+            tub = Tuben()
+            self.fmt, self.Y = tub.get_formants(self.L, self.A)
+            x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+            y = formantsynt.ffilter(fs, x, self.fmt)
+            self.audio_name = str(time.strftime("%H-%M-%S"))
+            wav.write(self.audio_name + '.wav', fs, y)
+            self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def play_sound(self):
-        # 读取音频文件
-        fs, data = wav.read(self.audio_name + '.wav')
-        # 播放音频文件
-        sd.play(data, fs)
-        sd.wait()  # 等待播放结束
+        if self.audio_name is None:
+            self.get_message("No Audio Generated")
+        else:
+            # open the audio file
+            fs, data = wav.read(self.audio_name + '.wav')
+            sd.play(data, fs)
+            sd.wait()  # wait for the play process to finish
 
     def generate_image(self):
         if len(self.L) != len(self.A):
-            self.get_message('the "lengths" and "areas" lists must be of equal length')
-            exit(1)
-        fig, ax = plt.subplots(3, 1)
-        fig.tight_layout(pad=2.5)
+            self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        if self.audio_name is None:
+            self.get_message("No Audio Generated")
+        else:
+            fig, ax = plt.subplots(3, 1)
+            fig.tight_layout(pad=2.5)
+            # plot tube
+            x = 0
+            for l, a in zip(self.L, self.A):
+                ax[0].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
+                x += l
+            ax[0].set_xlim([0, x])
+            ax[0].set_ylim([0, max(self.A) * 1.1])
+            ax[0].set_title('tube')
+            ax[0].set_xlabel('distance from lips (cm)')
+            ax[0].set_ylabel('area ($cm^2$)')
+            F = np.arange(1, 8000)
+            # plot function & peaks
+            ax[1].plot(F, self.Y, ':')
+            ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
+            ax[1].set_title('peakfunction:' + "determinant")
+            ax[1].set_xlabel('frequency (Hz)')
 
-        # plot tube
-        x = 0
-        for l, a in zip(self.L, self.A):
-            ax[0].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
-            x += l
+            ax[2].set_title('transfer function')
+            ax[2].set_xlabel('frequency (Hz)')
+            ax[2].set_ylabel('dB')
+            plt.sca(ax[2])
 
-        ax[0].set_xlim([0, x])
-        ax[0].set_ylim([0, max(self.A) * 1.1])
-        ax[0].set_title('tube')
-        ax[0].set_xlabel('distance from lips (cm)')
-        ax[0].set_ylabel('area ($cm^2$)')
+            fs = 16000
 
-        F = np.arange(1, 8000)
-
-        # plot function & peaks
-        ax[1].plot(F, self.Y, ':')
-        ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
-        ax[1].set_title('peakfunction:' + "determinant")
-        ax[1].set_xlabel('frequency (Hz)')
-
-        ax[2].set_title('transfer function')
-        ax[2].set_xlabel('frequency (Hz)')
-        ax[2].set_ylabel('dB')
-        plt.sca(ax[2])
-
-        fs = 16000
-
-        f, h = formantsynt.get_transfer_function(fs, self.fmt)
-        ax[2].plot(f, h)
-        # plt.show()
-        plt.savefig(self.audio_name + '.png')
+            f, h = formantsynt.get_transfer_function(fs, self.fmt)
+            ax[2].plot(f, h)
+            plt.savefig(self.audio_name + '.png')
+            self.get_message('Picture ' + self.audio_name + '.png Created')
 
     def menu_illustrate(self):
-        self.scene.clear()
         self.generate_image()
-        # 创建 QPixmap 并加载 PNG 图像
-        pixmap = QtGui.QPixmap(self.audio_name + '.png')
-        # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
-        pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
-        self.scene.addItem(pixmap_item)
-        self.graphicsView.update()
+        if self.audio_name is None:
+            self.get_message("No Audio Generated")
+        else:
+            self.scene.clear()
+            # 创建 QPixmap 并加载 PNG 图像
+            pixmap = QtGui.QPixmap(self.audio_name + '.png')
+            # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
+            pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
+            self.scene.addItem(pixmap_item)
+            self.illustration.update()
 
     def menu_3d(self):
         if self.L is None or self.A is None:
-            self.get_message('no input value')
-            exit(1)
+            self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
-            self.get_message('the "lengths" and "areas" lists must be of equal length')
-            exit(1)
-        cy_test.tubemaker_3d(self.L, self.A)
+            self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        else:
+            cy_test.tubemaker_3d(self.L, self.A)
 
 
 # Main entry point of the application
