@@ -46,13 +46,17 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.pushButton_3dfile.clicked.connect(self.menu_3d)
-        self.L = None
-        self.A = None
-        self.index = None
-        self.audio_name = None
+
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.illustration.setScene(self.scene)
+
+        self.example_a.clicked.connect(self.show_example_a)
+        self.example_i.clicked.connect(self.show_example_i)
+        self.L = []
+        self.A = []
+        self.index = None
+        self.audio_name = ''
 
     def get_message(self, message):
         self.input_information_output.clear()
@@ -68,28 +72,33 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.get_index()
         lengths = self.lengths.toPlainText()
         areas = self.areas.toPlainText()
-        if self.L is None or self.A is None:
-            # add sections
-            self.L = [float(l) for l in lengths.split(',')]
-            self.A = [float(a) for a in areas.split(',')]
-        elif self.index is not None:
-            # add a new section after the clicked section
-            self.L.insert(self.index+1, float(lengths))
-            self.A.insert(self.index+1, float(areas))
-            self.index = None
-        elif self.index is None and len(self.L) < 4:
-            # add more sections at the end of tube if not clicking any tube section
-            self.L += [float(l) for l in lengths.split(',')]
-            self.A += [float(a) for a in areas.split(',')]
-        if len(self.L) == len(self.A) and len(self.L) <= 4:
-            self.visualization(self.L, self.A)
-        elif len(self.L) > 4:
-            self.get_message('Invalid input: Maximum 4 Tube Sections')
+        if lengths == '' or areas == '':
+            self.get_message('Empty Input Value')
         else:
-            self.get_message('Invalid input: lengths and areas lists must be of equal length')
+            le = [float(l) for l in lengths.split(',')]
+            ar = [float(a) for a in areas.split(',')]
+            if len(le) == len(ar) and len(le) >= 1:
+                if len(self.L) == 0 or len(self.A) == 0:
+                    # add sections
+                    self.L = le
+                    self.A = ar
+                elif self.index is not None and len(self.L)+len(le) <= 4:
+                    self.L[self.index:self.index] = le
+                    self.A[self.index:self.index] = ar
+                elif len(self.L)+len(le) > 4:
+                    self.get_message('Invalid input: Maximum 4 Tube Sections')
+            else:
+                self.get_message('Invalid input: lengths and areas lists must be of equal length')
+            if len(self.L) == len(self.A) and len(self.L) <= 4:
+                self.visualization(self.L, self.A)
+            else:
+                self.get_message('Invalid input, please try again')
+                self.L = []
+                self.A = []
+                self.index = None
 
     def menu_remove(self):
-        if self.L is None or self.A is None:
+        if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         else:
             self.get_index()
@@ -107,7 +116,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
                 self.get_message('Length:[]\nArea:[]')
 
     def menu_alter(self):
-        if self.L is None or self.A is None:
+        if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         else:
             self.get_index()
@@ -134,11 +143,11 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.rect_items.append(rect)
             x_offset += length*25
             i += 1
-        self.get_message('Length:{}\nArea:{}'.format(self.L, self.A))
+        self.get_message('Length:{}\nArea:{}'.format(l, a))
         self.illustration.update()
 
     def menu_sound(self):
-        if self.L is None or self.A is None:
+        if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
@@ -153,7 +162,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def play_sound(self):
-        if self.audio_name is None:
+        if self.audio_name == '':
             self.get_message("No Audio Generated")
         else:
             # open the audio file
@@ -162,9 +171,11 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             sd.wait()  # wait for the play process to finish
 
     def generate_image(self):
-        if len(self.L) != len(self.A):
+        if len(self.L) == 0 or len(self.A) == 0:
+            self.get_message('Empty Input Value')
+        elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        if self.audio_name is None:
+        elif self.audio_name == '':
             self.get_message("No Audio Generated")
         else:
             fig, ax = plt.subplots(3, 1)
@@ -200,7 +211,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
 
     def menu_illustrate(self):
         self.generate_image()
-        if self.audio_name is None:
+        if self.audio_name == '':
             self.get_message("No Audio Generated")
         else:
             self.scene.clear()
@@ -212,12 +223,38 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.illustration.update()
 
     def menu_3d(self):
-        if self.L is None or self.A is None:
+        if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
             cy_test.tubemaker_3d(self.L, self.A)
+
+    def show_example_a(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [2, 5, 0.2, 2]
+        self.audio_name = 'a'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def show_example_i(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [2, 0.2, 5, 2]
+        self.audio_name = 'i'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
 
 
 # Main entry point of the application
