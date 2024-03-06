@@ -27,11 +27,11 @@ class Ui_MainWindow(object):
         self.illustration.setGeometry(QtCore.QRect(225, 225, 1100, 500))
         self.illustration.setObjectName("illustration")
         self.hint_area = QtWidgets.QTextBrowser(self.frame)
-        self.hint_area.setGeometry(QtCore.QRect(225, 125, 325, 75))
+        self.hint_area.setGeometry(QtCore.QRect(225, 125, 475, 75))
         self.hint_area.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_area.setObjectName("hint_area")
         self.hint_length = QtWidgets.QTextBrowser(self.frame)
-        self.hint_length.setGeometry(QtCore.QRect(225, 25, 325, 75))
+        self.hint_length.setGeometry(QtCore.QRect(225, 25, 475, 75))
         self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_length.setObjectName("hint_length")
         self.pushButton_3dfile = QtWidgets.QPushButton(self.frame)
@@ -86,11 +86,11 @@ class Ui_MainWindow(object):
         self.pushButton_remove.setObjectName("pushButton_remove")
         self.lengths = QtWidgets.QTextEdit(self.frame)
         self.lengths.setEnabled(True)
-        self.lengths.setGeometry(QtCore.QRect(600, 25, 500, 75))
+        self.lengths.setGeometry(QtCore.QRect(750, 25, 350, 75))
         self.lengths.setStyleSheet("font: 14pt \"Arial\";")
         self.lengths.setObjectName("lengths")
         self.areas = QtWidgets.QTextEdit(self.frame)
-        self.areas.setGeometry(QtCore.QRect(600, 125, 500, 75))
+        self.areas.setGeometry(QtCore.QRect(750, 125, 350, 75))
         self.areas.setStyleSheet("font: 14pt \"Arial\";")
         self.areas.setObjectName("areas")
         self.play_audio = QtWidgets.QCommandLinkButton(self.frame)
@@ -116,6 +116,26 @@ class Ui_MainWindow(object):
 "    color: rgb(255, 255, 255);\n"
 "}")
         self.input_sign.setObjectName("input_sign")
+        self.example_a = QtWidgets.QPushButton(self.frame)
+        self.example_a.setGeometry(QtCore.QRect(50, 575, 150, 50))
+        self.example_a.setStyleSheet("QPushButton{\n"
+"    font: 14pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 12pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.example_a.setObjectName("example_a")
+        self.example_i = QtWidgets.QPushButton(self.frame)
+        self.example_i.setGeometry(QtCore.QRect(50, 650, 150, 50))
+        self.example_i.setStyleSheet("QPushButton{\n"
+"    font: 14pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 12pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.example_i.setObjectName("example_i")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -128,14 +148,14 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Enter the area(s):</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the area(s),max 4 sections:</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
         self.hint_length.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Enter the length(s):</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the length(s),max 4 sections:</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
         self.pushButton_3dfile.setText(_translate("MainWindow", "3D File"))
         self.pushButton_add.setText(_translate("MainWindow", "Add"))
         self.pushButton_sound.setText(_translate("MainWindow", "Sound"))
@@ -154,3 +174,5 @@ class Ui_MainWindow(object):
         self.play_audio.setText(_translate("MainWindow", "play"))
         self.pushButton_alter.setText(_translate("MainWindow", "Alter"))
         self.input_sign.setText(_translate("MainWindow", "Input Information"))
+        self.example_a.setText(_translate("MainWindow", "example - a"))
+        self.example_i.setText(_translate("MainWindow", "example - i"))
