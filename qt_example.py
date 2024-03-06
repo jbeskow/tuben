@@ -46,6 +46,7 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.pushButton_3dfile.clicked.connect(self.menu_3d)
+        self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
 
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
@@ -228,7 +229,17 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            cy_test.tubemaker_3d(self.L, self.A)
+            cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
+            stl_file_path = self.audio_name + '.stl'
+            self.get_message(f'STL file created: {stl_file_path}')
+
+    def menu_obliviate(self):
+        self.scene.clear()
+        self.L = []
+        self.A = []
+        self.index = None
+        self.audio_name = ''
+        self.get_message('Obliviate! All input has been removed')
 
     def show_example_a(self):
         self.L = [2, 6, 6, 2]

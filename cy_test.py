@@ -125,7 +125,7 @@ def get_tube_specs(length_list, area_list, thickness=1):
     return tube_specs
 
 
-def tubemaker_3d(length_list, area_list, thickness=1):
+def tubemaker_3d(length_list, area_list, file_name, thickness=1):
     # Initial position for the first tube
     z_position = 0
 
@@ -156,12 +156,11 @@ def tubemaker_3d(length_list, area_list, thickness=1):
     combined_mesh = trimesh.util.concatenate(tubes)
 
     # Export the combined mesh to an STL file
-    stl_file_path = 'i.stl'
+    stl_file_path = file_name + '.stl'
     combined_mesh.export(stl_file_path)
 
     print(f"STL file created: {stl_file_path}")
 
 
 if __name__ == '__main__':
-    #tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
     detachable_tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
