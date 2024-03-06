@@ -165,3 +165,4 @@ def tubemaker_3d(length_list, area_list, thickness=1):
 if __name__ == '__main__':
     #tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
     detachable_tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
+
