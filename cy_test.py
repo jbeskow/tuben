@@ -79,7 +79,7 @@ def detachable_tubemaker_3d(length_list, area_list):
         create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5,str(i+1))
 
 
-def create_tube_mesh(inner_radius, height, thickness, segments=256):
+def create_tube_mesh(inner_radius, height, thickness, segments=256, filename='i'):
     """
     Creates a mesh for a tube (pipe) with the given inner radius, height, and wall thickness.
 
