@@ -88,7 +88,7 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>479</y>
+       <y>555</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -110,7 +110,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>29</y>
+       <y>30</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -132,7 +132,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>254</y>
+       <y>255</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -154,7 +154,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>404</y>
+       <y>405</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -176,7 +176,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>104</y>
+       <y>105</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -241,7 +241,7 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>329</y>
+       <y>330</y>
        <width>81</width>
        <height>50</height>
       </rect>
@@ -254,7 +254,7 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>179</y>
+       <y>180</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -301,11 +301,33 @@ QPushButton::hover{
       <string>Input Information</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_scale">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>480</y>
+       <width>150</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 14pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 14pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Scale</string>
+     </property>
+    </widget>
     <widget class="QPushButton" name="example_a">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>624</y>
+       <y>705</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -323,33 +345,11 @@ QPushButton::hover{
       <string>example - a</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="example_i">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>699</y>
-       <width>150</width>
-       <height>50</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
-}
-QPushButton::hover{
-	font: 87 12pt &quot;Arial Black&quot;;
-	background-color: rgb(255, 170, 255);
-}</string>
-     </property>
-     <property name="text">
-      <string>example - i</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_obliviate">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>554</y>
+       <y>630</y>
        <width>150</width>
        <height>50</height>
       </rect>
@@ -365,6 +365,16 @@ QPushButton::hover{
      </property>
      <property name="text">
       <string>Obliviate</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_scale">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>485</y>
+       <width>75</width>
+       <height>40</height>
+      </rect>
      </property>
     </widget>
    </widget>

@@ -45,6 +45,9 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_sound.clicked.connect(self.menu_sound)
         self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
+        self.doubleSpinBox_scale.setDecimals(1)
+        self.doubleSpinBox_scale.setValue(0.0)
+        self.pushButton_scale.clicked.connect(self.menu_scale)
         self.pushButton_3dfile.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
 
@@ -53,7 +56,6 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.illustration.setScene(self.scene)
 
         self.example_a.clicked.connect(self.show_example_a)
-        self.example_i.clicked.connect(self.show_example_i)
         self.L = []
         self.A = []
         self.index = None
@@ -223,6 +225,18 @@ class AppWindow(QMainWindow, Ui_MainWindow):
             self.scene.addItem(pixmap_item)
             self.illustration.update()
 
+    def menu_scale(self):
+        if len(self.L) == 0 or len(self.A) == 0:
+            self.get_message('Empty Input Value')
+        else:
+            value = self.doubleSpinBox_scale.value()
+            if value:
+                self.L = [x * value for x in self.L]
+                self.A = [y * (value ** 2) for y in self.A]
+                self.visualization(self.L, self.A)
+            else:
+                self.get_message('Empty Scale Argument')
+
     def menu_3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
@@ -245,19 +259,6 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.L = [2, 6, 6, 2]
         self.A = [2, 5, 0.2, 2]
         self.audio_name = 'a'
-        self.visualization(self.L, self.A)
-        fs = 16000
-        tub = Tuben()
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
-        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, self.fmt)
-        wav.write(self.audio_name + '.wav', fs, y)
-        self.get_message('Audio ' + self.audio_name + '.wav Created')
-
-    def show_example_i(self):
-        self.L = [2, 6, 6, 2]
-        self.A = [2, 0.2, 5, 2]
-        self.audio_name = 'i'
         self.visualization(self.L, self.A)
         fs = 16000
         tub = Tuben()
