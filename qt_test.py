@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1500, 800)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_TubeN(object):
+    def setupUi(self, TubeN):
+        TubeN.setObjectName("TubeN")
+        TubeN.resize(1500, 800)
+        self.centralwidget = QtWidgets.QWidget(TubeN)
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1500, 800))
@@ -149,44 +149,44 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_scale = QtWidgets.QDoubleSpinBox(self.frame)
         self.doubleSpinBox_scale.setGeometry(QtCore.QRect(10, 485, 75, 40))
         self.doubleSpinBox_scale.setObjectName("doubleSpinBox_scale")
-        MainWindow.setCentralWidget(self.centralwidget)
+        TubeN.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(TubeN)
+        QtCore.QMetaObject.connectSlotsByName(TubeN)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, TubeN):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.hint_area.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        TubeN.setWindowTitle(_translate("TubeN", "MainWindow"))
+        self.hint_area.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the area(s),max 4 sections:</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.hint_length.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.hint_length.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the length(s),max 4 sections:</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.pushButton_3dfile.setText(_translate("MainWindow", "3D File"))
-        self.pushButton_add.setText(_translate("MainWindow", "Add"))
-        self.pushButton_sound.setText(_translate("MainWindow", "Sound"))
-        self.pushButton_illustrate.setText(_translate("MainWindow", "Illustrate"))
-        self.pushButton_remove.setText(_translate("MainWindow", "Remove"))
-        self.lengths.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.pushButton_3dfile.setText(_translate("TubeN", "3D File"))
+        self.pushButton_add.setText(_translate("TubeN", "Add"))
+        self.pushButton_sound.setText(_translate("TubeN", "Sound"))
+        self.pushButton_illustrate.setText(_translate("TubeN", "Illustrate"))
+        self.pushButton_remove.setText(_translate("TubeN", "Remove"))
+        self.lengths.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
-        self.areas.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.areas.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
-        self.play_audio.setText(_translate("MainWindow", "play"))
-        self.pushButton_alter.setText(_translate("MainWindow", "Alter"))
-        self.input_sign.setText(_translate("MainWindow", "Input Information"))
-        self.pushButton_scale.setText(_translate("MainWindow", "Scale"))
-        self.example_a.setText(_translate("MainWindow", "example - a"))
-        self.pushButton_obliviate.setText(_translate("MainWindow", "Obliviate"))
+        self.play_audio.setText(_translate("TubeN", "play"))
+        self.pushButton_alter.setText(_translate("TubeN", "Alter"))
+        self.input_sign.setText(_translate("TubeN", "Input Information"))
+        self.pushButton_scale.setText(_translate("TubeN", "Scale"))
+        self.example_a.setText(_translate("TubeN", "example - a"))
+        self.pushButton_obliviate.setText(_translate("TubeN", "Obliviate"))

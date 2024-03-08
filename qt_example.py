@@ -1,3 +1,4 @@
+import re
 import sys
 import time
 import math
@@ -10,7 +11,7 @@ import sounddevice as sd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
-from qt_test import Ui_MainWindow
+from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
@@ -35,7 +36,7 @@ class MyRectItem(QGraphicsRectItem):
 
 
 # Create a subclass of QMainWindow to setup the GUI
-class AppWindow(QMainWindow, Ui_MainWindow):
+class AppWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -75,9 +76,11 @@ class AppWindow(QMainWindow, Ui_MainWindow):
         self.get_index()
         lengths = self.lengths.toPlainText()
         areas = self.areas.toPlainText()
+        match_l = bool(re.match(r'^\d(,\d)*$', lengths))
+        match_a = bool(re.match(r'^\d(,\d)*$', lengths))
         if lengths == '' or areas == '':
             self.get_message('Empty Input Value')
-        else:
+        elif match_l and match_a:
             le = [float(l) for l in lengths.split(',')]
             ar = [float(a) for a in areas.split(',')]
             if len(le) == len(ar) and len(le) >= 1:
@@ -85,20 +88,17 @@ class AppWindow(QMainWindow, Ui_MainWindow):
                     # add sections
                     self.L = le
                     self.A = ar
-                elif self.index is not None and len(self.L)+len(le) <= 4:
+                elif self.index is not None and len(self.L) + len(le) <= 4:
                     self.L[self.index:self.index] = le
                     self.A[self.index:self.index] = ar
-                elif len(self.L)+len(le) > 4:
+                elif len(self.L) + len(le) > 4:
                     self.get_message('Invalid input: Maximum 4 Tube Sections')
             else:
                 self.get_message('Invalid input: lengths and areas lists must be of equal length')
             if len(self.L) == len(self.A) and len(self.L) <= 4:
                 self.visualization(self.L, self.A)
-            else:
-                self.get_message('Invalid input, please try again')
-                self.L = []
-                self.A = []
-                self.index = None
+        else:
+            self.get_message('Invalid input, please try again')
 
     def menu_remove(self):
         if len(self.L) == 0 or len(self.A) == 0:
