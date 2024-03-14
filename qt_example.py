@@ -49,7 +49,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.doubleSpinBox_scale.setDecimals(1)
         self.doubleSpinBox_scale.setValue(0.0)
         self.pushButton_scale.clicked.connect(self.menu_scale)
-        self.pushButton_3dfile.clicked.connect(self.menu_3d)
+        self.pushButton_con3d.clicked.connect(self.con3d)
+        self.pushButton_det3d.clicked.connect(self.det3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
 
         self.rect_items = []
@@ -237,7 +238,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             else:
                 self.get_message('Empty Scale Argument')
 
-    def menu_3d(self):
+    def con3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
@@ -246,6 +247,16 @@ class AppWindow(QMainWindow, Ui_TubeN):
             cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
             stl_file_path = self.audio_name + '.stl'
             self.get_message(f'STL file created: {stl_file_path}')
+
+    def det3d(self):
+        if len(self.L) == 0 or len(self.A) == 0:
+            self.get_message('Empty Input Value')
+        elif len(self.L) != len(self.A):
+            self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        else:
+            cy_test.detachable_tubemaker_3d(self.L, self.A)
+            # stl_file_path = self.audio_name + '.stl'
+            # self.get_message(f'STL file created: {stl_file_path}')
 
     def menu_obliviate(self):
         self.scene.clear()
