@@ -245,7 +245,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
             cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
-            stl_file_path = self.audio_name + '.stl'
+            stl_file_path = self.audio_name + '_con_' + '.stl'
             self.get_message(f'STL file created: {stl_file_path}')
 
     def det3d(self):
@@ -254,9 +254,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            cy_test.detachable_tubemaker_3d(self.L, self.A)
-            # stl_file_path = self.audio_name + '.stl'
-            # self.get_message(f'STL file created: {stl_file_path}')
+            cy_test.detachable_tubemaker_3d(self.L, self.A, self.audio_name)
+            self.get_message(f'Detachable STL file created')
 
     def menu_obliviate(self):
         self.scene.clear()
