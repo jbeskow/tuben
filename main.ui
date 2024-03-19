@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>TubeN</class>
+ <widget class="QMainWindow" name="TubeN">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -84,43 +84,43 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:12pt; font-weight:600;&quot;&gt;Separate by comma(,)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_3dfile">
+    <widget class="QPushButton" name="pushButton_det3d">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>479</y>
+       <y>555</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 8pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
      <property name="text">
-      <string>3D File</string>
+      <string>Detachable 3D</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_add">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>29</y>
+       <y>30</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -132,17 +132,17 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>254</y>
+       <y>255</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -154,17 +154,17 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>404</y>
+       <y>330</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -176,17 +176,17 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>104</y>
+       <y>105</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -240,10 +240,10 @@ p, li { white-space: pre-wrap; }
     <widget class="QCommandLinkButton" name="play_audio">
      <property name="geometry">
       <rect>
-       <x>120</x>
-       <y>329</y>
-       <width>81</width>
-       <height>50</height>
+       <x>10</x>
+       <y>260</y>
+       <width>75</width>
+       <height>40</height>
       </rect>
      </property>
      <property name="text">
@@ -254,17 +254,17 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>179</y>
+       <y>180</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -301,21 +301,43 @@ QPushButton::hover{
       <string>Input Information</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="example_a">
+    <widget class="QPushButton" name="pushButton_scale">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>624</y>
+       <y>405</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 12pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Scale</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="example_a">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>705</y>
+       <width>150</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 10pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
@@ -323,48 +345,58 @@ QPushButton::hover{
       <string>example - a</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="example_i">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>699</y>
-       <width>150</width>
-       <height>50</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
-}
-QPushButton::hover{
-	font: 87 12pt &quot;Arial Black&quot;;
-	background-color: rgb(255, 170, 255);
-}</string>
-     </property>
-     <property name="text">
-      <string>example - i</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_obliviate">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>554</y>
+       <y>630</y>
        <width>150</width>
        <height>50</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton{
-	font: 14pt &quot;Arial&quot;;
+	font: 10pt &quot;Arial&quot;;
 }
 QPushButton::hover{
-	font: 87 14pt &quot;Arial Black&quot;;
+	font: 87 10pt &quot;Arial Black&quot;;
 	background-color: rgb(255, 170, 255);
 }</string>
      </property>
      <property name="text">
       <string>Obliviate</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_scale">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>410</y>
+       <width>75</width>
+       <height>40</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_con3d">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>480</y>
+       <width>150</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 10pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 8pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Continuous 3D</string>
      </property>
     </widget>
    </widget>

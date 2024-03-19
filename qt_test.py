@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1500, 800)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_TubeN(object):
+    def setupUi(self, TubeN):
+        TubeN.setObjectName("TubeN")
+        TubeN.resize(1500, 800)
+        self.centralwidget = QtWidgets.QWidget(TubeN)
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1500, 800))
@@ -34,53 +34,53 @@ class Ui_MainWindow(object):
         self.hint_length.setGeometry(QtCore.QRect(305, 50, 475, 75))
         self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_length.setObjectName("hint_length")
-        self.pushButton_3dfile = QtWidgets.QPushButton(self.frame)
-        self.pushButton_3dfile.setGeometry(QtCore.QRect(90, 479, 150, 50))
-        self.pushButton_3dfile.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+        self.pushButton_det3d = QtWidgets.QPushButton(self.frame)
+        self.pushButton_det3d.setGeometry(QtCore.QRect(90, 555, 150, 50))
+        self.pushButton_det3d.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 8pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
-        self.pushButton_3dfile.setObjectName("pushButton_3dfile")
+        self.pushButton_det3d.setObjectName("pushButton_det3d")
         self.pushButton_add = QtWidgets.QPushButton(self.frame)
-        self.pushButton_add.setGeometry(QtCore.QRect(90, 29, 150, 50))
+        self.pushButton_add.setGeometry(QtCore.QRect(90, 30, 150, 50))
         self.pushButton_add.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_add.setObjectName("pushButton_add")
         self.pushButton_sound = QtWidgets.QPushButton(self.frame)
-        self.pushButton_sound.setGeometry(QtCore.QRect(90, 254, 150, 50))
+        self.pushButton_sound.setGeometry(QtCore.QRect(90, 255, 150, 50))
         self.pushButton_sound.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_sound.setObjectName("pushButton_sound")
         self.pushButton_illustrate = QtWidgets.QPushButton(self.frame)
-        self.pushButton_illustrate.setGeometry(QtCore.QRect(90, 404, 150, 50))
+        self.pushButton_illustrate.setGeometry(QtCore.QRect(90, 330, 150, 50))
         self.pushButton_illustrate.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_illustrate.setObjectName("pushButton_illustrate")
         self.pushButton_remove = QtWidgets.QPushButton(self.frame)
-        self.pushButton_remove.setGeometry(QtCore.QRect(90, 104, 150, 50))
+        self.pushButton_remove.setGeometry(QtCore.QRect(90, 105, 150, 50))
         self.pushButton_remove.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_remove.setObjectName("pushButton_remove")
@@ -94,15 +94,15 @@ class Ui_MainWindow(object):
         self.areas.setStyleSheet("font: 14pt \"Arial\";")
         self.areas.setObjectName("areas")
         self.play_audio = QtWidgets.QCommandLinkButton(self.frame)
-        self.play_audio.setGeometry(QtCore.QRect(120, 329, 81, 50))
+        self.play_audio.setGeometry(QtCore.QRect(10, 260, 75, 40))
         self.play_audio.setObjectName("play_audio")
         self.pushButton_alter = QtWidgets.QPushButton(self.frame)
-        self.pushButton_alter.setGeometry(QtCore.QRect(90, 179, 150, 50))
+        self.pushButton_alter.setGeometry(QtCore.QRect(90, 180, 150, 50))
         self.pushButton_alter.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_alter.setObjectName("pushButton_alter")
@@ -116,74 +116,88 @@ class Ui_MainWindow(object):
 "    color: rgb(255, 255, 255);\n"
 "}")
         self.input_sign.setObjectName("input_sign")
-        self.example_a = QtWidgets.QPushButton(self.frame)
-        self.example_a.setGeometry(QtCore.QRect(90, 624, 150, 50))
-        self.example_a.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+        self.pushButton_scale = QtWidgets.QPushButton(self.frame)
+        self.pushButton_scale.setGeometry(QtCore.QRect(90, 405, 150, 50))
+        self.pushButton_scale.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 12pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.pushButton_scale.setObjectName("pushButton_scale")
+        self.example_a = QtWidgets.QPushButton(self.frame)
+        self.example_a.setGeometry(QtCore.QRect(90, 705, 150, 50))
+        self.example_a.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.example_a.setObjectName("example_a")
-        self.example_i = QtWidgets.QPushButton(self.frame)
-        self.example_i.setGeometry(QtCore.QRect(90, 699, 150, 50))
-        self.example_i.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
-"}\n"
-"QPushButton::hover{\n"
-"    font: 87 12pt \"Arial Black\";\n"
-"    background-color: rgb(255, 170, 255);\n"
-"}")
-        self.example_i.setObjectName("example_i")
         self.pushButton_obliviate = QtWidgets.QPushButton(self.frame)
-        self.pushButton_obliviate.setGeometry(QtCore.QRect(90, 554, 150, 50))
+        self.pushButton_obliviate.setGeometry(QtCore.QRect(90, 630, 150, 50))
         self.pushButton_obliviate.setStyleSheet("QPushButton{\n"
-"    font: 14pt \"Arial\";\n"
+"    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
-"    font: 87 14pt \"Arial Black\";\n"
+"    font: 87 10pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_obliviate.setObjectName("pushButton_obliviate")
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.doubleSpinBox_scale = QtWidgets.QDoubleSpinBox(self.frame)
+        self.doubleSpinBox_scale.setGeometry(QtCore.QRect(10, 410, 75, 40))
+        self.doubleSpinBox_scale.setObjectName("doubleSpinBox_scale")
+        self.pushButton_con3d = QtWidgets.QPushButton(self.frame)
+        self.pushButton_con3d.setGeometry(QtCore.QRect(90, 480, 150, 50))
+        self.pushButton_con3d.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 8pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.pushButton_con3d.setObjectName("pushButton_con3d")
+        TubeN.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(TubeN)
+        QtCore.QMetaObject.connectSlotsByName(TubeN)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, TubeN):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.hint_area.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        TubeN.setWindowTitle(_translate("TubeN", "MainWindow"))
+        self.hint_area.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the area(s),max 4 sections:</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.hint_length.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.hint_length.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the length(s),max 4 sections:</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.pushButton_3dfile.setText(_translate("MainWindow", "3D File"))
-        self.pushButton_add.setText(_translate("MainWindow", "Add"))
-        self.pushButton_sound.setText(_translate("MainWindow", "Sound"))
-        self.pushButton_illustrate.setText(_translate("MainWindow", "Illustrate"))
-        self.pushButton_remove.setText(_translate("MainWindow", "Remove"))
-        self.lengths.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.pushButton_det3d.setText(_translate("TubeN", "Detachable 3D"))
+        self.pushButton_add.setText(_translate("TubeN", "Add"))
+        self.pushButton_sound.setText(_translate("TubeN", "Sound"))
+        self.pushButton_illustrate.setText(_translate("TubeN", "Illustrate"))
+        self.pushButton_remove.setText(_translate("TubeN", "Remove"))
+        self.lengths.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
-        self.areas.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.areas.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
-        self.play_audio.setText(_translate("MainWindow", "play"))
-        self.pushButton_alter.setText(_translate("MainWindow", "Alter"))
-        self.input_sign.setText(_translate("MainWindow", "Input Information"))
-        self.example_a.setText(_translate("MainWindow", "example - a"))
-        self.example_i.setText(_translate("MainWindow", "example - i"))
-        self.pushButton_obliviate.setText(_translate("MainWindow", "Obliviate"))
+        self.play_audio.setText(_translate("TubeN", "play"))
+        self.pushButton_alter.setText(_translate("TubeN", "Alter"))
+        self.input_sign.setText(_translate("TubeN", "Input Information"))
+        self.pushButton_scale.setText(_translate("TubeN", "Scale"))
+        self.example_a.setText(_translate("TubeN", "example - a"))
+        self.pushButton_obliviate.setText(_translate("TubeN", "Obliviate"))
+        self.pushButton_con3d.setText(_translate("TubeN", "Continuous 3D"))

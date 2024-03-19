@@ -2,7 +2,7 @@ import numpy as np
 import trimesh
 
 
-def create_detachable_section_mesh(square_length, height, inner_radius, filename='tao',segments=256):
+def create_detachable_section_mesh(square_length, height, inner_radius, filename='tao', segments=256):
     outer_mesh = trimesh.creation.box((square_length, square_length, height))
     inner_mesh = trimesh.creation.cylinder(radius=inner_radius, height=height, sections=segments)
     tube_mesh = outer_mesh.difference(inner_mesh)
@@ -64,8 +64,7 @@ def create_detachable_section_mesh_lego(square_length, height, inner_radius, hol
     return outer_mesh
 
 
-
-def detachable_tubemaker_3d(length_list, area_list):
+def detachable_tubemaker_3d(length_list, area_list, filename):
     assert len(length_list) == len(area_list)
     # get radius from area
     radius_list = np.sqrt(np.array(area_list) / np.pi)
@@ -76,7 +75,7 @@ def detachable_tubemaker_3d(length_list, area_list):
 
     square_length = 2.5*max(radius_list)
     for i in range(len(length_list)):
-        create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5,str(i+1))
+        create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5, filename+"_det_"+str(i+1))
 
 
 def create_tube_mesh(inner_radius, height, thickness, segments=256, filename='i'):
@@ -156,11 +155,11 @@ def tubemaker_3d(length_list, area_list, file_name, thickness=1):
     combined_mesh = trimesh.util.concatenate(tubes)
 
     # Export the combined mesh to an STL file
-    stl_file_path = file_name + '.stl'
+    stl_file_path = file_name + '_con_' + '.stl'
     combined_mesh.export(stl_file_path)
 
     print(f"STL file created: {stl_file_path}")
 
 
 if __name__ == '__main__':
-    detachable_tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2])
+    detachable_tubemaker_3d([2, 6, 6, 2], [2, 0.2, 5, 2], 'a')
