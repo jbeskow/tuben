@@ -101,6 +101,7 @@ if __name__ == '__main__':
     """
     y = ffilter(fs, x, [250, 2200], plot=True)
     wav.write('i.wav', fs, y)
+    #118 and 183 are common male/female f0 from google
     y = ffilter(fs, x, [118, 250, 2200], plot=True)
     wav.write('i_m.wav', fs, y)
     y = ffilter(fs, x, [183, 250, 2200], plot=True)
