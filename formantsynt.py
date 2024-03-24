@@ -89,9 +89,16 @@ def impulsetrain(fs, f, duration):
     return x
 
 
+def flaring(f_obs, l_short, r, sound_speed=35204):
+    # take the leftmost section (lips) as input?
+    l_inc = (sound_speed / (4 * f_obs)) - (l_short + 0.6 * r)
+    return l_short + l_inc
+
+
 if __name__ == '__main__':
     fs = 16000
-    x = impulsetrain(fs, 72, 1.5)
+    #change f in implusetrain to change f0
+    x = impulsetrain(fs, 300, 1.5)
     wav.write('source.wav', fs, x)
     """
     y = ffilter(fs, x, [300, 600], 100)
@@ -101,8 +108,8 @@ if __name__ == '__main__':
     """
     y = ffilter(fs, x, [250, 2200], plot=True)
     wav.write('i.wav', fs, y)
-    #118 and 183 are common male/female f0 from google
-    y = ffilter(fs, x, [118, 250, 2200], plot=True)
-    wav.write('i_m.wav', fs, y)
-    y = ffilter(fs, x, [183, 250, 2200], plot=True)
-    wav.write('i_f.wav', fs, y)
+    # 118 and 183 are common male/female f0 from google
+    # y = ffilter(fs, x, [200, 250, 2200], plot=True)
+    # wav.write('i_m.wav', fs, y)
+    # y = ffilter(fs, x, [183, 250, 2200], plot=True)
+    # wav.write('i_f.wav', fs, y)
