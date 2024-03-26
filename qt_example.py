@@ -15,7 +15,7 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-
+from popups import InputDialog
 
 class MyRectItem(QGraphicsRectItem):
     def __init__(self, index, x, y, length, width, la, output_method=None):
@@ -40,7 +40,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.pushButton_add.clicked.connect(self.menu_add)
+        #self.pushButton_add.clicked.connect(self.menu_add)
+        self.pushButton_add.clicked.connect(self.openInputDialog)
         self.pushButton_remove.clicked.connect(self.menu_remove)
         self.pushButton_alter.clicked.connect(self.menu_alter)
         self.pushButton_sound.clicked.connect(self.menu_sound)
@@ -49,8 +50,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.doubleSpinBox_scale.setDecimals(1)
         self.doubleSpinBox_scale.setValue(0.0)
         self.pushButton_scale.clicked.connect(self.menu_scale)
-        self.pushButton_con3d.clicked.connect(self.con3d)
-        self.pushButton_det3d.clicked.connect(self.det3d)
+        self.pushButton_3d.clicked.connect(self.menu_3d)
+        # self.pushButton_det3d.clicked.connect(self.det3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
 
         self.rect_items = []
@@ -58,6 +59,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.illustration.setScene(self.scene)
 
         self.example_a.clicked.connect(self.show_example_a)
+        self.example_i.clicked.connect(self.show_example_i)
+        self.example_o.clicked.connect(self.show_example_o)
         self.L = []
         self.A = []
         self.index = None
@@ -137,15 +140,15 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
     def visualization(self, l, a):
         self.scene.clear()
-        diameter = [2*math.sqrt(i/3.14) for i in a]
+        diameter = [2 * math.sqrt(i / 3.14) for i in a]
         x_offset = 0
         i = 0
         for length, width in zip(l, diameter):
             la = [l[i], a[i]]
-            rect = MyRectItem(i, x_offset, 0, length*25, width*25, la, self.get_message)
+            rect = MyRectItem(i, x_offset, 0, length * 25, width * 25, la, self.get_message)
             self.scene.addItem(rect)
             self.rect_items.append(rect)
-            x_offset += length*25
+            x_offset += length * 25
             i += 1
         self.get_message('Length:{}\nArea:{}'.format(l, a))
         self.illustration.update()
@@ -238,6 +241,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
             else:
                 self.get_message('Empty Scale Argument')
 
+    def menu_3d(self):
+        self.get_message('Under construction')
+
     def con3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
@@ -277,6 +283,70 @@ class AppWindow(QMainWindow, Ui_TubeN):
         y = formantsynt.ffilter(fs, x, self.fmt)
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def show_example_i(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [2, 0.2, 5, 2]
+        self.audio_name = 'i'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def show_example_o(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [0.1, 5, 1, 2]
+        self.audio_name = 'o'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def scale(self, scale_ratio):
+        self.L = [i * scale_ratio for i in self.L]
+        self.A = [i * scale_ratio for i in self.A]
+
+    def openInputDialog(self):
+        dialog = InputDialog(self)
+        dialog.setWindowTitle("add")
+        if dialog.exec_():
+            self.get_index()
+            lengths, areas = dialog.getInputs()
+            match_l = bool(re.match(r'^\d(,\d)*$', lengths))
+            match_a = bool(re.match(r'^\d(,\d)*$', lengths))
+            print(type(lengths))
+            print("Input 1:", lengths)
+            print("Input 2:", areas)
+            if lengths == '' or areas == '':
+                self.get_message('Empty Input Value')
+            elif match_l and match_a:
+                le = [float(l) for l in lengths.split(',')]
+                ar = [float(a) for a in areas.split(',')]
+                if len(le) == len(ar) and len(le) >= 1:
+                    if len(self.L) == 0 or len(self.A) == 0:
+                        # add sections
+                        self.L = le
+                        self.A = ar
+                    elif self.index is not None and len(self.L) + len(le) <= 4:
+                        self.L[self.index:self.index] = le
+                        self.A[self.index:self.index] = ar
+                    elif len(self.L) + len(le) > 4:
+                        self.get_message('Invalid input: Maximum 4 Tube Sections')
+                else:
+                    self.get_message('Invalid input: lengths and areas lists must be of equal length')
+                if len(self.L) == len(self.A) and len(self.L) <= 4:
+                    self.visualization(self.L, self.A)
+            else:
+                self.get_message('Invalid input, please try again')
+            # Process the inputs or pass them to another part of the program here
 
 
 # Main entry point of the application
