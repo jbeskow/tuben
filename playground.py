@@ -50,8 +50,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.doubleSpinBox_scale.setDecimals(1)
         self.doubleSpinBox_scale.setValue(0.0)
         self.pushButton_scale.clicked.connect(self.menu_scale)
-        self.pushButton_con3d.clicked.connect(self.con3d)
-        self.pushButton_det3d.clicked.connect(self.det3d)
+        self.pushButton_3d.clicked.connect(self.menu_3d)
+        # self.pushButton_det3d.clicked.connect(self.det3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
 
         self.rect_items = []
@@ -59,6 +59,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.illustration.setScene(self.scene)
 
         self.example_a.clicked.connect(self.show_example_a)
+        self.example_i.clicked.connect(self.show_example_i)
+        self.example_o.clicked.connect(self.show_example_o)
         self.L = []
         self.A = []
         self.index = None
@@ -239,6 +241,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
             else:
                 self.get_message('Empty Scale Argument')
 
+    def menu_3d(self):
+        self.get_message('Under construction')
+
     def con3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
@@ -270,6 +275,32 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.L = [2, 6, 6, 2]
         self.A = [2, 5, 0.2, 2]
         self.audio_name = 'a'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def show_example_i(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [2, 0.2, 5, 2]
+        self.audio_name = 'i'
+        self.visualization(self.L, self.A)
+        fs = 16000
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
+        y = formantsynt.ffilter(fs, x, self.fmt)
+        wav.write(self.audio_name + '.wav', fs, y)
+        self.get_message('Audio ' + self.audio_name + '.wav Created')
+
+    def show_example_o(self):
+        self.L = [2, 6, 6, 2]
+        self.A = [0.1, 5, 1, 2]
+        self.audio_name = 'o'
         self.visualization(self.L, self.A)
         fs = 16000
         tub = Tuben()
@@ -316,6 +347,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             else:
                 self.get_message('Invalid input, please try again')
             # Process the inputs or pass them to another part of the program here
+
 
 # Main entry point of the application
 if __name__ == '__main__':

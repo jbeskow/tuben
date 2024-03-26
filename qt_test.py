@@ -34,16 +34,6 @@ class Ui_TubeN(object):
         self.hint_length.setGeometry(QtCore.QRect(305, 50, 475, 75))
         self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
         self.hint_length.setObjectName("hint_length")
-        self.pushButton_det3d = QtWidgets.QPushButton(self.frame)
-        self.pushButton_det3d.setGeometry(QtCore.QRect(90, 555, 150, 50))
-        self.pushButton_det3d.setStyleSheet("QPushButton{\n"
-"    font: 10pt \"Arial\";\n"
-"}\n"
-"QPushButton::hover{\n"
-"    font: 87 8pt \"Arial Black\";\n"
-"    background-color: rgb(255, 170, 255);\n"
-"}")
-        self.pushButton_det3d.setObjectName("pushButton_det3d")
         self.pushButton_add = QtWidgets.QPushButton(self.frame)
         self.pushButton_add.setGeometry(QtCore.QRect(90, 30, 150, 50))
         self.pushButton_add.setStyleSheet("QPushButton{\n"
@@ -127,7 +117,7 @@ class Ui_TubeN(object):
 "}")
         self.pushButton_scale.setObjectName("pushButton_scale")
         self.example_a = QtWidgets.QPushButton(self.frame)
-        self.example_a.setGeometry(QtCore.QRect(90, 705, 150, 50))
+        self.example_a.setGeometry(QtCore.QRect(60, 555, 60, 50))
         self.example_a.setStyleSheet("QPushButton{\n"
 "    font: 10pt \"Arial\";\n"
 "}\n"
@@ -149,16 +139,36 @@ class Ui_TubeN(object):
         self.doubleSpinBox_scale = QtWidgets.QDoubleSpinBox(self.frame)
         self.doubleSpinBox_scale.setGeometry(QtCore.QRect(10, 410, 75, 40))
         self.doubleSpinBox_scale.setObjectName("doubleSpinBox_scale")
-        self.pushButton_con3d = QtWidgets.QPushButton(self.frame)
-        self.pushButton_con3d.setGeometry(QtCore.QRect(90, 480, 150, 50))
-        self.pushButton_con3d.setStyleSheet("QPushButton{\n"
+        self.pushButton_3d = QtWidgets.QPushButton(self.frame)
+        self.pushButton_3d.setGeometry(QtCore.QRect(90, 480, 150, 50))
+        self.pushButton_3d.setStyleSheet("QPushButton{\n"
 "    font: 10pt \"Arial\";\n"
 "}\n"
 "QPushButton::hover{\n"
 "    font: 87 8pt \"Arial Black\";\n"
 "    background-color: rgb(255, 170, 255);\n"
 "}")
-        self.pushButton_con3d.setObjectName("pushButton_con3d")
+        self.pushButton_3d.setObjectName("pushButton_3d")
+        self.example_i = QtWidgets.QPushButton(self.frame)
+        self.example_i.setGeometry(QtCore.QRect(140, 555, 60, 50))
+        self.example_i.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 10pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.example_i.setObjectName("example_i")
+        self.example_o = QtWidgets.QPushButton(self.frame)
+        self.example_o.setGeometry(QtCore.QRect(220, 555, 60, 50))
+        self.example_o.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 10pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.example_o.setObjectName("example_o")
         TubeN.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(TubeN)
@@ -179,7 +189,6 @@ class Ui_TubeN(object):
 "</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the length(s),max 4 sections:</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.pushButton_det3d.setText(_translate("TubeN", "Detachable 3D"))
         self.pushButton_add.setText(_translate("TubeN", "Add"))
         self.pushButton_sound.setText(_translate("TubeN", "Sound"))
         self.pushButton_illustrate.setText(_translate("TubeN", "Illustrate"))
@@ -198,6 +207,8 @@ class Ui_TubeN(object):
         self.pushButton_alter.setText(_translate("TubeN", "Alter"))
         self.input_sign.setText(_translate("TubeN", "Input Information"))
         self.pushButton_scale.setText(_translate("TubeN", "Scale"))
-        self.example_a.setText(_translate("TubeN", "example - a"))
+        self.example_a.setText(_translate("TubeN", "a"))
         self.pushButton_obliviate.setText(_translate("TubeN", "Obliviate"))
-        self.pushButton_con3d.setText(_translate("TubeN", "Continuous 3D"))
+        self.pushButton_3d.setText(_translate("TubeN", "3D File"))
+        self.example_i.setText(_translate("TubeN", "i"))
+        self.example_o.setText(_translate("TubeN", "o"))
