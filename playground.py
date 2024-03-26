@@ -316,7 +316,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.A = [i * scale_ratio for i in self.A]
 
     def openInputDialog(self):
-        dialog = InputDialog(self)
+        dialog = InputDialogAdd(self)
         dialog.setWindowTitle("add")
         if dialog.exec_():
             self.get_index()
