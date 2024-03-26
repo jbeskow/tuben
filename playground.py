@@ -15,7 +15,7 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-from popups import InputDialog
+from popups import InputDialogAdd
 
 
 class MyRectItem(QGraphicsRectItem):
