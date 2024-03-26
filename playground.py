@@ -17,6 +17,7 @@ from tuben_gui import Tuben
 import cy_test
 from popups import InputDialog
 
+
 class MyRectItem(QGraphicsRectItem):
     def __init__(self, index, x, y, length, width, la, output_method=None):
         super().__init__(x, y, length, width)

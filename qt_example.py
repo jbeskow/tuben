@@ -15,15 +15,17 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-from popups import InputDialog
+from popups import InputDialogAdd, InputDialogAlter
+
 
 class MyRectItem(QGraphicsRectItem):
     def __init__(self, index, x, y, length, width, la, output_method=None):
         super().__init__(x, y, length, width)
         self.index = index  # 存储索引值
         self.la = la
-        self.setBrush(QColor.fromRgb(0, 255, 0))  # 设置矩形颜色
+        self.setBrush(QColor.fromRgb(200, 0, 0))  # 设置矩形颜色
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
+        self.setFlag(QGraphicsRectItem.ItemIsMovable, True)  # 允许拖拽
         self.isClicked = False
         self.output_method = output_method
 
@@ -40,8 +42,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        #self.pushButton_add.clicked.connect(self.menu_add)
-        self.pushButton_add.clicked.connect(self.openInputDialog)
+        self.pushButton_add.clicked.connect(self.menu_add)
         self.pushButton_remove.clicked.connect(self.menu_remove)
         self.pushButton_alter.clicked.connect(self.menu_alter)
         self.pushButton_sound.clicked.connect(self.menu_sound)
@@ -77,32 +78,35 @@ class AppWindow(QMainWindow, Ui_TubeN):
                     self.index = item.index
 
     def menu_add(self):
-        self.get_index()
-        lengths = self.lengths.toPlainText()
-        areas = self.areas.toPlainText()
-        match_l = bool(re.match(r'^\d(,\d)*$', lengths))
-        match_a = bool(re.match(r'^\d(,\d)*$', lengths))
-        if lengths == '' or areas == '':
-            self.get_message('Empty Input Value')
-        elif match_l and match_a:
-            le = [float(l) for l in lengths.split(',')]
-            ar = [float(a) for a in areas.split(',')]
-            if len(le) == len(ar) and len(le) >= 1:
-                if len(self.L) == 0 or len(self.A) == 0:
-                    # add sections
-                    self.L = le
-                    self.A = ar
-                elif self.index is not None and len(self.L) + len(le) <= 4:
-                    self.L[self.index:self.index] = le
-                    self.A[self.index:self.index] = ar
-                elif len(self.L) + len(le) > 4:
-                    self.get_message('Invalid input: Maximum 4 Tube Sections')
+        dialog = InputDialogAdd(self)
+        dialog.setWindowTitle("add")
+        if dialog.exec_():
+            self.get_index()
+            lengths, areas = dialog.getInputs()
+            match_l = bool(re.match(r'^\d(,\d)*$', lengths))
+            match_a = bool(re.match(r'^\d(,\d)*$', lengths))
+            if lengths == '' or areas == '':
+                self.get_message('Empty Input Value')
+            elif match_l and match_a:
+                le = [float(l) for l in lengths.split(',')]
+                ar = [float(a) for a in areas.split(',')]
+                if len(le) == len(ar) and len(le) >= 1:
+                    if len(self.L) == 0 or len(self.A) == 0:
+                        # add sections
+                        self.L = le
+                        self.A = ar
+                    elif self.index is not None and len(self.L) + len(le) <= 4:
+                        self.L[self.index:self.index] = le
+                        self.A[self.index:self.index] = ar
+                    elif len(self.L) + len(le) > 4:
+                        self.get_message('Invalid input: Maximum 4 Tube Sections')
+                else:
+                    self.get_message('Invalid input: lengths and areas lists must be of equal length')
+                if len(self.L) == len(self.A) and len(self.L) <= 4:
+                    self.visualization(self.L, self.A)
             else:
-                self.get_message('Invalid input: lengths and areas lists must be of equal length')
-            if len(self.L) == len(self.A) and len(self.L) <= 4:
-                self.visualization(self.L, self.A)
-        else:
-            self.get_message('Invalid input, please try again')
+                self.get_message('Invalid input, please try again')
+            # Process the inputs or pass them to another part of the program here
 
     def menu_remove(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -123,20 +127,22 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.get_message('Length:[]\nArea:[]')
 
     def menu_alter(self):
-        if len(self.L) == 0 or len(self.A) == 0:
-            self.get_message('Empty Input Value')
-        else:
-            self.get_index()
-            new_length = self.lengths.toPlainText()
-            new_area = self.areas.toPlainText()
-            if self.index is not None:
-                try:
-                    self.L[self.index] = float(new_length)
-                    self.A[self.index] = float(new_area)
-                    self.visualization(self.L, self.A)
-                    self.index = None
-                except ValueError:
-                    self.get_message('Invalid Input')
+        dialog = InputDialogAlter(self)
+        dialog.setWindowTitle("alter")
+        if dialog.exec_():
+            if len(self.L) == 0 or len(self.A) == 0:
+                self.get_message('Empty Input Value')
+            else:
+                self.get_index()
+                new_length, new_area = dialog.getInputs()
+                if self.index is not None:
+                    try:
+                        self.L[self.index] = float(new_length)
+                        self.A[self.index] = float(new_area)
+                        self.visualization(self.L, self.A)
+                        self.index = None
+                    except ValueError:
+                        self.get_message('Invalid Input')
 
     def visualization(self, l, a):
         self.scene.clear()
@@ -313,40 +319,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def scale(self, scale_ratio):
         self.L = [i * scale_ratio for i in self.L]
         self.A = [i * scale_ratio for i in self.A]
-
-    def openInputDialog(self):
-        dialog = InputDialog(self)
-        dialog.setWindowTitle("add")
-        if dialog.exec_():
-            self.get_index()
-            lengths, areas = dialog.getInputs()
-            match_l = bool(re.match(r'^\d(,\d)*$', lengths))
-            match_a = bool(re.match(r'^\d(,\d)*$', lengths))
-            print(type(lengths))
-            print("Input 1:", lengths)
-            print("Input 2:", areas)
-            if lengths == '' or areas == '':
-                self.get_message('Empty Input Value')
-            elif match_l and match_a:
-                le = [float(l) for l in lengths.split(',')]
-                ar = [float(a) for a in areas.split(',')]
-                if len(le) == len(ar) and len(le) >= 1:
-                    if len(self.L) == 0 or len(self.A) == 0:
-                        # add sections
-                        self.L = le
-                        self.A = ar
-                    elif self.index is not None and len(self.L) + len(le) <= 4:
-                        self.L[self.index:self.index] = le
-                        self.A[self.index:self.index] = ar
-                    elif len(self.L) + len(le) > 4:
-                        self.get_message('Invalid input: Maximum 4 Tube Sections')
-                else:
-                    self.get_message('Invalid input: lengths and areas lists must be of equal length')
-                if len(self.L) == len(self.A) and len(self.L) <= 4:
-                    self.visualization(self.L, self.A)
-            else:
-                self.get_message('Invalid input, please try again')
-            # Process the inputs or pass them to another part of the program here
 
 
 # Main entry point of the application

@@ -24,16 +24,8 @@ class Ui_TubeN(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.illustration = QtWidgets.QGraphicsView(self.frame)
-        self.illustration.setGeometry(QtCore.QRect(305, 250, 1100, 500))
+        self.illustration.setGeometry(QtCore.QRect(305, 30, 700, 400))
         self.illustration.setObjectName("illustration")
-        self.hint_area = QtWidgets.QTextBrowser(self.frame)
-        self.hint_area.setGeometry(QtCore.QRect(305, 150, 475, 75))
-        self.hint_area.setStyleSheet("font: 14pt \"Arial\";")
-        self.hint_area.setObjectName("hint_area")
-        self.hint_length = QtWidgets.QTextBrowser(self.frame)
-        self.hint_length.setGeometry(QtCore.QRect(305, 50, 475, 75))
-        self.hint_length.setStyleSheet("font: 14pt \"Arial\";")
-        self.hint_length.setObjectName("hint_length")
         self.pushButton_add = QtWidgets.QPushButton(self.frame)
         self.pushButton_add.setGeometry(QtCore.QRect(90, 30, 150, 50))
         self.pushButton_add.setStyleSheet("QPushButton{\n"
@@ -74,15 +66,6 @@ class Ui_TubeN(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.pushButton_remove.setObjectName("pushButton_remove")
-        self.lengths = QtWidgets.QTextEdit(self.frame)
-        self.lengths.setEnabled(True)
-        self.lengths.setGeometry(QtCore.QRect(830, 50, 350, 75))
-        self.lengths.setStyleSheet("font: 14pt \"Arial\";")
-        self.lengths.setObjectName("lengths")
-        self.areas = QtWidgets.QTextEdit(self.frame)
-        self.areas.setGeometry(QtCore.QRect(830, 150, 350, 75))
-        self.areas.setStyleSheet("font: 14pt \"Arial\";")
-        self.areas.setObjectName("areas")
         self.play_audio = QtWidgets.QCommandLinkButton(self.frame)
         self.play_audio.setGeometry(QtCore.QRect(10, 260, 75, 40))
         self.play_audio.setObjectName("play_audio")
@@ -97,10 +80,10 @@ class Ui_TubeN(object):
 "}")
         self.pushButton_alter.setObjectName("pushButton_alter")
         self.input_information_output = QtWidgets.QTextBrowser(self.frame)
-        self.input_information_output.setGeometry(QtCore.QRect(1230, 94, 175, 131))
+        self.input_information_output.setGeometry(QtCore.QRect(1010, 500, 200, 150))
         self.input_information_output.setObjectName("input_information_output")
         self.input_sign = QtWidgets.QLabel(self.frame)
-        self.input_sign.setGeometry(QtCore.QRect(1230, 50, 171, 31))
+        self.input_sign.setGeometry(QtCore.QRect(1020, 455, 160, 35))
         self.input_sign.setStyleSheet("QLabel:{\n"
 "    font: 10pt \"Arial\";\n"
 "    color: rgb(255, 255, 255);\n"
@@ -177,35 +160,13 @@ class Ui_TubeN(object):
     def retranslateUi(self, TubeN):
         _translate = QtCore.QCoreApplication.translate
         TubeN.setWindowTitle(_translate("TubeN", "MainWindow"))
-        self.hint_area.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the area(s),max 4 sections:</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
-        self.hint_length.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Enter the length(s),max 4 sections:</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:12pt; font-weight:600;\">Separate by comma(,)</span></p></body></html>"))
         self.pushButton_add.setText(_translate("TubeN", "Add"))
         self.pushButton_sound.setText(_translate("TubeN", "Sound"))
         self.pushButton_illustrate.setText(_translate("TubeN", "Illustrate"))
         self.pushButton_remove.setText(_translate("TubeN", "Remove"))
-        self.lengths.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
-        self.areas.setHtml(_translate("TubeN", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Arial\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p></body></html>"))
         self.play_audio.setText(_translate("TubeN", "play"))
         self.pushButton_alter.setText(_translate("TubeN", "Alter"))
-        self.input_sign.setText(_translate("TubeN", "Input Information"))
+        self.input_sign.setText(_translate("TubeN", "Operation History"))
         self.pushButton_scale.setText(_translate("TubeN", "Scale"))
         self.example_a.setText(_translate("TubeN", "a"))
         self.pushButton_obliviate.setText(_translate("TubeN", "Obliviate"))
