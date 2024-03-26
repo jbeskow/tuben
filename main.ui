@@ -84,28 +84,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:12pt; font-weight:600;&quot;&gt;Separate by comma(,)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_det3d">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>555</y>
-       <width>150</width>
-       <height>50</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton{
-	font: 10pt &quot;Arial&quot;;
-}
-QPushButton::hover{
-	font: 87 8pt &quot;Arial Black&quot;;
-	background-color: rgb(255, 170, 255);
-}</string>
-     </property>
-     <property name="text">
-      <string>Detachable 3D</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_add">
      <property name="geometry">
       <rect>
@@ -326,9 +304,9 @@ QPushButton::hover{
     <widget class="QPushButton" name="example_a">
      <property name="geometry">
       <rect>
-       <x>90</x>
-       <y>705</y>
-       <width>150</width>
+       <x>60</x>
+       <y>555</y>
+       <width>60</width>
        <height>50</height>
       </rect>
      </property>
@@ -342,7 +320,7 @@ QPushButton::hover{
 }</string>
      </property>
      <property name="text">
-      <string>example - a</string>
+      <string>a</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_obliviate">
@@ -377,7 +355,7 @@ QPushButton::hover{
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_con3d">
+    <widget class="QPushButton" name="pushButton_3d">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -396,7 +374,51 @@ QPushButton::hover{
 }</string>
      </property>
      <property name="text">
-      <string>Continuous 3D</string>
+      <string>3D File</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="example_i">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>555</y>
+       <width>60</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 10pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 10pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>i</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="example_o">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>555</y>
+       <width>60</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 10pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 10pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>o</string>
      </property>
     </widget>
    </widget>
