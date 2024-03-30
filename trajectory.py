@@ -99,10 +99,37 @@ class MyWindow(QWidget):
         painter.end()
         self.imageLabel.setPixmap(pixmap.scaled(437, 293, Qt.KeepAspectRatio))
 
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Main Window")
+        self.initUI()
+        self.childWindow = MyWindow("vowel_chart.png")  # Create instance of your child window
+
+    def initUI(self):
+        layout = QVBoxLayout(self)
+        openChildWindowButton = QPushButton('Open Child Window', self)
+        setFeaturesButton = QPushButton('Set Features in Child Window', self)
+
+        layout.addWidget(openChildWindowButton)
+        layout.addWidget(setFeaturesButton)
+
+        openChildWindowButton.clicked.connect(self.openChildWindow)
+        setFeaturesButton.clicked.connect(self.setFeaturesInChild)
+
+    def openChildWindow(self):
+        self.childWindow.show()  # Show the child window in a non-blocking way
+
+    def setFeaturesInChild(self):
+        # Example of setting features in the child window
+        # This can be adapted to set whatever data or features you need
+        if self.childWindow.isVisible():
+            self.childWindow.addEntry()  # Add an entry to the child window's table
+
 def main():
     app = QApplication(sys.argv)
-    window = MyWindow("vowel_chart.png")
-    window.show()
+    mainWindow = MainWindow()
+    mainWindow.show()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
