@@ -88,6 +88,54 @@ def impulsetrain(fs, f, duration):
 
     return x
 
+def ffilter_super(fs, x, fmt, z=None, bw=100):
+    sos = np.vstack([formant(f/fs, bw/fs) for f in fmt])
+    if z is None:
+        # Get the initial filter state scaled by the first sample of x
+        z = sig.sosfilt_zi(sos) * x[0] if x.size > 0 else sig.sosfilt_zi(sos)
+
+    y, z = sig.sosfilt(sos, x, zi=z)
+    return y, z
+
+
+def interpolate_formants(formant_sequence, steps, time=0.1):
+    interpolated_sequence = [(formant_sequence[0])]
+    # interpolated_sequence = []
+    for i in range(len(formant_sequence) - 1):
+        start_formant, start_duration = formant_sequence[i]
+        end_formant, end_duration = formant_sequence[i + 1]
+
+        # interpolated_sequence.append((start_formant,start_duration))
+        for step in range(steps):
+            ratio = step / float(steps)
+            interpolated_formant = [s + ratio * (e - s) for s, e in zip(start_formant, end_formant)]
+            interpolated_sequence.append((interpolated_formant, time / steps))
+
+        interpolated_sequence.append((end_formant, end_duration))
+
+    return interpolated_sequence
+
+
+def synthesize_vowel_sequence(fs, formant_sequence, base_freq=175, steps=5):
+    interpolated_sequence = interpolate_formants(formant_sequence, steps)
+    total_duration = sum(duration for _, duration in interpolated_sequence)
+    x = impulsetrain(fs, base_freq, total_duration)
+    synthesized = np.zeros(int(fs * total_duration))
+
+    start_index = 0
+    z = None
+    for fmt, duration in interpolated_sequence:
+        segment_length = int(duration * fs)
+        segment_end_index = start_index + segment_length
+        segment = x[start_index:segment_end_index]
+
+        # Apply the formant filter to the segment
+        synthesized_segment, z = ffilter_super(fs, segment, fmt, z=z)
+        synthesized[start_index:segment_end_index] = synthesized_segment
+
+        start_index = segment_end_index
+    synthesized /= np.max(np.abs(synthesized))
+    return synthesized
 
 def flaring(f_obs, l_short, r, sound_speed=35204):
     # take the leftmost section (lips) as input?
@@ -98,7 +146,7 @@ def flaring(f_obs, l_short, r, sound_speed=35204):
 if __name__ == '__main__':
     fs = 16000
     #change f in implusetrain to change f0
-    x = impulsetrain(fs, 300, 1.5)
+    x = impulsetrain(fs, 75, 1.5)
     wav.write('source.wav', fs, x)
     """
     y = ffilter(fs, x, [300, 600], 100)
@@ -107,9 +155,21 @@ if __name__ == '__main__':
     wav.write('a.wav', fs, y)
     """
     y = ffilter(fs, x, [250, 2200], plot=True)
+    print(y[7500:9500])
+    print(len(y))
     wav.write('i.wav', fs, y)
     # 118 and 183 are common male/female f0 from google
     # y = ffilter(fs, x, [200, 250, 2200], plot=True)
     # wav.write('i_m.wav', fs, y)
     # y = ffilter(fs, x, [183, 250, 2200], plot=True)
     # wav.write('i_f.wav', fs, y)
+    fs = 16000
+    # formant_sequence = [([300, 600], 1), ([250, 2200], 1), ([600, 950], 1)]
+    formant_sequence = [
+        ([800, 1200], 0.5),  # "how"
+        ([730, 1090], 0.5),  # "are"
+        ([300, 2000], 0.2),  # "y" part of "you"
+        ([300, 870], 0.3)  # "ou" part of "you"
+    ]
+    sound = synthesize_vowel_sequence(fs, formant_sequence, steps=100)
+    wav.write('howareyou.wav', fs, sound.astype(np.float32))
