@@ -24,7 +24,7 @@ class Ui_TubeN(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.illustration = QtWidgets.QGraphicsView(self.frame)
-        self.illustration.setGeometry(QtCore.QRect(305, 30, 700, 400))
+        self.illustration.setGeometry(QtCore.QRect(305, 30, 700, 500))
         self.illustration.setObjectName("illustration")
         self.pushButton_add = QtWidgets.QPushButton(self.frame)
         self.pushButton_add.setGeometry(QtCore.QRect(90, 30, 150, 50))
@@ -80,10 +80,10 @@ class Ui_TubeN(object):
 "}")
         self.pushButton_alter.setObjectName("pushButton_alter")
         self.input_information_output = QtWidgets.QTextBrowser(self.frame)
-        self.input_information_output.setGeometry(QtCore.QRect(1010, 500, 200, 150))
+        self.input_information_output.setGeometry(QtCore.QRect(1010, 580, 200, 150))
         self.input_information_output.setObjectName("input_information_output")
         self.input_sign = QtWidgets.QLabel(self.frame)
-        self.input_sign.setGeometry(QtCore.QRect(1020, 455, 160, 35))
+        self.input_sign.setGeometry(QtCore.QRect(1020, 535, 160, 35))
         self.input_sign.setStyleSheet("QLabel:{\n"
 "    font: 10pt \"Arial\";\n"
 "    color: rgb(255, 255, 255);\n"
@@ -152,6 +152,16 @@ class Ui_TubeN(object):
 "    background-color: rgb(255, 170, 255);\n"
 "}")
         self.example_o.setObjectName("example_o")
+        self.pushButton_trajectory = QtWidgets.QPushButton(self.frame)
+        self.pushButton_trajectory.setGeometry(QtCore.QRect(305, 555, 150, 50))
+        self.pushButton_trajectory.setStyleSheet("QPushButton{\n"
+"    font: 10pt \"Arial\";\n"
+"}\n"
+"QPushButton::hover{\n"
+"    font: 87 10pt \"Arial Black\";\n"
+"    background-color: rgb(255, 170, 255);\n"
+"}")
+        self.pushButton_trajectory.setObjectName("pushButton_trajectory")
         TubeN.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(TubeN)
@@ -173,3 +183,4 @@ class Ui_TubeN(object):
         self.pushButton_3d.setText(_translate("TubeN", "3D File"))
         self.example_i.setText(_translate("TubeN", "i"))
         self.example_o.setText(_translate("TubeN", "o"))
+        self.pushButton_trajectory.setText(_translate("TubeN", "Trajectory"))

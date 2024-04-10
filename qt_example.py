@@ -16,6 +16,7 @@ import formantsynt
 from tuben_gui import Tuben
 import cy_test
 from popups import InputDialogAdd, InputDialogAlter
+from AXIS import Axis
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -25,7 +26,7 @@ class MyRectItem(QGraphicsRectItem):
         self.la = la
         self.setBrush(QColor.fromRgb(200, 0, 0))  # 设置矩形颜色
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
-        self.setFlag(QGraphicsRectItem.ItemIsMovable, True)  # 允许拖拽
+        # self.setFlag(QGraphicsRectItem.ItemIsMovable, True)  # 允许拖拽
         self.isClicked = False
         self.output_method = output_method
 
@@ -52,8 +53,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.doubleSpinBox_scale.setValue(0.0)
         self.pushButton_scale.clicked.connect(self.menu_scale)
         self.pushButton_3d.clicked.connect(self.menu_3d)
-        # self.pushButton_det3d.clicked.connect(self.det3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
+        self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
@@ -151,7 +152,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         i = 0
         for length, width in zip(l, diameter):
             la = [l[i], a[i]]
-            rect = MyRectItem(i, x_offset, 0, length * 25, width * 25, la, self.get_message)
+            rect = MyRectItem(i, x_offset, 300, length * 25, width * 25, la, self.get_message)
+            # i:index, x_offset:X, 300:Y, length, width, info of tube, message
             self.scene.addItem(rect)
             self.rect_items.append(rect)
             x_offset += length * 25
@@ -319,6 +321,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def scale(self, scale_ratio):
         self.L = [i * scale_ratio for i in self.L]
         self.A = [i * scale_ratio for i in self.A]
+
+    # def menu_trajectory(self):
+
 
 
 # Main entry point of the application

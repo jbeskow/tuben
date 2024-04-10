@@ -38,7 +38,7 @@
        <x>305</x>
        <y>30</y>
        <width>700</width>
-       <height>400</height>
+       <height>500</height>
       </rect>
      </property>
     </widget>
@@ -169,7 +169,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>1010</x>
-       <y>500</y>
+       <y>580</y>
        <width>200</width>
        <height>150</height>
       </rect>
@@ -179,7 +179,7 @@ QPushButton::hover{
      <property name="geometry">
       <rect>
        <x>1020</x>
-       <y>455</y>
+       <y>535</y>
        <width>160</width>
        <height>35</height>
       </rect>
@@ -334,6 +334,28 @@ QPushButton::hover{
      </property>
      <property name="text">
       <string>o</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_trajectory">
+     <property name="geometry">
+      <rect>
+       <x>305</x>
+       <y>555</y>
+       <width>150</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 10pt &quot;Arial&quot;;
+}
+QPushButton::hover{
+	font: 87 10pt &quot;Arial Black&quot;;
+	background-color: rgb(255, 170, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Trajectory</string>
      </property>
     </widget>
    </widget>
