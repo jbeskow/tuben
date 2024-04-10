@@ -33,8 +33,8 @@ class MyWindow(QWidget):
         # Image layout
         imageLayout = QVBoxLayout()
         self.imageLabel = QLabel(self)
-        self.imageLabel.setPixmap(self.originalPixmap.scaled(437, 293, Qt.KeepAspectRatio))
-        self.imageLabel.setFixedSize(437, 293)
+        self.imageLabel.setPixmap(self.originalPixmap.scaled(316, 215, Qt.KeepAspectRatio))
+        self.imageLabel.setFixedSize(316, 215)
         self.addFromImageButton = QPushButton('Add from Image Click', self)
         imageLayout.addWidget(self.imageLabel)
         imageLayout.addWidget(self.addFromImageButton)
@@ -52,6 +52,8 @@ class MyWindow(QWidget):
     def addClickPositionToTable(self):
         if self.lastClickPosition:
             x, y = self.lastClickPosition
+            x = int(2.111*x+248.27)
+            y = int(-106/15*y+2300.666)
             self.tableWidget.insertRow(self.tableWidget.rowCount())
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 0, QTableWidgetItem(str(x)))
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 1, QTableWidgetItem(str(y)))
@@ -108,7 +110,7 @@ class MyWindow(QWidget):
         painter.setPen(pen)
         painter.drawPoint(QPoint(x, y))
         painter.end()
-        self.imageLabel.setPixmap(pixmap.scaled(437, 293, Qt.KeepAspectRatio))
+        self.imageLabel.setPixmap(pixmap.scaled(316, 215, Qt.KeepAspectRatio))
 
 
 class MainWindow(QWidget):
