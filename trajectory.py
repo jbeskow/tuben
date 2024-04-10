@@ -1,7 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
+    QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
+from formantsynt import synthesize_vowel_sequence
+
 
 class MyWindow(QWidget):
     def __init__(self, imagePath):
@@ -19,7 +22,7 @@ class MyWindow(QWidget):
         self.tableWidget.setHorizontalHeaderLabels(['F1', 'F2', 'Name', 'Duration'])
         self.addButton = QPushButton('Add Entry', self)
         self.delButton = QPushButton('Delete Entry', self)
-        self.sumButton = QPushButton('Calculate Sum of Positions', self)
+        self.sumButton = QPushButton('Synthesize Trajectory', self)
 
         tableLayout = QVBoxLayout()
         tableLayout.addWidget(self.tableWidget)
@@ -42,7 +45,7 @@ class MyWindow(QWidget):
         self.addButton.clicked.connect(self.addEntry)
         self.delButton.clicked.connect(self.deleteEntry)
         self.addFromImageButton.clicked.connect(self.addClickPositionToTable)
-        self.sumButton.clicked.connect(self.calculateSumOfPositions)
+        self.sumButton.clicked.connect(lambda: synthesize_vowel_sequence(fs=16000, formant_sequence=self.list_prepare()))
 
         self.resize(900, 600)
 
@@ -78,6 +81,14 @@ class MyWindow(QWidget):
             total_y += int(self.tableWidget.item(row, 1).text())
         print(f"Total X: {total_x}, Total Y: {total_y}")
 
+    def list_prepare(self):
+        traj_list = []
+        for row in range(self.tableWidget.rowCount()):
+            traj_list.append(([float(self.tableWidget.item(row, 0).text()),
+                               float(self.tableWidget.item(row, 1).text())],
+                              float(self.tableWidget.item(row, 3).text())))
+        return traj_list
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             clickPosition = self.imageLabel.mapFromGlobal(self.mapToGlobal(event.pos()))
@@ -98,6 +109,7 @@ class MyWindow(QWidget):
         painter.drawPoint(QPoint(x, y))
         painter.end()
         self.imageLabel.setPixmap(pixmap.scaled(437, 293, Qt.KeepAspectRatio))
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -126,11 +138,13 @@ class MainWindow(QWidget):
         if self.childWindow.isVisible():
             self.childWindow.addEntry()  # Add an entry to the child window's table
 
+
 def main():
     app = QApplication(sys.argv)
     mainWindow = MainWindow()
     mainWindow.show()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()

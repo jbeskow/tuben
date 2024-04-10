@@ -135,6 +135,7 @@ def synthesize_vowel_sequence(fs, formant_sequence, base_freq=175, steps=5):
 
         start_index = segment_end_index
     synthesized /= np.max(np.abs(synthesized))
+    wav.write('you.wav', fs, synthesized.astype(np.float32))
     return synthesized
 
 def flaring(f_obs, l_short, r, sound_speed=35204):
