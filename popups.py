@@ -15,7 +15,7 @@ class InputDialogAdd(QDialog):
 
     def initUI(self):
         mainLayout = QVBoxLayout()
-        mainLayout.addWidget(QLabel("Enter the tube parameters,\nmax 4 sections:Separate by comma(,)"))
+        mainLayout.addWidget(QLabel("Enter the tube parameters,\nSeparate by comma(,)"))
         # Create first input row
         row1Layout = QHBoxLayout()
         row1Layout.addWidget(QLabel("Length(s):"))
@@ -71,6 +71,7 @@ class InputDialogAlter(QDialog):
 
     def getInputs(self):
         return self.input1.text(), self.input2.text()
+
 
 class TrajectoryWindow(QWidget):
     def __init__(self, imagePath):
@@ -201,6 +202,7 @@ class MainWindow(QMainWindow, Ui_TubeN):
             self.L.append(le)
             self.A.append(ar)
             # Process the inputs or pass them to another part of the program here
+
 
 def main():
     app = QApplication(sys.argv)

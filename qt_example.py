@@ -54,7 +54,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_scale.clicked.connect(self.menu_scale)
         self.pushButton_3d.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
-        self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
+        # self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
@@ -93,17 +93,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 ar = [float(a) for a in areas.split(',')]
                 if len(le) == len(ar) and len(le) >= 1:
                     if len(self.L) == 0 or len(self.A) == 0:
-                        # add sections
+                        # create tube sections
                         self.L = le
                         self.A = ar
-                    elif self.index is not None and len(self.L) + len(le) <= 4:
+                    elif self.index is not None and sum(self.L) < 16:
+                        # add new sections to the tube
                         self.L[self.index:self.index] = le
                         self.A[self.index:self.index] = ar
-                    elif len(self.L) + len(le) > 4:
-                        self.get_message('Invalid input: Maximum 4 Tube Sections')
+                    else:
+                        self.get_message('Invalid input: the total length must be under or equal to 16 centimeters')
                 else:
                     self.get_message('Invalid input: lengths and areas lists must be of equal length')
-                if len(self.L) == len(self.A) and len(self.L) <= 4:
+                if len(self.L) == len(self.A) and sum(self.L) <= 16:
                     self.visualization(self.L, self.A)
             else:
                 self.get_message('Invalid input, please try again')
@@ -280,8 +281,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Obliviate! All input has been removed')
 
     def show_example_a(self):
-        self.L = [2, 6, 6, 2]
-        self.A = [2, 5, 0.2, 2]
+        self.L = [1, 1, 3, 3, 3, 3, 1, 1]
+        self.A = [1, 2, 5, 2, 1, 0.2, 2, 1]
         self.audio_name = 'a'
         self.visualization(self.L, self.A)
         fs = 16000
@@ -293,8 +294,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def show_example_i(self):
-        self.L = [2, 6, 6, 2]
-        self.A = [2, 0.2, 5, 2]
+        self.L = [1, 1, 3, 3, 3, 3, 1, 1]
+        self.A = [1, 2, 0.2, 1, 2, 5, 2, 1]
         self.audio_name = 'i'
         self.visualization(self.L, self.A)
         fs = 16000
