@@ -15,7 +15,7 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-from popups import InputDialogAdd, InputDialogAlter
+from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting
 from AXIS import Axis
 
 
@@ -54,7 +54,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_scale.clicked.connect(self.menu_scale)
         self.pushButton_3d.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
-        # self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
+        self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
@@ -251,7 +251,12 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.get_message('Empty Scale Argument')
 
     def menu_3d(self):
-        self.get_message('Under construction')
+        threeD = Click3dPrinting()
+        threeD.setWindowTitle("3d printing")
+        threeD.ConButton.clicked.connect(self.con3d)
+        threeD.DetButton.clicked.connect(self.det3d)
+        if threeD.exec_():
+            pass
 
     def con3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -260,7 +265,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
             cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
-            stl_file_path = self.audio_name + '_con_' + '.stl'
+            stl_file_path = self.audio_name + '_con' + '.stl'
             self.get_message(f'STL file created: {stl_file_path}')
 
     def det3d(self):
@@ -319,12 +324,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
-    def scale(self, scale_ratio):
-        self.L = [i * scale_ratio for i in self.L]
-        self.A = [i * scale_ratio for i in self.A]
-
-    # def menu_trajectory(self):
-
+    def menu_trajectory(self):
+        trajectory = TrajectoryWindow(self)
 
 
 # Main entry point of the application

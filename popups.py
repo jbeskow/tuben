@@ -1,10 +1,11 @@
 import sys
 from qt_test import Ui_TubeN
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem,QDialog,QLineEdit,QMainWindow
+    QTableWidgetItem,QDialog,QLineEdit,QMainWindow,QMessageBox
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
 from formantsynt import synthesize_vowel_sequence
+
 
 # 接收两个输入
 class InputDialogAdd(QDialog):
@@ -71,6 +72,24 @@ class InputDialogAlter(QDialog):
 
     def getInputs(self):
         return self.input1.text(), self.input2.text()
+
+
+class Click3dPrinting(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("3d Printing")
+        self.initUI()
+
+    def initUI(self):
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(QLabel("Choose a type of tube:"))
+        # Create buttons for function selection
+        self.ConButton = QPushButton("Continuous", self)
+        mainLayout.addWidget(self.ConButton)
+        self.DetButton = QPushButton("Detachable", self)
+        mainLayout.addWidget(self.DetButton)
+
+        self.setLayout(mainLayout)
 
 
 class TrajectoryWindow(QWidget):
