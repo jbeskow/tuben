@@ -15,7 +15,7 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting
+from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, Illustration
 from AXIS import Axis
 
 
@@ -191,11 +191,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        elif self.audio_name == '':
-            self.get_message("No Audio Generated")
         else:
-            fig, ax = plt.subplots(3, 1)
+            fig, ax = plt.subplots(2, 1)
             fig.tight_layout(pad=2.5)
+            '''
             # plot tube
             x = 0
             for l, a in zip(self.L, self.A):
@@ -206,37 +205,45 @@ class AppWindow(QMainWindow, Ui_TubeN):
             ax[0].set_title('tube')
             ax[0].set_xlabel('distance from lips (cm)')
             ax[0].set_ylabel('area ($cm^2$)')
-            F = np.arange(1, 8000)
+            '''
             # plot function & peaks
-            ax[1].plot(F, self.Y, ':')
-            ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
-            ax[1].set_title('peakfunction:' + "determinant")
-            ax[1].set_xlabel('frequency (Hz)')
+            F = np.arange(1, 8000)
+            ax[0].plot(F, self.Y, ':')
+            ax[0].plot(F[self.fmt], self.Y[self.fmt], '.')
+            ax[0].set_title('peakfunction:' + "determinant")
+            ax[0].set_xlabel('frequency (Hz)')
 
-            ax[2].set_title('transfer function')
-            ax[2].set_xlabel('frequency (Hz)')
-            ax[2].set_ylabel('dB')
-            plt.sca(ax[2])
+            ax[1].set_title('transfer function')
+            ax[1].set_xlabel('frequency (Hz)')
+            ax[1].set_ylabel('dB')
+            plt.sca(ax[1])
 
             fs = 16000
 
             f, h = formantsynt.get_transfer_function(fs, self.fmt)
-            ax[2].plot(f, h)
-            plt.savefig(self.audio_name + '.png')
-            self.get_message('Picture ' + self.audio_name + '.png Created')
+            ax[1].plot(f, h)
+            if self.audio_name != '':
+                plt.savefig(self.audio_name + '.png')
+                self.get_message('Picture ' + self.audio_name + '.png Created')
+            return fig
 
     def menu_illustrate(self):
-        self.generate_image()
-        if self.audio_name == '':
-            self.get_message("No Audio Generated")
-        else:
-            self.scene.clear()
-            # 创建 QPixmap 并加载 PNG 图像
-            pixmap = QtGui.QPixmap(self.audio_name + '.png')
-            # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
-            pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
-            self.scene.addItem(pixmap_item)
-            self.illustration.update()
+        fig = self.generate_image()
+        illustrate = Illustration(fig)
+        illustrate.setWindowTitle("Illustration")
+        illustrate.show()
+        if illustrate.exec_():
+            pass
+        # if self.audio_name == '':
+        #     self.get_message("No Audio Generated")
+        # else:
+        #     self.scene.clear()
+        #     # 创建 QPixmap 并加载 PNG 图像
+        #     pixmap = QtGui.QPixmap(self.audio_name + '.png')
+        #     # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
+        #     pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
+        #     self.scene.addItem(pixmap_item)
+        #     self.illustration.update()
 
     def menu_scale(self):
         if len(self.L) == 0 or len(self.A) == 0:

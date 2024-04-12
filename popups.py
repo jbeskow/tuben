@@ -1,9 +1,11 @@
 import sys
 from qt_test import Ui_TubeN
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem,QDialog,QLineEdit,QMainWindow,QMessageBox
+    QTableWidgetItem,QDialog,QLineEdit,QMainWindow
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from formantsynt import synthesize_vowel_sequence
 
 
@@ -72,6 +74,31 @@ class InputDialogAlter(QDialog):
 
     def getInputs(self):
         return self.input1.text(), self.input2.text()
+
+
+class Illustration(QDialog):
+    def __init__(self, fig, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Illustration")
+        self.fig = fig
+        self.initUI()
+
+    def initUI(self):
+        mainLayout = QVBoxLayout()
+
+        # 添加一个 QLabel 用于显示提示文本
+        mainLayout.addWidget(QLabel("peak & transfer function"))
+        # 创建一个 FigureCanvas 对象，并将 matplotlib 图像添加到其中
+        self.canvas = FigureCanvas(self.fig)
+        mainLayout.addWidget(self.canvas)
+
+        self.setLayout(mainLayout)
+
+    def setPlot(self, plot):
+        # 将 matplotlib 生成的图像显示在 Figure 对象中
+        self.figure.clear()
+        self.figure.gca().imshow(plot)
+        self.canvas.draw()
 
 
 class Click3dPrinting(QDialog):
