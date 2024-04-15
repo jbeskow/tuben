@@ -2,7 +2,7 @@ from scipy import signal as sig
 import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
-
+import time
 
 # J. Beskow 2023
 # Static vowel formant synthesis
@@ -135,7 +135,8 @@ def synthesize_vowel_sequence(fs, formant_sequence, base_freq=175, steps=5):
 
         start_index = segment_end_index
     synthesized /= np.max(np.abs(synthesized))
-    wav.write('you.wav', fs, synthesized.astype(np.float32))
+    audio_name = str(time.strftime("%H-%M-%S"))+'_trajectory.wav'
+    wav.write(audio_name, fs, synthesized.astype(np.float32))
     return synthesized
 
 def flaring(f_obs, l_short, r, sound_speed=35204):

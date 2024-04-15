@@ -52,6 +52,7 @@ class MyWindow(QWidget):
     def addClickPositionToTable(self):
         if self.lastClickPosition:
             x, y = self.lastClickPosition
+            # manually calculated scaling
             x = int(2.111*x+248.27)
             y = int(-106/15*y+2300.666)
             self.tableWidget.insertRow(self.tableWidget.rowCount())

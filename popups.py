@@ -1,7 +1,7 @@
 import sys
 from qt_test import Ui_TubeN
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem,QDialog,QLineEdit,QMainWindow
+    QTableWidgetItem, QDialog, QLineEdit, QMainWindow
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
 from matplotlib.figure import Figure
@@ -120,7 +120,7 @@ class Click3dPrinting(QDialog):
 
 
 class TrajectoryWindow(QWidget):
-    def __init__(self, imagePath):
+    def __init__(self, imagePath='vowel_chart.png'):
         super().__init__()
         self.imagePath = imagePath
         self.setWindowTitle("Main Window with Image Click")
@@ -146,8 +146,8 @@ class TrajectoryWindow(QWidget):
         # Image layout
         imageLayout = QVBoxLayout()
         self.imageLabel = QLabel(self)
-        self.imageLabel.setPixmap(self.originalPixmap.scaled(437, 293, Qt.KeepAspectRatio))
-        self.imageLabel.setFixedSize(437, 293)
+        self.imageLabel.setPixmap(self.originalPixmap.scaled(316, 215, Qt.KeepAspectRatio))
+        self.imageLabel.setFixedSize(316, 215)
         self.addFromImageButton = QPushButton('Add from Image Click', self)
         imageLayout.addWidget(self.imageLabel)
         imageLayout.addWidget(self.addFromImageButton)
@@ -158,13 +158,17 @@ class TrajectoryWindow(QWidget):
         self.addButton.clicked.connect(self.addEntry)
         self.delButton.clicked.connect(self.deleteEntry)
         self.addFromImageButton.clicked.connect(self.addClickPositionToTable)
-        self.sumButton.clicked.connect(lambda: synthesize_vowel_sequence(fs=16000, formant_sequence=self.list_prepare()))
+        self.sumButton.clicked.connect(
+            lambda: synthesize_vowel_sequence(fs=16000, formant_sequence=self.list_prepare()))
 
         self.resize(900, 600)
 
     def addClickPositionToTable(self):
         if self.lastClickPosition:
             x, y = self.lastClickPosition
+            # manually calculated scaling
+            x = int(2.111 * x + 248.27)
+            y = int(-106 / 15 * y + 2300.666)
             self.tableWidget.insertRow(self.tableWidget.rowCount())
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 0, QTableWidgetItem(str(x)))
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 1, QTableWidgetItem(str(y)))
@@ -172,27 +176,22 @@ class TrajectoryWindow(QWidget):
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 3, QTableWidgetItem("1"))
             self.lastClickPosition = None  # Reset after adding
 
-    def addEntry(self):
+    def addEntry(self, fmt=(0, 0)):
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         for i in range(4):
             if i == 2:  # Name column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("vowel"))
             elif i == 3:  # Duration column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("1"))
+            elif i == 0:
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[0])))
             else:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("0"))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[1])))
 
     def deleteEntry(self):
         selected_rows = set(index.row() for index in self.tableWidget.selectedIndexes())
         for row in sorted(selected_rows, reverse=True):
             self.tableWidget.removeRow(row)
-
-    def calculateSumOfPositions(self):
-        total_x = total_y = 0
-        for row in range(self.tableWidget.rowCount()):
-            total_x += int(self.tableWidget.item(row, 0).text())
-            total_y += int(self.tableWidget.item(row, 1).text())
-        print(f"Total X: {total_x}, Total Y: {total_y}")
 
     def list_prepare(self):
         traj_list = []
@@ -221,19 +220,19 @@ class TrajectoryWindow(QWidget):
         painter.setPen(pen)
         painter.drawPoint(QPoint(x, y))
         painter.end()
-        self.imageLabel.setPixmap(pixmap.scaled(437, 293, Qt.KeepAspectRatio))
+        self.imageLabel.setPixmap(pixmap.scaled(316, 215, Qt.KeepAspectRatio))
 
 
-#壳子 测试用
+# 壳子 测试用
 class MainWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.pushButton_add.clicked.connect(self.openInputDialog)
-        #self.button.clicked.connect(self.openInputDialog)
+        # self.button.clicked.connect(self.openInputDialog)
         self.L = []
         self.A = []
-        #self.setCentralWidget(self.button)
+        # self.setCentralWidget(self.button)
 
     def openInputDialog(self):
         dialog = InputDialogAdd(self)
@@ -255,6 +254,7 @@ def main():
     mainWindow = MainWindow()
     mainWindow.show()
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()

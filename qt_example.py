@@ -67,6 +67,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.A = []
         self.index = None
         self.audio_name = ''
+        # trajectory window
+        self.trajectoryWindow = TrajectoryWindow()
 
     def get_message(self, message):
         self.input_information_output.clear()
@@ -332,7 +334,23 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def menu_trajectory(self):
-        trajectory = TrajectoryWindow(self)
+        # if it is already shown then nothing happens
+        self.trajectoryWindow.show()
+        if not self.L:
+            return
+        tub = Tuben()
+        # TODO pick a better one between these two
+        #self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        fmt, _ = tub.get_formants(self.L, self.A)
+        self.trajectoryWindow.addEntry(fmt=fmt)
+        self.trajectoryWindow.raise_()
+        self.trajectoryWindow.activateWindow()
+
+
+
+    def scale(self, scale_ratio):
+        self.L = [i * scale_ratio for i in self.L]
+        self.A = [i * scale_ratio for i in self.A]
 
 
 # Main entry point of the application
