@@ -1,12 +1,12 @@
 import sys
 from qt_test import Ui_TubeN
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem, QDialog, QLineEdit, QMainWindow
+    QTableWidgetItem, QDialog, QLineEdit, QMainWindow, QFileDialog
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from formantsynt import synthesize_vowel_sequence
+import soundfile as sf
 
 
 # 接收两个输入
@@ -81,6 +81,7 @@ class FigIllustration(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Illustration")
         self.fig = fig
+        self.file_path = None
         self.initUI()
 
     def initUI(self):
@@ -91,7 +92,6 @@ class FigIllustration(QDialog):
         # 创建一个 FigureCanvas 对象，并将 matplotlib 图像添加到其中
         self.canvas = FigureCanvas(self.fig)
         mainLayout.addWidget(self.canvas)
-
         self.setLayout(mainLayout)
 
 

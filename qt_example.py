@@ -1,9 +1,8 @@
 import re
 import sys
-import time
 import math
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog
 from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QColor, QPolygonF
@@ -221,16 +220,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.fmt, self.Y = tub.get_formants(self.L, self.A)
             x = formantsynt.impulsetrain(fs, 70.0, 1.5)
             y = formantsynt.ffilter(fs, x, self.fmt)
-            self.audio_name = str(time.strftime("%H-%M-%S"))
-            wav.write(self.audio_name + '.wav', fs, y)
-            self.get_message('Audio ' + self.audio_name + '.wav Created')
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "All Files (*)")
+            if file_path:
+                self.audio_name = file_path
+                wav.write(file_path+'.wav', fs, y)
+                self.get_message(file_path + '.wav Created')
 
     def play_sound(self):
         if self.audio_name == '':
             self.get_message("No Audio Generated")
         else:
             # open the audio file
-            fs, data = wav.read(self.audio_name + '.wav')
+            fs, data = wav.read(self.audio_name+'.wav')
             sd.play(data, fs)
             sd.wait()  # wait for the play process to finish
 
@@ -264,10 +265,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         fs = 16000
         f, h = formantsynt.get_transfer_function(fs, self.fmt)
         ax[2].plot(f, h)
-
-        if self.audio_name != '':
-            plt.savefig(self.audio_name + '.png')
-            self.get_message('Picture ' + self.audio_name + '.png Created')
+        if self.audio_name:
+            plt.savefig(self.audio_name+'.png')
         return fig
 
     def menu_illustrate(self):
@@ -306,6 +305,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        elif self.audio_name is None:
+            self.get_message('Audio File not Created')
         else:
             cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
             stl_file_path = self.audio_name + '_con' + '.stl'
@@ -316,6 +317,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        elif self.audio_name is None:
+            self.get_message('Audio File not Created')
         else:
             cy_test.detachable_tubemaker_3d(self.L, self.A, self.audio_name)
             self.get_message(f'Detachable STL file created')
