@@ -77,10 +77,10 @@ class InputDialogAlter(QDialog):
 
 
 class Illustration(QDialog):
-    def __init__(self, fig, parent=None):
+    def __init__(self, ax, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Illustration")
-        self.fig = fig
+        self.ax = ax
         self.initUI()
 
     def initUI(self):
@@ -89,16 +89,10 @@ class Illustration(QDialog):
         # 添加一个 QLabel 用于显示提示文本
         mainLayout.addWidget(QLabel("peak & transfer function"))
         # 创建一个 FigureCanvas 对象，并将 matplotlib 图像添加到其中
-        self.canvas = FigureCanvas(self.fig)
+        self.canvas = FigureCanvas(self.ax.figure)
         mainLayout.addWidget(self.canvas)
 
         self.setLayout(mainLayout)
-
-    def setPlot(self, plot):
-        # 将 matplotlib 生成的图像显示在 Figure 对象中
-        self.figure.clear()
-        self.figure.gca().imshow(plot)
-        self.canvas.draw()
 
 
 class Click3dPrinting(QDialog):

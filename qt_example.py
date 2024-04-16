@@ -2,10 +2,11 @@ import re
 import sys
 import time
 import math
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem
+from PyQt5.QtCore import QPointF, Qt
+from PyQt5.QtGui import QColor, QPolygonF
 import scipy.io.wavfile as wav
 import sounddevice as sd
 import matplotlib.pyplot as plt
@@ -16,7 +17,6 @@ import formantsynt
 from tuben_gui import Tuben
 import cy_test
 from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, Illustration
-from AXIS import Axis
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -26,7 +26,6 @@ class MyRectItem(QGraphicsRectItem):
         self.la = la
         self.setBrush(QColor.fromRgb(200, 0, 0))  # 设置矩形颜色
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
-        # self.setFlag(QGraphicsRectItem.ItemIsMovable, True)  # 允许拖拽
         self.isClicked = False
         self.output_method = output_method
 
@@ -59,6 +58,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.illustration.setScene(self.scene)
+        self.add_axis()
 
         self.example_a.clicked.connect(self.show_example_a)
         self.example_i.clicked.connect(self.show_example_i)
@@ -121,9 +121,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.L.pop(self.index)
                 self.A.pop(self.index)
                 self.index = None
-            else:  # otherwise pop the last section of the tube
-                self.L.pop()
-                self.A.pop()
+            else:
+                self.get_message('Select a section first')
             if len(self.L) == len(self.A) and len(self.L) > 0:
                 self.visualization(self.L, self.A)
             else:
@@ -131,32 +130,78 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.get_message('Length:[]\nArea:[]')
 
     def menu_alter(self):
-        dialog = InputDialogAlter(self)
-        dialog.setWindowTitle("alter")
-        if dialog.exec_():
-            if len(self.L) == 0 or len(self.A) == 0:
-                self.get_message('Empty Input Value')
-            else:
-                self.get_index()
-                new_length, new_area = dialog.getInputs()
-                if self.index is not None:
-                    try:
+        if len(self.L) == 0 or len(self.A) == 0:
+            self.get_message('Empty Input Value')
+        else:
+            self.get_index()
+            if self.index is not None:
+                try:
+                    dialog = InputDialogAlter(self)
+                    dialog.setWindowTitle("alter")
+                    if dialog.exec_():
+                        new_length, new_area = dialog.getInputs()
                         self.L[self.index] = float(new_length)
                         self.A[self.index] = float(new_area)
                         self.visualization(self.L, self.A)
                         self.index = None
-                    except ValueError:
-                        self.get_message('Invalid Input')
+                except ValueError:
+                    self.get_message('Invalid Input')
+            else:
+                self.get_message('Select a section first')
+
+    def add_axis(self):
+        # 添加水平坐标轴
+        self.scene.addLine(0, 200, 450, 200)
+        # 添加垂直坐标轴
+        self.scene.addLine(0, 0, 0, 200)
+
+        # 添加水平坐标轴箭头
+        arrow = QPolygonF([QPointF(455, 200), QPointF(450, 205), QPointF(450, 195)])
+        self.scene.addPolygon(arrow)
+
+        # 添加垂直坐标轴箭头
+        arrow = QPolygonF([QPointF(0, -5), QPointF(5, 0), QPointF(-5, 0)])
+        self.scene.addPolygon(arrow)
+
+        # 添加水平坐标轴刻度
+        for x in range(25, 451, 25):
+            tick = QGraphicsLineItem(x, 195, x, 200)
+            self.scene.addItem(tick)
+
+            # 显示刻度数值
+            text = QGraphicsSimpleTextItem(str(int(x/25)))
+            text.setPos(x-10, 210)
+            self.scene.addItem(text)
+
+        # 添加垂直坐标轴刻度
+        for y in range(25, 201, 25):
+            tick = QGraphicsLineItem(0, 200 - y, 5, 200 - y)
+            self.scene.addItem(tick)
+
+            # 显示刻度数值
+            text = QGraphicsSimpleTextItem(str(int(y/25)))
+            text.setPos(-30, 190 - y)
+            self.scene.addItem(text)
+
+        self.add_label(-20, 210, "0")
+        self.add_label(480, 200, "X")
+        self.add_label(-10, -50, "Y")
+
+    def add_label(self, x, y, text):
+        label = QGraphicsTextItem(text)
+        label.setPos(x, y)
+        self.scene.addItem(label)
 
     def visualization(self, l, a):
         self.scene.clear()
+        self.add_axis()
         diameter = [2 * math.sqrt(i / 3.14) for i in a]
         x_offset = 0
         i = 0
         for length, width in zip(l, diameter):
             la = [l[i], a[i]]
-            rect = MyRectItem(i, x_offset, 300, length * 25, width * 25, la, self.get_message)
-            # i:index, x_offset:X, 300:Y, length, width, info of tube, message
+            rect = MyRectItem(i, x_offset, 200-int(width*25), length * 25, width * 25, la, self.get_message)
+            # i:index, x_offset:X, 50:Y, length, width, info of tube, message
             self.scene.addItem(rect)
             self.rect_items.append(rect)
             x_offset += length * 25
@@ -194,9 +239,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            fig, ax = plt.subplots(2, 1)
+            fig, ax = plt.subplots(3, 1)
             fig.tight_layout(pad=2.5)
-            '''
             # plot tube
             x = 0
             for l, a in zip(self.L, self.A):
@@ -207,45 +251,32 @@ class AppWindow(QMainWindow, Ui_TubeN):
             ax[0].set_title('tube')
             ax[0].set_xlabel('distance from lips (cm)')
             ax[0].set_ylabel('area ($cm^2$)')
-            '''
             # plot function & peaks
             F = np.arange(1, 8000)
-            ax[0].plot(F, self.Y, ':')
-            ax[0].plot(F[self.fmt], self.Y[self.fmt], '.')
-            ax[0].set_title('peakfunction:' + "determinant")
-            ax[0].set_xlabel('frequency (Hz)')
-
-            ax[1].set_title('transfer function')
+            ax[1].plot(F, self.Y, ':')
+            ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
+            ax[1].set_title('peakfunction:' + "determinant")
             ax[1].set_xlabel('frequency (Hz)')
-            ax[1].set_ylabel('dB')
-            plt.sca(ax[1])
+
+            ax[2].set_title('transfer function')
+            ax[2].set_xlabel('frequency (Hz)')
+            ax[2].set_ylabel('dB')
+            plt.sca(ax[2])
 
             fs = 16000
 
             f, h = formantsynt.get_transfer_function(fs, self.fmt)
-            ax[1].plot(f, h)
+            ax[2].plot(f, h)
             if self.audio_name != '':
                 plt.savefig(self.audio_name + '.png')
                 self.get_message('Picture ' + self.audio_name + '.png Created')
-            return fig
+            return ax
 
     def menu_illustrate(self):
         fig = self.generate_image()
-        illustrate = Illustration(fig)
-        illustrate.setWindowTitle("Illustration")
-        illustrate.show()
-        if illustrate.exec_():
-            pass
-        # if self.audio_name == '':
-        #     self.get_message("No Audio Generated")
-        # else:
-        #     self.scene.clear()
-        #     # 创建 QPixmap 并加载 PNG 图像
-        #     pixmap = QtGui.QPixmap(self.audio_name + '.png')
-        #     # 创建 QGraphicsPixmapItem 并添加到 QGraphicsScene 中
-        #     pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
-        #     self.scene.addItem(pixmap_item)
-        #     self.illustration.update()
+        plot = Illustration(fig)
+        plot.setWindowTitle("Illustration")
+        plot.show()
 
     def menu_scale(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -288,6 +319,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
     def menu_obliviate(self):
         self.scene.clear()
+        self.add_axis()
         self.L = []
         self.A = []
         self.index = None
@@ -340,13 +372,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
             return
         tub = Tuben()
         # TODO pick a better one between these two
-        #self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        # self.fmt, self.Y = tub.get_formants(self.L, self.A)
         fmt, _ = tub.get_formants(self.L, self.A)
         self.trajectoryWindow.addEntry(fmt=fmt)
         self.trajectoryWindow.raise_()
         self.trajectoryWindow.activateWindow()
-
-
 
     def scale(self, scale_ratio):
         self.L = [i * scale_ratio for i in self.L]
