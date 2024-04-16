@@ -76,11 +76,11 @@ class InputDialogAlter(QDialog):
         return self.input1.text(), self.input2.text()
 
 
-class Illustration(QDialog):
-    def __init__(self, ax, parent=None):
+class FigIllustration(QDialog):
+    def __init__(self, fig, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Illustration")
-        self.ax = ax
+        self.fig = fig
         self.initUI()
 
     def initUI(self):
@@ -89,7 +89,7 @@ class Illustration(QDialog):
         # 添加一个 QLabel 用于显示提示文本
         mainLayout.addWidget(QLabel("peak & transfer function"))
         # 创建一个 FigureCanvas 对象，并将 matplotlib 图像添加到其中
-        self.canvas = FigureCanvas(self.ax.figure)
+        self.canvas = FigureCanvas(self.fig)
         mainLayout.addWidget(self.canvas)
 
         self.setLayout(mainLayout)

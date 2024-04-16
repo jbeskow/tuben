@@ -16,7 +16,7 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import cy_test
-from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, Illustration
+from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, FigIllustration
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -247,8 +247,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
         ax[0].set_title('tube')
         ax[0].set_xlabel('distance from lips (cm)')
         ax[0].set_ylabel('area ($cm^2$)')
+
         # plot function & peaks
         F = np.arange(1, 8000)
+        tub = Tuben()
+        self.fmt, self.Y = tub.get_formants(self.L, self.A)
         ax[1].plot(F, self.Y, ':')
         ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
         ax[1].set_title('peakfunction:' + "determinant")
@@ -258,15 +261,14 @@ class AppWindow(QMainWindow, Ui_TubeN):
         ax[2].set_xlabel('frequency (Hz)')
         ax[2].set_ylabel('dB')
         plt.sca(ax[2])
-
         fs = 16000
-
         f, h = formantsynt.get_transfer_function(fs, self.fmt)
         ax[2].plot(f, h)
+
         if self.audio_name != '':
             plt.savefig(self.audio_name + '.png')
             self.get_message('Picture ' + self.audio_name + '.png Created')
-        return ax
+        return fig
 
     def menu_illustrate(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -275,9 +277,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
             fig = self.generate_image()
-            plot = Illustration(fig)
+            plot = FigIllustration(fig)
             plot.setWindowTitle("Illustration")
-            plot.show()
+            plot.exec_()
 
     def menu_scale(self):
         if len(self.L) == 0 or len(self.A) == 0:
