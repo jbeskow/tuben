@@ -79,6 +79,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             for item in self.rect_items:
                 if item.isClicked:
                     self.index = item.index
+                    item.isClicked = False
 
     def menu_add(self):
         dialog = InputDialogAdd(self)
@@ -110,7 +111,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
                     self.visualization(self.L, self.A)
             else:
                 self.get_message('Invalid input, please try again')
-            # Process the inputs or pass them to another part of the program here
 
     def menu_remove(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -120,14 +120,15 @@ class AppWindow(QMainWindow, Ui_TubeN):
             if self.index is not None:  # pop the section that has been clicked
                 self.L.pop(self.index)
                 self.A.pop(self.index)
+                if len(self.L) == len(self.A) and len(self.L) > 0:
+                    self.visualization(self.L, self.A)
+                else:
+                    self.scene.clear()
+                    self.add_axis()
+                    self.get_message('Empty Input Value')
                 self.index = None
             else:
                 self.get_message('Select a section first')
-            if len(self.L) == len(self.A) and len(self.L) > 0:
-                self.visualization(self.L, self.A)
-            else:
-                self.scene.clear()
-                self.get_message('Length:[]\nArea:[]')
 
     def menu_alter(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -234,49 +235,49 @@ class AppWindow(QMainWindow, Ui_TubeN):
             sd.wait()  # wait for the play process to finish
 
     def generate_image(self):
+        fig, ax = plt.subplots(3, 1)
+        fig.tight_layout(pad=2.5)
+        # plot tube
+        x = 0
+        for l, a in zip(self.L, self.A):
+            ax[0].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
+            x += l
+        ax[0].set_xlim([0, x])
+        ax[0].set_ylim([0, max(self.A) * 1.1])
+        ax[0].set_title('tube')
+        ax[0].set_xlabel('distance from lips (cm)')
+        ax[0].set_ylabel('area ($cm^2$)')
+        # plot function & peaks
+        F = np.arange(1, 8000)
+        ax[1].plot(F, self.Y, ':')
+        ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
+        ax[1].set_title('peakfunction:' + "determinant")
+        ax[1].set_xlabel('frequency (Hz)')
+
+        ax[2].set_title('transfer function')
+        ax[2].set_xlabel('frequency (Hz)')
+        ax[2].set_ylabel('dB')
+        plt.sca(ax[2])
+
+        fs = 16000
+
+        f, h = formantsynt.get_transfer_function(fs, self.fmt)
+        ax[2].plot(f, h)
+        if self.audio_name != '':
+            plt.savefig(self.audio_name + '.png')
+            self.get_message('Picture ' + self.audio_name + '.png Created')
+        return ax
+
+    def menu_illustrate(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            fig, ax = plt.subplots(3, 1)
-            fig.tight_layout(pad=2.5)
-            # plot tube
-            x = 0
-            for l, a in zip(self.L, self.A):
-                ax[0].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
-                x += l
-            ax[0].set_xlim([0, x])
-            ax[0].set_ylim([0, max(self.A) * 1.1])
-            ax[0].set_title('tube')
-            ax[0].set_xlabel('distance from lips (cm)')
-            ax[0].set_ylabel('area ($cm^2$)')
-            # plot function & peaks
-            F = np.arange(1, 8000)
-            ax[1].plot(F, self.Y, ':')
-            ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
-            ax[1].set_title('peakfunction:' + "determinant")
-            ax[1].set_xlabel('frequency (Hz)')
-
-            ax[2].set_title('transfer function')
-            ax[2].set_xlabel('frequency (Hz)')
-            ax[2].set_ylabel('dB')
-            plt.sca(ax[2])
-
-            fs = 16000
-
-            f, h = formantsynt.get_transfer_function(fs, self.fmt)
-            ax[2].plot(f, h)
-            if self.audio_name != '':
-                plt.savefig(self.audio_name + '.png')
-                self.get_message('Picture ' + self.audio_name + '.png Created')
-            return ax
-
-    def menu_illustrate(self):
-        fig = self.generate_image()
-        plot = Illustration(fig)
-        plot.setWindowTitle("Illustration")
-        plot.show()
+            fig = self.generate_image()
+            plot = Illustration(fig)
+            plot.setWindowTitle("Illustration")
+            plot.show()
 
     def menu_scale(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -378,9 +379,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.trajectoryWindow.raise_()
         self.trajectoryWindow.activateWindow()
 
-    def scale(self, scale_ratio):
-        self.L = [i * scale_ratio for i in self.L]
-        self.A = [i * scale_ratio for i in self.A]
+    # def scale(self, scale_ratio):
+    #     self.L = [i * scale_ratio for i in self.L]
+    #     self.A = [i * scale_ratio for i in self.A]
 
 
 # Main entry point of the application
