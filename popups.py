@@ -6,7 +6,6 @@ from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from formantsynt import synthesize_vowel_sequence
-import soundfile as sf
 
 
 # 接收两个输入
