@@ -17,7 +17,15 @@ class InputDialogAdd(QDialog):
 
     def initUI(self):
         mainLayout = QVBoxLayout()
-        mainLayout.addWidget(QLabel("Enter the tube parameters,\nSeparate by comma(,)"))
+        mainLayout.addWidget(QLabel("Choose a file with tube parameters"))
+        # Add button to load file
+        self.loadButton = QPushButton("Load File", self)
+        self.loadButton.setToolTip("Load a file with the first line being length and the second line \n"
+                                   "being width (separate with comma)")
+        self.loadButton.clicked.connect(self.loadFile)
+        mainLayout.addWidget(self.loadButton)
+
+        mainLayout.addWidget(QLabel("Or enter the parameters,\nSeparate by comma(,)"))
         # Create first input row
         row1Layout = QHBoxLayout()
         row1Layout.addWidget(QLabel("Length(s):"))
@@ -37,6 +45,15 @@ class InputDialogAdd(QDialog):
         mainLayout.addWidget(okButton)
 
         self.setLayout(mainLayout)
+
+    def loadFile(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)")
+        if file_path:
+            with open(file_path, "r") as file:
+                lines = file.readlines()
+            if len(lines) >= 2:
+                self.input1.setText(lines[0].strip('\n'))
+                self.input2.setText(lines[1])
 
     def getInputs(self):
         return self.input1.text(), self.input2.text()

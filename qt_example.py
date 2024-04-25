@@ -54,6 +54,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
         self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
+        self.setTip()
+
         self.rect_items = []
         self.scene = QtWidgets.QGraphicsScene()
         self.illustration.setScene(self.scene)
@@ -384,9 +386,31 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.trajectoryWindow.raise_()
         self.trajectoryWindow.activateWindow()
 
-    # def scale(self, scale_ratio):
-    #     self.L = [i * scale_ratio for i in self.L]
-    #     self.A = [i * scale_ratio for i in self.A]
+    def setTip(self):
+        self.pushButton_add.setToolTip('This button is for adding tube parameters in two ways.\n'
+                                       'Load a file or type in the parameters through keyboard')
+        self.pushButton_remove.setToolTip('This button is for deleting a tube section.\n'
+                                          'You can click the section and click this button to remove it')
+        self.pushButton_alter.setToolTip('This button is for changing the length and/or width'
+                                         'of a certain tube section.\n'
+                                         'You can click the section and click this button to enter the new parameters')
+        self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.\n'
+                                         'You can click the play button on the left to hear the audio after'
+                                         'generating it')
+        self.pushButton_illustrate.setToolTip('This button is for generating a tube related picture.\n'
+                                              'With Tube information, Peak function plot and Transfer function plot')
+        self.pushButton_scale.setToolTip('This button is for changing the entire tube in proportion.\n'
+                                         'You can enter or click the spinbox on the left to set the proportion\n'
+                                         'and click this button to get new tube parameters')
+        self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
+        self.example_a.setToolTip('This button is an example of tube parameters that sounds like vowel a.\n'
+                                  'You can click this button to get the parameters then test them with other buttons')
+        self.example_i.setToolTip('This button is an example of tube parameters that sounds like vowel i.\n'
+                                  'You can click this button to get the parameters then test them with other buttons')
+        self.example_o.setToolTip('This button is an example of tube parameters that sounds like vowel o.\n'
+                                  'You can click this button to get the parameters then test them with other buttons')
+        self.pushButton_obliviate.setToolTip('This button is for deleting all tube parameters.\n'
+                                             'Name after a spell in Harry Potter')
 
 
 # Main entry point of the application
