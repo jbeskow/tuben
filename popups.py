@@ -186,17 +186,19 @@ class TrajectoryWindow(QWidget):
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 3, QTableWidgetItem("1"))
             self.lastClickPosition = None  # Reset after adding
 
-    def addEntry(self, fmt=(0, 0)):
+    def addEntry(self):
         self.tableWidget.insertRow(self.tableWidget.rowCount())
+        #print(type(fmt))
+        #print("ei")
         for i in range(4):
             if i == 2:  # Name column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("vowel"))
             elif i == 3:  # Duration column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("1"))
             elif i == 0:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[0])))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(0)))
             else:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[1])))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(0)))
 
     def deleteEntry(self):
         selected_rows = set(index.row() for index in self.tableWidget.selectedIndexes())
