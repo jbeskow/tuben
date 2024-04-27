@@ -148,10 +148,22 @@ class TrajectoryWindow(QWidget):
         self.sumButton = QPushButton('Synthesize Trajectory', self)
 
         tableLayout = QVBoxLayout()
+        f0Layout = QHBoxLayout()
+        f0Layout.setAlignment(Qt.AlignLeft)  # 设置居中对齐
+        self.f0Label = QLabel('F0(Hz):', self)
+        self.f0Input = QLineEdit(self)
+        self.f0Input.setMaximumWidth(100) # 设置输入框的最大宽度为100像素
+        self.f0Input.setText("100")
+        f0Layout.addWidget(self.f0Label)
+        f0Layout.addWidget(self.f0Input)
+        f0Layout.setSpacing(10)  # 设置标签和输入框之间的间距为10像素
+        tableLayout.addLayout(f0Layout)
+
         tableLayout.addWidget(self.tableWidget)
         tableLayout.addWidget(self.addButton)
         tableLayout.addWidget(self.delButton)
         tableLayout.addWidget(self.sumButton)
+
 
         # Image layout
         imageLayout = QVBoxLayout()
@@ -165,11 +177,11 @@ class TrajectoryWindow(QWidget):
         self.mainLayout.addLayout(tableLayout)
         self.mainLayout.addLayout(imageLayout)
 
-        self.addButton.clicked.connect(self.addEntry)
+        self.addButton.clicked.connect(lambda: self.addEntry(fmt=(0,0)))
         self.delButton.clicked.connect(self.deleteEntry)
         self.addFromImageButton.clicked.connect(self.addClickPositionToTable)
         self.sumButton.clicked.connect(
-            lambda: synthesize_vowel_sequence(fs=16000, formant_sequence=self.list_prepare()))
+            lambda: synthesize_vowel_sequence(fs=16000, formant_sequence=self.list_prepare(),base_freq=int(self.f0Input.text())))
 
         self.resize(900, 600)
 
@@ -186,19 +198,18 @@ class TrajectoryWindow(QWidget):
             self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 3, QTableWidgetItem("1"))
             self.lastClickPosition = None  # Reset after adding
 
-    def addEntry(self):
+    def addEntry(self,fmt):
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         #print(type(fmt))
-        #print("ei")
         for i in range(4):
             if i == 2:  # Name column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("vowel"))
             elif i == 3:  # Duration column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("1"))
             elif i == 0:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(0)))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[0])))
             else:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(0)))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[1])))
 
     def deleteEntry(self):
         selected_rows = set(index.row() for index in self.tableWidget.selectedIndexes())
