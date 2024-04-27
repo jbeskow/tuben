@@ -443,11 +443,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                          'You can tye in or click the spinbox on the left to set the proportion\n'
                                          'and click this button to get new tube parameters')
         self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
-        self.example_a.setToolTip('This button is an example of tube parameters that sounds like vowel /a/.\n'
+        self.example_a.setToolTip('This button is an example of tube parameters that sounds like /a/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
-        self.example_i.setToolTip('This button is an example of tube parameters that sounds like vowel /i/.\n'
+        self.example_i.setToolTip('This button is an example of tube parameters that sounds like /i/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
-        self.example_u.setToolTip('This button is an example of tube parameters that sounds like vowel /u/.\n'
+        self.example_u.setToolTip('This button is an example of tube parameters that sounds like /u/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
         self.pushButton_obliviate.setToolTip('This button is for deleting all tube parameters.\n'
                                              'Name after a spell in Harry Potter')
