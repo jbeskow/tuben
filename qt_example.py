@@ -11,6 +11,7 @@ import sounddevice as sd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
@@ -57,13 +58,15 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.setTip()
 
         self.rect_items = []
-        self.scene = QtWidgets.QGraphicsScene()
-        self.illustration.setScene(self.scene)
+        self.scene1 = QtWidgets.QGraphicsScene()
+        self.illustration.setScene(self.scene1)
         self.add_axis()
+        self.scene2 = QtWidgets.QGraphicsScene()
+        self.graphics_formants.setScene(self.scene2)
 
         self.example_a.clicked.connect(self.show_example_a)
         self.example_i.clicked.connect(self.show_example_i)
-        self.example_o.clicked.connect(self.show_example_o)
+        self.example_u.clicked.connect(self.show_example_u)
         self.L = []
         self.A = []
         self.index = None
@@ -88,8 +91,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         if dialog.exec_():
             self.get_index()
             lengths, areas = dialog.getInputs()
-            match_l = bool(re.match(r'^\d(,\d)*$', lengths))
-            match_a = bool(re.match(r'^\d(,\d)*$', lengths))
+            match_l = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
+            match_a = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
             if lengths == '' or areas == '':
                 self.get_message('Empty Input Value')
             elif match_l and match_a:
@@ -100,16 +103,17 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         # create tube sections
                         self.L = le
                         self.A = ar
-                    elif self.index is not None and sum(self.L) < 16:
-                        # add new sections to the tube
+                    elif self.index is not None and sum(self.L) <= 18:
+                        # add new sections after given index of the tube
                         self.L[self.index:self.index] = le
                         self.A[self.index:self.index] = ar
                     else:
-                        self.get_message('Invalid input: the total length must be under or equal to 16 centimeters')
+                        self.get_message('Invalid input: the total length must be under or equal to 18 centimeters')
                 else:
                     self.get_message('Invalid input: lengths and areas lists must be of equal length')
-                if len(self.L) == len(self.A) and sum(self.L) <= 16:
+                if len(self.L) == len(self.A) and sum(self.L) <= 18:
                     self.visualization(self.L, self.A)
+                    self.visualize_formants()
             else:
                 self.get_message('Invalid input, please try again')
 
@@ -123,8 +127,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.A.pop(self.index)
                 if len(self.L) == len(self.A) and len(self.L) > 0:
                     self.visualization(self.L, self.A)
+                    self.visualize_formants()
                 else:
-                    self.scene.clear()
+                    self.scene1.clear()
                     self.add_axis()
                     self.get_message('Empty Input Value')
                 self.index = None
@@ -145,6 +150,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         self.L[self.index] = float(new_length)
                         self.A[self.index] = float(new_area)
                         self.visualization(self.L, self.A)
+                        self.visualize_formants()
                         self.index = None
                 except ValueError:
                     self.get_message('Invalid Input')
@@ -152,50 +158,52 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.get_message('Select a section first')
 
     def add_axis(self):
-        # 添加水平坐标轴
-        self.scene.addLine(0, 200, 450, 200)
-        # 添加垂直坐标轴
-        self.scene.addLine(0, 0, 0, 200)
+        # horizontal axis
+        self.scene1.addLine(0, 200, 450, 200)
+        # vertical axis
+        self.scene1.addLine(0, 0, 0, 200)
 
-        # 添加水平坐标轴箭头
+        # horizontal arrow
         arrow = QPolygonF([QPointF(455, 200), QPointF(450, 205), QPointF(450, 195)])
-        self.scene.addPolygon(arrow)
+        self.scene1.addPolygon(arrow)
 
-        # 添加垂直坐标轴箭头
+        # vertical arrow
         arrow = QPolygonF([QPointF(0, -5), QPointF(5, 0), QPointF(-5, 0)])
-        self.scene.addPolygon(arrow)
+        self.scene1.addPolygon(arrow)
 
-        # 添加水平坐标轴刻度
+        # horizontal scale
         for x in range(25, 451, 25):
             tick = QGraphicsLineItem(x, 195, x, 200)
-            self.scene.addItem(tick)
+            self.scene1.addItem(tick)
 
-            # 显示刻度数值
+            # scale values
             text = QGraphicsSimpleTextItem(str(int(x/25)))
-            text.setPos(x-10, 210)
-            self.scene.addItem(text)
+            text.setPos(x-5, 210)
+            self.scene1.addItem(text)
 
-        # 添加垂直坐标轴刻度
+        # vertical scale
         for y in range(25, 201, 25):
             tick = QGraphicsLineItem(0, 200 - y, 5, 200 - y)
-            self.scene.addItem(tick)
+            self.scene1.addItem(tick)
 
-            # 显示刻度数值
+            # scale values
             text = QGraphicsSimpleTextItem(str(int(y/25)))
             text.setPos(-30, 190 - y)
-            self.scene.addItem(text)
+            self.scene1.addItem(text)
 
         self.add_label(-20, 210, "0")
-        self.add_label(480, 200, "X")
-        self.add_label(-10, -50, "Y")
+        self.add_label(-20, 230, "Glottis")
+        self.add_label(480, 200, "X (cm)")
+        self.add_label(450, 230, "Lips")
+        self.add_label(-10, -50, "Y (cm\u00B2)")
 
     def add_label(self, x, y, text):
         label = QGraphicsTextItem(text)
         label.setPos(x, y)
-        self.scene.addItem(label)
+        self.scene1.addItem(label)
 
     def visualization(self, l, a):
-        self.scene.clear()
+        self.scene1.clear()
         self.add_axis()
         diameter = [2 * math.sqrt(i / 3.14) for i in a]
         x_offset = 0
@@ -204,7 +212,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
             la = [l[i], a[i]]
             rect = MyRectItem(i, x_offset, 200-int(width*25), length * 25, width * 25, la, self.get_message)
             # i:index, x_offset:X, 50:Y, length, width, info of tube, message
-            self.scene.addItem(rect)
+            self.scene1.addItem(rect)
             self.rect_items.append(rect)
             x_offset += length * 25
             i += 1
@@ -291,6 +299,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.L = [x * value for x in self.L]
                 self.A = [y * (value ** 2) for y in self.A]
                 self.visualization(self.L, self.A)
+                self.visualize_formants()
             else:
                 self.get_message('Empty Scale Argument')
 
@@ -307,6 +316,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        elif sum(self.L) > 18:
+            self.get_message('Invalid input: for printable purpose, the total length should be no larger than 18 cm')
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
@@ -319,6 +330,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
+        elif sum(self.L) > 18:
+            self.get_message('Invalid input: for printable purpose, the total length should be no larger than 18 cm')
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
@@ -326,7 +339,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message(f'Detachable STL file created')
 
     def menu_obliviate(self):
-        self.scene.clear()
+        self.scene1.clear()
+        self.scene2.clear()
         self.add_axis()
         self.L = []
         self.A = []
@@ -339,6 +353,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.A = [1, 2, 5, 2, 1, 0.2, 2, 1]
         self.audio_name = 'a'
         self.visualization(self.L, self.A)
+        self.visualize_formants()
         fs = 16000
         tub = Tuben()
         self.fmt, self.Y = tub.get_formants(self.L, self.A)
@@ -352,6 +367,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.A = [1, 2, 0.2, 1, 2, 5, 2, 1]
         self.audio_name = 'i'
         self.visualization(self.L, self.A)
+        self.visualize_formants()
         fs = 16000
         tub = Tuben()
         self.fmt, self.Y = tub.get_formants(self.L, self.A)
@@ -360,11 +376,12 @@ class AppWindow(QMainWindow, Ui_TubeN):
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
-    def show_example_o(self):
+    def show_example_u(self):
         self.L = [2, 6, 6, 2]
         self.A = [0.1, 5, 1, 2]
-        self.audio_name = 'o'
+        self.audio_name = 'u'
         self.visualization(self.L, self.A)
+        self.visualize_formants()
         fs = 16000
         tub = Tuben()
         self.fmt, self.Y = tub.get_formants(self.L, self.A)
@@ -386,28 +403,51 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.trajectoryWindow.raise_()
         self.trajectoryWindow.activateWindow()
 
+    def visualize_formants(self):
+        self.scene2.clear()
+        F = np.arange(1, 8000)
+        tub = Tuben()
+        fmt, Y = tub.get_formants(self.L, self.A)
+        fig, ax = plt.subplots(figsize=(10, 3))
+        ax.plot(F, Y, ':')
+        ax.plot(F[fmt], Y[fmt], '.')
+        for idx in fmt:
+            x_val = F[idx]
+            y_val = Y[idx]
+            ax.axvline(x_val, color='gray', linestyle='--')
+            ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val + 0.05),
+                        textcoords='data', ha='center', va='bottom', arrowprops=dict(arrowstyle='-', linestyle=':'))
+        ax.annotate('frequency (Hz)', xy=(1.1, 0), xycoords='axes fraction', ha='right', va='bottom')
+        fig.patch.set_facecolor((234 / 255, 233 / 255, 255 / 255))
+        canvas = FigureCanvas(fig)
+        self.scene2.addWidget(canvas)
+        self.graphics_formants.setScene(self.scene2)
+
     def setTip(self):
         self.pushButton_add.setToolTip('This button is for adding tube parameters in two ways.\n'
-                                       'Load a file or type in the parameters through keyboard')
+                                       'Load a file or manually type in the parameters')
         self.pushButton_remove.setToolTip('This button is for deleting a tube section.\n'
                                           'You can click the section and click this button to remove it')
-        self.pushButton_alter.setToolTip('This button is for changing the length and/or width'
+        self.pushButton_alter.setToolTip('This button is for changing the length and/or width '
                                          'of a certain tube section.\n'
                                          'You can click the section and click this button to enter the new parameters')
         self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.\n'
-                                         'You can click the play button on the left to hear the audio after'
+                                         'You can click the play button on the left to hear the audio after '
                                          'generating it')
-        self.pushButton_illustrate.setToolTip('This button is for generating a tube related picture.\n'
-                                              'With Tube information, Peak function plot and Transfer function plot')
-        self.pushButton_scale.setToolTip('This button is for changing the entire tube in proportion.\n'
-                                         'You can enter or click the spinbox on the left to set the proportion\n'
+        self.play_audio.setToolTip('Click this button to hear the .wav file you created.')
+        self.pushButton_illustrate.setToolTip('This button is for generating tube related illustration.\n'
+                                              'With Tube model, Peak function plot and Transfer function plot\n'
+                                              'The illustration will be saved automatically as a .png file\n'
+                                              'with the same name of the .wav file')
+        self.pushButton_scale.setToolTip('This button is for changing the entire tube proportionally.\n'
+                                         'You can tye in or click the spinbox on the left to set the proportion\n'
                                          'and click this button to get new tube parameters')
         self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
-        self.example_a.setToolTip('This button is an example of tube parameters that sounds like vowel a.\n'
+        self.example_a.setToolTip('This button is an example of tube parameters that sounds like vowel /a/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
-        self.example_i.setToolTip('This button is an example of tube parameters that sounds like vowel i.\n'
+        self.example_i.setToolTip('This button is an example of tube parameters that sounds like vowel /i/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
-        self.example_o.setToolTip('This button is an example of tube parameters that sounds like vowel o.\n'
+        self.example_u.setToolTip('This button is an example of tube parameters that sounds like vowel /u/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
         self.pushButton_obliviate.setToolTip('This button is for deleting all tube parameters.\n'
                                              'Name after a spell in Harry Potter')
