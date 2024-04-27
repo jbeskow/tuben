@@ -200,7 +200,7 @@ class TrajectoryWindow(QWidget):
 
     def addEntry(self,fmt):
         self.tableWidget.insertRow(self.tableWidget.rowCount())
-        #print(type(fmt))
+        #print(type(fmt)) without lambda fmt is bool?
         for i in range(4):
             if i == 2:  # Name column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("vowel"))
