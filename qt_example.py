@@ -104,9 +104,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         self.A = ar
                     elif self.index is not None and sum(self.L) <= 18:
                         # add new sections after given index of the tube
-                        self.L[self.index+1] = le
-                        self.A[self.index+1] = ar
-                        self.index = None
+                        if self.index < len(self.L):
+                            self.L[self.index+1:self.index+1] = le
+                            self.A[self.index+1:self.index+1] = ar
+                            self.index = None
+                        else:
+                            self.L += le
+                            self.A += ar
+                            self.index = None
+                    elif self.index is None and sum(self.L) <= 18:
+                        # add new sections after the current tube
+                        self.L += le
+                        self.A += ar
                     else:
                         self.get_message('Invalid input: the total length must be under or equal to 18 centimeters')
                 else:
@@ -147,13 +156,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
                     dialog.setWindowTitle("alter")
                     if dialog.exec_():
                         new_length, new_area = dialog.getInputs()
-                        self.L[self.index] = float(new_length)
-                        self.A[self.index] = float(new_area)
-                        self.visualization(self.L, self.A)
-                        self.visualize_formants()
+                        l = float(new_length)
+                        a = float(new_area)
+                        if l > 0 and a > 0:
+                            self.L[self.index] = l
+                            self.A[self.index] = a
+                            self.visualization(self.L, self.A)
+                            self.visualize_formants()
+                        else:
+                            self.get_message('Invalid Input: new parameter(s) should be larger than 0')
                         self.index = None
                 except ValueError:
-                    self.get_message('Invalid Input')
+                    self.get_message('Invalid Input: new parameter(s) should be numbers')
             else:
                 self.get_message('Select a section first')
 
@@ -227,9 +241,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         else:
             fs = 16000
             tub = Tuben()
-            self.fmt, self.Y = tub.get_formants(self.L, self.A)
+            fmt, _ = tub.get_formants(self.L, self.A)
             x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-            y = formantsynt.ffilter(fs, x, self.fmt)
+            y = formantsynt.ffilter(fs, x, fmt)
             file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "All Files (*)")
             if file_path:
                 self.audio_name = file_path
@@ -262,9 +276,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         # plot function & peaks
         F = np.arange(1, 8000)
         tub = Tuben()
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
-        ax[1].plot(F, self.Y, ':')
-        ax[1].plot(F[self.fmt], self.Y[self.fmt], '.')
+        fmt, Y = tub.get_formants(self.L, self.A)
+        ax[1].plot(F, Y, ':')
+        ax[1].plot(F[fmt], Y[fmt], '.')
         ax[1].set_title('peakfunction:' + "determinant")
         ax[1].set_xlabel('frequency (Hz)')
 
@@ -273,7 +287,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         ax[2].set_ylabel('dB')
         plt.sca(ax[2])
         fs = 16000
-        f, h = formantsynt.get_transfer_function(fs, self.fmt)
+        f, h = formantsynt.get_transfer_function(fs, fmt)
         ax[2].plot(f, h)
         if self.audio_name:
             plt.savefig(self.audio_name+'.png')
@@ -356,9 +370,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.visualize_formants()
         fs = 16000
         tub = Tuben()
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        fmt, Y = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, self.fmt)
+        y = formantsynt.ffilter(fs, x, fmt)
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
@@ -370,9 +384,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.visualize_formants()
         fs = 16000
         tub = Tuben()
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        fmt, _ = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, self.fmt)
+        y = formantsynt.ffilter(fs, x, fmt)
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
@@ -384,9 +398,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.visualize_formants()
         fs = 16000
         tub = Tuben()
-        self.fmt, self.Y = tub.get_formants(self.L, self.A)
+        fmt, _ = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, self.fmt)
+        y = formantsynt.ffilter(fs, x, fmt)
         wav.write(self.audio_name + '.wav', fs, y)
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 

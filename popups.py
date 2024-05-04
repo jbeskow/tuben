@@ -207,9 +207,9 @@ class TrajectoryWindow(QWidget):
             elif i == 3:  # Duration column
                 self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem("1"))
             elif i == 0:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[0])))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(int(fmt[0])+1)))
             else:
-                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(fmt[1])))
+                self.tableWidget.setItem(self.tableWidget.rowCount() - 1, i, QTableWidgetItem(str(int(fmt[1])+1)))
 
     def deleteEntry(self):
         selected_rows = set(index.row() for index in self.tableWidget.selectedIndexes())
