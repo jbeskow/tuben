@@ -83,7 +83,7 @@ class Ui_TubeN(object):
         self.input_information_output.setGeometry(QtCore.QRect(1130, 80, 275, 310))
         self.input_information_output.setObjectName("input_information_output")
         self.input_sign = QtWidgets.QLabel(self.frame)
-        self.input_sign.setGeometry(QtCore.QRect(1200, 30, 160, 35))
+        self.input_sign.setGeometry(QtCore.QRect(1170, 30, 260, 35))
         self.input_sign.setStyleSheet("QLabel:{\n"
 "    font: 10pt \"Arial\";\n"
 "    color: rgb(255, 255, 255);\n"
@@ -179,7 +179,7 @@ class Ui_TubeN(object):
         self.pushButton_remove.setText(_translate("TubeN", "Remove"))
         self.play_audio.setText(_translate("TubeN", "play"))
         self.pushButton_alter.setText(_translate("TubeN", "Alter"))
-        self.input_sign.setText(_translate("TubeN", "Operation History"))
+        self.input_sign.setText(_translate("TubeN", "Operational Information"))
         self.pushButton_scale.setText(_translate("TubeN", "Scale"))
         self.example_a.setText(_translate("TubeN", "/a/"))
         self.pushButton_obliviate.setText(_translate("TubeN", "Obliviate"))

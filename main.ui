@@ -178,9 +178,9 @@ QPushButton::hover{
     <widget class="QLabel" name="input_sign">
      <property name="geometry">
       <rect>
-       <x>1200</x>
+       <x>1170</x>
        <y>30</y>
-       <width>160</width>
+       <width>260</width>
        <height>35</height>
       </rect>
      </property>
@@ -191,7 +191,7 @@ QPushButton::hover{
 }</string>
      </property>
      <property name="text">
-      <string>Operation History</string>
+      <string>Operational Information</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_scale">

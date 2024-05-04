@@ -89,7 +89,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
         dialog = InputDialogAdd(self)
         dialog.setWindowTitle("add")
         if dialog.exec_():
-            self.get_index()
             lengths, areas = dialog.getInputs()
             match_l = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
             match_a = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
@@ -99,14 +98,16 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 le = [float(l) for l in lengths.split(',')]
                 ar = [float(a) for a in areas.split(',')]
                 if len(le) == len(ar) and len(le) >= 1:
+                    self.get_index()
                     if len(self.L) == 0 or len(self.A) == 0:
                         # create tube sections
                         self.L = le
                         self.A = ar
                     elif self.index is not None and sum(self.L) <= 18:
                         # add new sections after given index of the tube
-                        self.L[self.index:self.index] = le
-                        self.A[self.index:self.index] = ar
+                        self.L[self.index+1] = le
+                        self.A[self.index+1] = ar
+                        self.index = None
                     else:
                         self.get_message('Invalid input: the total length must be under or equal to 18 centimeters')
                 else:
@@ -451,6 +452,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                   'You can click this button to get the parameters then test them with other buttons')
         self.pushButton_obliviate.setToolTip('This button is for deleting all tube parameters.\n'
                                              'Name after a spell in Harry Potter')
+        self.pushButton_trajectory.setToolTip('This button is for setting the current tube parameters\n'
+                                              'as an anchor for vowel sequence synthesis.')
 
 
 # Main entry point of the application
