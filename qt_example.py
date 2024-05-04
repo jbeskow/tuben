@@ -1,15 +1,14 @@
 import re
 import sys
 import math
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog
-from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem
+from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem, QGraphicsScene
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QColor, QPolygonF
 import scipy.io.wavfile as wav
 import sounddevice as sd
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from qt_test import Ui_TubeN
@@ -58,10 +57,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.setTip()
 
         self.rect_items = []
-        self.scene1 = QtWidgets.QGraphicsScene()
+        self.scene1 = QGraphicsScene()
         self.illustration.setScene(self.scene1)
         self.add_axis()
-        self.scene2 = QtWidgets.QGraphicsScene()
+        self.scene2 = QGraphicsScene()
         self.graphics_formants.setScene(self.scene2)
 
         self.example_a.clicked.connect(self.show_example_a)
