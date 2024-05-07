@@ -291,6 +291,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         ax[2].plot(f, h)
         if self.audio_name:
             plt.savefig(self.audio_name+'.png')
+            self.get_message(self.audio_name+'.png Created')
         return fig
 
     def menu_illustrate(self):
