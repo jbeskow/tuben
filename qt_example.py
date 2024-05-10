@@ -1,6 +1,5 @@
 import re
 import sys
-import math
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog
 from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem, QGraphicsScene
 from PyQt5.QtCore import QPointF, Qt
@@ -102,7 +101,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         # create tube sections
                         self.L = le
                         self.A = ar
-                    elif self.index is not None and sum(self.L) <= 18:
+                    elif self.index is not None and sum(self.L) <= 20:
                         # add new sections after given index of the tube
                         if self.index < len(self.L):
                             self.L[self.index+1:self.index+1] = le
@@ -112,12 +111,12 @@ class AppWindow(QMainWindow, Ui_TubeN):
                             self.L += le
                             self.A += ar
                             self.index = None
-                    elif self.index is None and sum(self.L) <= 18:
+                    elif self.index is None and sum(self.L) <= 20:
                         # add new sections after the current tube
                         self.L += le
                         self.A += ar
                     else:
-                        self.get_message('Invalid input: the total length must be under or equal to 18 centimeters')
+                        self.get_message('Invalid input: the total length must be under or equal to 20 centimeters')
                 else:
                     self.get_message('Invalid input: lengths and areas lists must be of equal length')
                 if len(self.L) == len(self.A) and sum(self.L) <= 18:
@@ -173,43 +172,43 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
     def add_axis(self):
         # horizontal axis
-        self.scene1.addLine(0, 200, 450, 200)
+        self.scene1.addLine(0, 150, 500, 150)
         # vertical axis
-        self.scene1.addLine(0, 0, 0, 200)
+        self.scene1.addLine(0, -100, 0, 150)
 
         # horizontal arrow
-        arrow = QPolygonF([QPointF(455, 200), QPointF(450, 205), QPointF(450, 195)])
+        arrow = QPolygonF([QPointF(505, 150), QPointF(500, 155), QPointF(500, 145)])
         self.scene1.addPolygon(arrow)
 
         # vertical arrow
-        arrow = QPolygonF([QPointF(0, -5), QPointF(5, 0), QPointF(-5, 0)])
+        arrow = QPolygonF([QPointF(0, -105), QPointF(5, -100), QPointF(-5, -100)])
         self.scene1.addPolygon(arrow)
 
         # horizontal scale
-        for x in range(25, 451, 25):
-            tick = QGraphicsLineItem(x, 195, x, 200)
+        for x in range(25, 501, 25):
+            tick = QGraphicsLineItem(x, 140, x, 150)
             self.scene1.addItem(tick)
 
             # scale values
             text = QGraphicsSimpleTextItem(str(int(x/25)))
-            text.setPos(x-5, 210)
+            text.setPos(x-5, 160)
             self.scene1.addItem(text)
 
         # vertical scale
-        for y in range(25, 201, 25):
-            tick = QGraphicsLineItem(0, 200 - y, 5, 200 - y)
+        for y in range(25, 251, 25):
+            tick = QGraphicsLineItem(0, 150 - y, 5, 150 - y)
             self.scene1.addItem(tick)
 
             # scale values
             text = QGraphicsSimpleTextItem(str(int(y/25)))
-            text.setPos(-30, 190 - y)
+            text.setPos(-30, 140 - y)
             self.scene1.addItem(text)
 
-        self.add_label(-20, 210, "0")
-        self.add_label(-20, 230, "Glottis")
-        self.add_label(480, 200, "X (cm)")
-        self.add_label(450, 230, "Lips")
-        self.add_label(-10, -50, "Y (cm\u00B2)")
+        self.add_label(-20, 160, "0")
+        self.add_label(-20, 180, "Lips")
+        self.add_label(520, 150, "X (cm)")
+        self.add_label(450, 180, "Glottis")
+        self.add_label(10, -120, "Y (cm\u00B2)")
 
     def add_label(self, x, y, text):
         label = QGraphicsTextItem(text)
@@ -219,12 +218,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def visualization(self, l, a):
         self.scene1.clear()
         self.add_axis()
-        diameter = [2 * math.sqrt(i / 3.14) for i in a]
         x_offset = 0
         i = 0
-        for length, width in zip(l, diameter):
+        for length, width in zip(l, a):
             la = [l[i], a[i]]
-            rect = MyRectItem(i, x_offset, 200-int(width*25), length * 25, width * 25, la, self.get_message)
+            rect = MyRectItem(i, x_offset, 150-int(width*25), length * 25, width * 25, la, self.get_message)
             # i:index, x_offset:X, 50:Y, length, width, info of tube, message
             self.scene1.addItem(rect)
             self.rect_items.append(rect)
@@ -331,8 +329,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        elif sum(self.L) > 18:
-            self.get_message('Invalid input: for printable purpose, the total length should be no larger than 18 cm')
+        elif sum(self.L) > 20:
+            self.get_message('Invalid input: for printable purpose, the total length should be no longer than 20 cm')
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
@@ -345,8 +343,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        elif sum(self.L) > 18:
-            self.get_message('Invalid input: for printable purpose, the total length should be no larger than 18 cm')
+        elif sum(self.L) > 20:
+            self.get_message('Invalid input: for printable purpose, the total length should be no longer than 20 cm')
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
@@ -364,8 +362,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Obliviate! All input has been removed')
 
     def show_example_a(self):
-        self.L = [1, 1, 3, 3, 3, 3, 1, 1]
-        self.A = [1, 2, 5, 2, 1, 0.2, 2, 1]
+        self.L = [1.5, 0.5, 3.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+        self.A = [5, 6.5, 8, 6.5, 5, 4, 3.2, 1.6, 2.6, 2, 1.6, 1.3, 1, 0.65, 1, 1.6, 2.6, 4, 1, 1.3, 1.6, 2.6]
         self.audio_name = 'a'
         self.visualization(self.L, self.A)
         self.visualize_formants()
@@ -378,8 +376,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def show_example_i(self):
-        self.L = [1, 1, 3, 3, 3, 3, 1, 1]
-        self.A = [1, 2, 0.2, 1, 2, 5, 2, 1]
+        self.L = [1, 0.5, 0.5, 0.5, 0.5, 3, 0.5, 0.5, 0.5, 0.5, 1, 4, 1, 1, 0.5, 0.5]
+        self.A = [4, 3.2, 1.6, 1.3, 1, 0.65, 1.3, 2.6, 4, 6.5, 8, 10.5, 8, 2, 2.6, 3.2]
         self.audio_name = 'i'
         self.visualization(self.L, self.A)
         self.visualize_formants()
@@ -392,8 +390,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def show_example_u(self):
-        self.L = [2, 6, 6, 2]
-        self.A = [0.1, 5, 1, 2]
+        self.L = [1, 1, 0.5, 0.5, 0.5, 2, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5,
+                  0.5, 0.5, 0.5, 0.5, 1.5, 0.5, 0.5, 0.5, 0.5, 1, 1.5, 1, 1]
+        self.A = [0.65, 0.32, 2, 5, 10.5, 13, 10.5, 8, 6.5, 5, 3.2, 2.6, 2,
+                  1.6, 1.3, 2, 1.6, 1, 1.3, 1.6, 3.2, 5, 8, 10.5, 2, 2.6]
         self.audio_name = 'u'
         self.visualization(self.L, self.A)
         self.visualize_formants()
