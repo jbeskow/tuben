@@ -82,7 +82,7 @@ def impulsetrain(fs, f, duration):
     t = np.arange(int(fs * duration))
     x = (np.fmod(t, fs / f) < 1).astype(float)
     # fade in/out 0.1s
-    ease = int(0.1 * fs)
+    ease = int(0.5 * fs)
     x[0:ease] *= np.linspace(0, 1, ease)
     x[-ease:] *= np.linspace(1, 0, ease)
 
