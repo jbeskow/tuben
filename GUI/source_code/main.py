@@ -13,7 +13,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
-import cy_test
+import tube3dmodel
 from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, FigIllustration
 
 
@@ -334,7 +334,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
-            cy_test.tubemaker_3d(self.L, self.A, self.audio_name)
+            tube3dmodel.tubemaker_3d(self.L, self.A, self.audio_name)
             stl_file_path = self.audio_name + '_con' + '.stl'
             self.get_message(f'STL file created: {stl_file_path}')
 
@@ -348,7 +348,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif self.audio_name is None:
             self.get_message('Audio File not Created')
         else:
-            cy_test.detachable_tubemaker_3d(self.L, self.A, self.audio_name)
+            tube3dmodel.detachable_tubemaker_3d(self.L, self.A, self.audio_name)
             self.get_message(f'Detachable STL file created')
 
     def menu_obliviate(self):
