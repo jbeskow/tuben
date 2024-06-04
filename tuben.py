@@ -4,6 +4,8 @@ import scipy.io.wavfile as wav
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import formantsynt
+import pandas as pd
+
 
 # J. Beskow 2023
 # Tube-to-formant calculation, after
@@ -117,12 +119,15 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser('tuben',description = 'Calculate formant frequencies of vocal tract tube. VT specified by lists of lengths and areas of tubes, starting at the lips. ')
-    parser.add_argument('-l','--lengths',help='list of tube segment lengths in cm',default='4,4,4,4')
-    parser.add_argument('-a','--areas',help='list of tube segment areas in cm^2',default='2,2,2,2')
+    parser.add_argument('-l','--lengths',help='list of tube segment lengths in cm',default='')
+    parser.add_argument('-a','--areas',help='list of tube segment areas in cm^2',default='')
+    parser.add_argument('-t','--table',help='table of areas in csv format',default='Fant1971.csv')
+    parser.add_argument('-s','--symbol',help='symbol in table to synthesize',default='a')
     parser.add_argument('-m','--method',help='method: "determinant" or "phase"',default='determinant')
     parser.add_argument('-n','--maxnrformants',help='max number of formants',type=int,default=4)
     parser.add_argument('-p','--plot',help='plot tube and peak function',action='store_true')
-    parser.add_argument('-o','--output',help='output synthesized wavfile',default='')
+    parser.add_argument('-v','--verbose',help='more output',action='store_true')
+    parser.add_argument('-o','--output',help='output synthesized wavfile',default='out.wav')
     parser.add_argument('--synt-f0',help='synt. source frequency in Hz',type=float,default=70.0)
     parser.add_argument('--synt-dur',help='synt. duration in seconds',type=float,default=1.5)
     parser.add_argument('-fs','--samplerate',help='sample rate',type=float,default=16000)
@@ -131,17 +136,43 @@ if __name__ == '__main__':
 
     tub = tuben(args.method,args.maxnrformants,args.samplerate,args.samplerate/2,args.c)
 
-    # python tuben.py --lengths 2,6,6,2 --areas 2,5,0.2,2 -o aa.wav
-    # python tuben.py --lengths 2,6,6,2 --areas 0.1,5,1,2 -o oo.wav
-    # python tuben.py --lengths 2,6,6,2 --areas 2,0.2,5,2 -o ii.wav
-
     # the tube segments are defined by the lists L (lengths, cm) and A (areas, cm^2) lip-to-glottis
-    L = [float(l) for l in args.lengths.split(',')]
-    A = [float(a) for a in args.areas.split(',')]
+
+    # if table is given, read it and get the areas for the symbol
+    if args.table != '':
+
+        try:
+            df = pd.read_csv(args.table)
+        except:
+            print('could not read table:',args.table)
+            exit(1)
+
+        if args.symbol in df.columns:
+            # get areas for symbol
+            A = df[args.symbol].dropna().tolist()
+            cm = df['cm'].dropna().tolist()
+            # get tube lengths from differences in cm
+            L = [t-s for s,t in zip(cm,cm[1:])]
+            L = L[0:len(A)]
+        else:
+            print('no such symbol:',args.symbol)
+            exit(1)
+
+    # if areas or lengths are given as arguments, they will override the table
+    if args.areas != '':
+        A = [float(a) for a in args.areas.split(',')]
+    if args.lengths != '':
+        L = [float(l) for l in args.lengths.split(',')]
+        if len(L) == 1 and len(A) > 1:
+            L = [L[0]]*len(A)
 
     if len(L) != len(A):
-        print('the "lengths" and "areas" lists must be of equal length')
+        print('"lengths" and "areas" don\'t match', 'L:',L,'A:',A)
         exit(1)
+
+    if args.verbose:
+        print('lenths:',L)
+        print('areas:',A)
 
     fmt,Y = tub.get_formants(L,A)
     print('formant frequencies (Hz): ', ', '.join([str(x) for x in fmt]))
