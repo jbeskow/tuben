@@ -48,8 +48,15 @@ Direct specification of lengths and areas:
 
 ![Example plot](images/plot.png)
 
+
+## 3D Printing of Vocal Tubes
+
+The `3Dprinting`directory contains code and instructions for 3D-printing of vocal tubes, for more information see Zhang et al, 2024.
+
 ## References
 
 *Fant, G. (1971). Acoustic theory of speech production: with calculations based on X-ray studies of Russian articulations (No. 2). Walter de Gruyter.*
 
 [*Liljencrants, J., & Fant, G. (1975). Computer program for VT-resonance frequency calculations. STL-QPSR, 16, 15-21.*](https://www.speech.kth.se/prod/publications/files/qpsr/1975/1975_16_4_015-020.pdf)
+
+[*Zhang, K., Song, R., Tu, R., Edlund, J., Beskow, J., & Ekström, A. G. (2024). Modeling, synthesis and 3D printing of tube vocal tract models with a codeless graphical user interface. In Proceedings from FONETIK 2024 Stockholm, June 3–5, 2024 (pp. 155–160). Stockholm University.](https://doi.org/10.5281/zenodo.11396112) 
