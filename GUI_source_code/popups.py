@@ -8,7 +8,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from formantsynt import synthesize_vowel_sequence
 
 
-# 接收两个输入
+# Receive two inputs
 class InputDialogAdd(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -246,7 +246,7 @@ class TrajectoryWindow(QWidget):
         self.imageLabel.setPixmap(pixmap.scaled(316, 215, Qt.KeepAspectRatio))
 
 
-# 壳子 测试用
+# for testing
 class MainWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()

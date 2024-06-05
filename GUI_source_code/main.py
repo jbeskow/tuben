@@ -20,10 +20,10 @@ from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPr
 class MyRectItem(QGraphicsRectItem):
     def __init__(self, index, x, y, length, width, la, output_method=None):
         super().__init__(x, y, length, width)
-        self.index = index  # 存储索引值
+        self.index = index  # save index for each tube section
         self.la = la
-        self.setBrush(QColor.fromRgb(200, 0, 0))  # 设置矩形颜色
-        self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # 允许选择
+        self.setBrush(QColor.fromRgb(200, 0, 0))
+        self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # to be selebtable
         self.isClicked = False
         self.output_method = output_method
 
