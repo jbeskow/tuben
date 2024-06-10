@@ -68,6 +68,7 @@ class tuben:
                 self.Y = self._wormfrek_phase_vec(l,a)
             else:
                 print('no such method')
+                print('hej')
                 exit(1)
             
             # find the peaks of Y, these correspond to the formant locations
