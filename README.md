@@ -49,9 +49,9 @@ Direct specification of lengths and areas:
 ![Example plot](images/plot.png)
 
 
-## 3D Printing of Vocal Tubes
+## GUI + 3D Printing of Vocal Tubes
 
-The `3Dprinting`directory contains code and instructions for 3D-printing of vocal tubes, for more information see Zhang et al, 2024.
+The `gui-and-3dprinting/` subdirectory contains code and instructions for 3D-printing of vocal tubes, for more information see Zhang et al, 2024.
 
 ## References
 
