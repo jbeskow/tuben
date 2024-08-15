@@ -88,8 +88,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         dialog.setWindowTitle("add")
         if dialog.exec_():
             lengths, areas = dialog.getInputs()
-            match_l = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
-            match_a = bool(re.match(r'^\d+(\.\d+)?(,\d+(\.\d+)?)*$', lengths))
+            match_l = bool(re.match(r'^\d+(\.\d+)?(,\s?\d+(\.\d+)?)*$', lengths))
+            match_a = bool(re.match(r'^\d+(\.\d+)?(,\s?\d+(\.\d+)?)*$', lengths))
             if lengths == '' or areas == '':
                 self.get_message('Empty Input Value')
             elif match_l and match_a:
@@ -101,7 +101,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         # create tube sections
                         self.L = le
                         self.A = ar
-                    elif self.index is not None and sum(self.L) <= 20:
+                    elif self.index is not None:
                         # add new sections after given index of the tube
                         if self.index < len(self.L):
                             self.L[self.index+1:self.index+1] = le
@@ -111,15 +111,13 @@ class AppWindow(QMainWindow, Ui_TubeN):
                             self.L += le
                             self.A += ar
                             self.index = None
-                    elif self.index is None and sum(self.L) <= 20:
+                    elif self.index is None:
                         # add new sections after the current tube
                         self.L += le
                         self.A += ar
-                    else:
-                        self.get_message('Invalid input: the total length must be under or equal to 20 centimeters')
                 else:
                     self.get_message('Invalid input: lengths and areas lists must be of equal length')
-                if len(self.L) == len(self.A) and sum(self.L) <= 18:
+                if len(self.L) == len(self.A):
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
             else:
