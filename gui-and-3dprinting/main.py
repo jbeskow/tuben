@@ -121,7 +121,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
             else:
-                self.get_message('Invalid input, please try again')
+                self.get_message('')
 
     def menu_remove(self):
         if len(self.L) == 0 or len(self.A) == 0:
