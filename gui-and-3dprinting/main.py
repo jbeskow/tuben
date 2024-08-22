@@ -16,6 +16,7 @@ import tube3dmodel
 from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, \
     PlotSelectionDialog, FigIllustration
 import sounddevice as sd
+import pandas as pd
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -44,18 +45,19 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_add.clicked.connect(self.menu_add)
         self.pushButton_remove.clicked.connect(self.menu_remove)
         self.pushButton_alter.clicked.connect(self.menu_alter)
-        self.pushButton_sound.clicked.connect(self.menu_sound)
-        self.play_audio.clicked.connect(self.play_sound)
-        self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.doubleSpinBox_scale.setDecimals(1)
         self.doubleSpinBox_scale.setValue(0.0)
         self.pushButton_scale.clicked.connect(self.menu_scale)
+        self.pushButton_save.clicked.connect(self.menu_save)
+        self.pushButton_sound.clicked.connect(self.menu_sound)
+        self.play_audio.clicked.connect(self.play_sound)
+        self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.pushButton_3d.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
         self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
         self.setTip()
-
+        self.tub = Tuben()
         self.rect_items = []
         self.scene1 = QGraphicsScene()
         self.illustration.setScene(self.scene1)
@@ -63,8 +65,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.scene2 = QGraphicsScene()
         self.graphics_formants.setScene(self.scene2)
 
-        # self.selected_plots = ['tube', 'peak function', 'transfer function']
-        # self.selected_plots = ['tube', 'transfer function']
         self.selected_plots = []
 
         self.example_a.clicked.connect(self.show_example_a)
@@ -72,6 +72,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.example_u.clicked.connect(self.show_example_u)
         self.L = []
         self.A = []
+        self.L_all = []
+        self.A_all = []
+        self.action = []
+        self.F_all = []
         self.samplerate = 16000
         self.index = None
         # trajectory window
@@ -125,6 +129,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if len(self.L) == len(self.A):
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
+                    self.action.append('Add')
+                    self.L_all.append(self.L)
+                    self.A_all.append(self.L)
+                    fmt, _ = self.tub.get_formants(self.L, self.A)
+                    self.F_all.append(fmt.tolist())
             else:
                 self.get_message('Invalid input, please try again')
 
@@ -139,6 +148,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if len(self.L) == len(self.A) and len(self.L) > 0:
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
+                    self.action.append('Remove')
+                    self.L_all.append(self.L)
+                    self.A_all.append(self.L)
+                    fmt, _ = self.tub.get_formants(self.L, self.A)
+                    self.F_all.append(fmt.tolist())
                 else:
                     self.scene1.clear()
                     self.add_axis()
@@ -165,6 +179,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
                             self.A[self.index] = a
                             self.visualization(self.L, self.A)
                             self.visualize_formants()
+                            self.action.append('Alter')
+                            self.L_all.append(self.L)
+                            self.A_all.append(self.L)
+                            fmt, _ = self.tub.get_formants(self.L, self.A)
+                            self.F_all.append(fmt.tolist())
                         else:
                             self.get_message('Invalid Input: new parameter(s) should be larger than 0')
                         self.index = None
@@ -172,6 +191,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
                     self.get_message('Invalid Input: new parameter(s) should be numbers')
             else:
                 self.get_message('Select a section first')
+
+    def menu_save(self):
+        history = pd.DataFrame()
+        history['Action'] = self.action
+        history['Length'] = self.L_all
+        history['Area'] = self.A_all
+        history['Predicted Formants'] = self.F_all
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save CSV File", "", "CSV Files (*.csv);;All Files (*)")
+        if file_path:
+            if not file_path.endswith(".csv"):
+                file_path += ".csv"
+            history.to_csv(file_path, encoding='UTF-8', index=False)
 
     def add_axis(self):
         # horizontal axis
@@ -240,8 +271,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            tub = Tuben()
-            fmt, _ = tub.get_formants(self.L, self.A)
+            fmt, _ = self.tub.get_formants(self.L, self.A)
             x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
             y = formantsynt.ffilter(self.samplerate, x, fmt)
             file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "WAV Files (*.wav);;All Files (*)")
@@ -252,8 +282,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.get_message(file_path + '.wav Created')
 
     def play_sound(self):
-        tub = Tuben()
-        fmt, _ = tub.get_formants(self.L, self.A)
+        fmt, _ = self.tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
         y = formantsynt.ffilter(self.samplerate, x, fmt)
         data = np.array(y)
@@ -264,14 +293,13 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def generate_image(self):
         fig, ax = plt.subplots(len(self.selected_plots), 1, figsize=(8, len(self.selected_plots) * 3))
         if len(self.selected_plots) == 1:
-            ax = [ax]  # 确保 ax 是列表类型
+            ax = [ax]
 
         # 生成子图
         x = 0
         plot_index = 0
         F = np.arange(1, 8000)
-        tub = Tuben()
-        fmt, Y = tub.get_formants(self.L, self.A)
+        fmt, Y = self.tub.get_formants(self.L, self.A)
         fs = 16000
         f, h = formantsynt.get_transfer_function(fs, fmt)
         if 'tube' in self.selected_plots:
@@ -329,6 +357,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 self.A = [y * (value ** 2) for y in self.A]
                 self.visualization(self.L, self.A)
                 self.visualize_formants()
+                self.action.append('Scale')
+                self.L_all.append(self.L)
+                self.A_all.append(self.L)
+                fmt, _ = self.tub.get_formants(self.L, self.A)
+                self.F_all.append(fmt.tolist())
             else:
                 self.get_message('Empty Scale Argument')
 
@@ -353,9 +386,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                                        "All Files (*)",
                                                        options=options)
             if file_path:
+                if not file_path.endswith(".stl"):
+                    file_path += "_con.stl"
                 tube3dmodel.tubemaker_3d(self.L, self.A, file_path)
-                stl_file_path = file_path + '_con' + '.stl'
-                self.get_message(f'STL file created: {stl_file_path}')
+                self.get_message(f'STL file created: {file_path}')
 
     def det3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -385,22 +419,12 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.A = [5, 6.5, 8, 6.5, 5, 4, 3.2, 1.6, 2.6, 2, 1.6, 1.3, 1, 0.65, 1, 1.6, 2.6, 4, 1, 1.3, 1.6, 2.6]
         self.visualization(self.L, self.A)
         self.visualize_formants()
-        fs = 16000
-        tub = Tuben()
-        fmt, Y = tub.get_formants(self.L, self.A)
-        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, fmt)
 
     def show_example_i(self):
         self.L = [1, 0.5, 0.5, 0.5, 0.5, 3, 0.5, 0.5, 0.5, 0.5, 1, 4, 1, 1, 0.5, 0.5]
         self.A = [4, 3.2, 1.6, 1.3, 1, 0.65, 1.3, 2.6, 4, 6.5, 8, 10.5, 8, 2, 2.6, 3.2]
         self.visualization(self.L, self.A)
         self.visualize_formants()
-        fs = 16000
-        tub = Tuben()
-        fmt, _ = tub.get_formants(self.L, self.A)
-        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, fmt)
 
     def show_example_u(self):
         self.L = [1, 1, 0.5, 0.5, 0.5, 2, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5,
@@ -409,21 +433,15 @@ class AppWindow(QMainWindow, Ui_TubeN):
                   1.6, 1.3, 2, 1.6, 1, 1.3, 1.6, 3.2, 5, 8, 10.5, 2, 2.6]
         self.visualization(self.L, self.A)
         self.visualize_formants()
-        fs = 16000
-        tub = Tuben()
-        fmt, _ = tub.get_formants(self.L, self.A)
-        x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-        y = formantsynt.ffilter(fs, x, fmt)
 
     def menu_trajectory(self):
         # if it is already shown then nothing happens
         self.trajectoryWindow.show()
         if not self.L:
             return
-        tub = Tuben()
         # TODO pick a better one between these two
         # self.fmt, self.Y = tub.get_formants(self.L, self.A)
-        fmt, _ = tub.get_formants(self.L, self.A)
+        fmt, _ = self.tub.get_formants(self.L, self.A)
         self.trajectoryWindow.addEntry(fmt=fmt)
         self.trajectoryWindow.raise_()
         self.trajectoryWindow.activateWindow()
@@ -431,8 +449,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def visualize_formants(self):
         self.scene2.clear()
         F = np.arange(1, 8000)
-        tub = Tuben()
-        fmt, Y = tub.get_formants(self.L, self.A)
+        fmt, Y = self.tub.get_formants(self.L, self.A)
         fig, ax = plt.subplots(figsize=(10, 3))
         ax.plot(F, Y, ':')
         ax.plot(F[fmt], Y[fmt], '.')
@@ -456,14 +473,15 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_alter.setToolTip('This button is for changing the length and/or width '
                                          'of a certain tube section.\n'
                                          'You can click the section and click this button to enter the new parameters')
+        self.pushButton_scale.setToolTip('This button is for changing the entire tube proportionally.\n'
+                                         'You can type in or click the spinbox on the left to set the proportion\n'
+                                         'and click this button to get new tube parameters')
+        self.pushButton_save.setToolTip('This button is for saving all the changes you have made.')
         self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.')
         self.play_audio.setToolTip('Click this button to hear the synthesized sound based on given tube parameters.')
         self.pushButton_illustrate.setToolTip('This button is for generating tube related illustration.\n'
                                               'With Tube model, Peak function plot and Transfer function options\n'
                                               'You can save the plot as a .png file')
-        self.pushButton_scale.setToolTip('This button is for changing the entire tube proportionally.\n'
-                                         'You can type in or click the spinbox on the left to set the proportion\n'
-                                         'and click this button to get new tube parameters')
         self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
         self.example_a.setToolTip('This button is an example of tube parameters that sounds like /a/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
@@ -475,6 +493,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                              'Name after a spell in Harry Potter')
         self.pushButton_trajectory.setToolTip('This button is for setting the current tube parameters\n'
                                               'as an anchor for vowel sequence synthesis.')
+        self.pushButton_explore.setToolTip('Under Construction')
 
 
 # Main entry point of the application
