@@ -64,8 +64,7 @@ def create_detachable_section_mesh_lego(square_length, height, inner_radius, hol
     return outer_mesh
 
 
-
-def detachable_tubemaker_3d(length_list, area_list):
+def detachable_tubemaker_3d(length_list, area_list, filename):
     assert len(length_list) == len(area_list)
     # get radius from area
     radius_list = np.sqrt(np.array(area_list) / np.pi)
@@ -76,7 +75,7 @@ def detachable_tubemaker_3d(length_list, area_list):
 
     square_length = 2.5*max(radius_list)
     for i in range(len(length_list)):
-        create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5,str(i+1))
+        create_detachable_section_mesh_lego(square_length, length_list[i], radius_list[i], 5, filename+str(i+1))
 
 
 def create_tube_mesh(inner_radius, height, thickness, segments=256, filename='i'):

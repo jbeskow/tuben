@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphic
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QColor, QPolygonF
 import scipy.io.wavfile as wav
-import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
@@ -14,7 +13,9 @@ from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import tube3dmodel
-from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, FigIllustration
+from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, \
+    PlotSelectionDialog, FigIllustration
+import sounddevice as sd
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -31,11 +32,11 @@ class MyRectItem(QGraphicsRectItem):
         if event.button() == Qt.LeftButton:
             self.isClicked = True
             if self.output_method:
-                self.output_method('Index: {} clicked\nLength {}\nArea {}'.format(self.index, self.la[0], self.la[1]))
+                self.output_method('Index {} clicked\nLength:{}\nArea:{}'.format(self.index, self.la[0], self.la[1]))
         super().mousePressEvent(event)
 
 
-# Create a subclass of QMainWindow to setup the GUI
+# Create a subclass of QMainWindow to set up the GUI
 class AppWindow(QMainWindow, Ui_TubeN):
     def __init__(self):
         super().__init__()
@@ -62,13 +63,17 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.scene2 = QGraphicsScene()
         self.graphics_formants.setScene(self.scene2)
 
+        # self.selected_plots = ['tube', 'peak function', 'transfer function']
+        # self.selected_plots = ['tube', 'transfer function']
+        self.selected_plots = []
+
         self.example_a.clicked.connect(self.show_example_a)
         self.example_i.clicked.connect(self.show_example_i)
         self.example_u.clicked.connect(self.show_example_u)
         self.L = []
         self.A = []
+        self.samplerate = 16000
         self.index = None
-        self.audio_name = ''
         # trajectory window
         self.trajectoryWindow = TrajectoryWindow()
 
@@ -235,59 +240,65 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            fs = 16000
             tub = Tuben()
             fmt, _ = tub.get_formants(self.L, self.A)
-            x = formantsynt.impulsetrain(fs, 70.0, 1.5)
-            y = formantsynt.ffilter(fs, x, fmt)
-            file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "All Files (*)")
+            x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
+            y = formantsynt.ffilter(self.samplerate, x, fmt)
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "WAV Files (*.wav);;All Files (*)")
             if file_path:
-                self.audio_name = file_path
-                wav.write(file_path+'.wav', fs, y)
+                if not file_path.endswith(".wav"):
+                    file_path += ".wav"
+                wav.write(file_path, self.samplerate, y)
                 self.get_message(file_path + '.wav Created')
 
     def play_sound(self):
-        if self.audio_name == '':
-            self.get_message("No Audio Generated")
-        else:
-            # open the audio file
-            fs, data = wav.read(self.audio_name+'.wav')
-            sd.play(data, fs)
-            sd.wait()  # wait for the play process to finish
+        tub = Tuben()
+        fmt, _ = tub.get_formants(self.L, self.A)
+        x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
+        y = formantsynt.ffilter(self.samplerate, x, fmt)
+        data = np.array(y)
+        data_float32 = data.astype(np.float32)
+        sd.play(data_float32, self.samplerate)
+        sd.wait()
 
     def generate_image(self):
-        fig, ax = plt.subplots(3, 1)
-        fig.tight_layout(pad=2.5)
-        # plot tube
-        x = 0
-        for l, a in zip(self.L, self.A):
-            ax[0].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
-            x += l
-        ax[0].set_xlim([0, x])
-        ax[0].set_ylim([0, max(self.A) * 1.1])
-        ax[0].set_title('tube')
-        ax[0].set_xlabel('distance from lips (cm)')
-        ax[0].set_ylabel('area ($cm^2$)')
+        fig, ax = plt.subplots(len(self.selected_plots), 1, figsize=(8, len(self.selected_plots) * 3))
+        if len(self.selected_plots) == 1:
+            ax = [ax]  # 确保 ax 是列表类型
 
-        # plot function & peaks
+        # 生成子图
+        x = 0
+        plot_index = 0
         F = np.arange(1, 8000)
         tub = Tuben()
         fmt, Y = tub.get_formants(self.L, self.A)
-        ax[1].plot(F, Y, ':')
-        ax[1].plot(F[fmt], Y[fmt], '.')
-        ax[1].set_title('peakfunction:' + "determinant")
-        ax[1].set_xlabel('frequency (Hz)')
-
-        ax[2].set_title('transfer function')
-        ax[2].set_xlabel('frequency (Hz)')
-        ax[2].set_ylabel('dB')
-        plt.sca(ax[2])
         fs = 16000
         f, h = formantsynt.get_transfer_function(fs, fmt)
-        ax[2].plot(f, h)
-        if self.audio_name:
-            plt.savefig(self.audio_name+'.png')
-            self.get_message(self.audio_name+'.png Created')
+        if 'tube' in self.selected_plots:
+            for l, a in zip(self.L, self.A):
+                ax[plot_index].add_patch(Rectangle((x, 0), l, a, ls='--', ec='k'))
+                x += l
+            ax[plot_index].set_xlim([0, x])
+            ax[plot_index].set_ylim([0, max(self.A) * 1.1])
+            ax[plot_index].set_title('tube')
+            ax[plot_index].set_xlabel('distance from lips (cm)')
+            ax[plot_index].set_ylabel('area ($cm^2$)')
+            plot_index += 1
+
+        if 'peak function' in self.selected_plots:
+            ax[plot_index].plot(F, Y, ':')
+            ax[plot_index].plot(F[fmt], Y[fmt], '.')
+            ax[plot_index].set_title('peakfunction: determinant')
+            ax[plot_index].set_xlabel('frequency (Hz)')
+            plot_index += 1
+
+        if 'transfer function' in self.selected_plots:
+            ax[plot_index].set_title('transfer function')
+            ax[plot_index].set_xlabel('frequency (Hz)')
+            ax[plot_index].set_ylabel('dB')
+            ax[plot_index].plot(f, h)
+            plot_index += 1
+        plt.tight_layout()
         return fig
 
     def menu_illustrate(self):
@@ -296,10 +307,17 @@ class AppWindow(QMainWindow, Ui_TubeN):
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
         else:
-            fig = self.generate_image()
-            plot = FigIllustration(fig)
-            plot.setWindowTitle("Illustration")
-            plot.exec_()
+            options = ['tube', 'peak function', 'transfer function']
+            dialog = PlotSelectionDialog(options)
+            if dialog.exec_():
+                self.selected_plots = dialog.selected_plots
+            if len(self.selected_plots) == 0:
+                self.get_message('Empty input: choose at least one option to generate the image')
+            else:
+                fig = self.generate_image()
+                plot = FigIllustration(fig)
+                plot.setWindowTitle("Illustration")
+                plot.exec_()
 
     def menu_scale(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -327,27 +345,31 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        elif sum(self.L) > 20:
-            self.get_message('Invalid input: for printable purpose, the total length should be no longer than 20 cm')
-        elif self.audio_name is None:
-            self.get_message('Audio File not Created')
+        elif sum(self.L) > 22:
+            self.get_message('Invalid input: for printable purpose, the total length should be no longer than 22 cm')
         else:
-            tube3dmodel.tubemaker_3d(self.L, self.A, self.audio_name)
-            stl_file_path = self.audio_name + '_con' + '.stl'
-            self.get_message(f'STL file created: {stl_file_path}')
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save STL File", "",
+                                                       "All Files (*)",
+                                                       options=options)
+            if file_path:
+                tube3dmodel.tubemaker_3d(self.L, self.A, file_path)
+                stl_file_path = file_path + '_con' + '.stl'
+                self.get_message(f'STL file created: {stl_file_path}')
 
     def det3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
         elif len(self.L) != len(self.A):
             self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        elif sum(self.L) > 20:
-            self.get_message('Invalid input: for printable purpose, the total length should be no longer than 20 cm')
-        elif self.audio_name is None:
-            self.get_message('Audio File not Created')
         else:
-            tube3dmodel.detachable_tubemaker_3d(self.L, self.A, self.audio_name)
-            self.get_message(f'Detachable STL file created')
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save STL File", "",
+                                                       "All Files (*)",
+                                                       options=options)
+            if file_path:
+                tube3dmodel.detachable_tubemaker_3d(self.L, self.A, file_path)
+                self.get_message(f'Detachable STL file created')
 
     def menu_obliviate(self):
         self.scene1.clear()
@@ -356,13 +378,11 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.L = []
         self.A = []
         self.index = None
-        self.audio_name = ''
         self.get_message('Obliviate! All input has been removed')
 
     def show_example_a(self):
         self.L = [1.5, 0.5, 3.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         self.A = [5, 6.5, 8, 6.5, 5, 4, 3.2, 1.6, 2.6, 2, 1.6, 1.3, 1, 0.65, 1, 1.6, 2.6, 4, 1, 1.3, 1.6, 2.6]
-        self.audio_name = 'a'
         self.visualization(self.L, self.A)
         self.visualize_formants()
         fs = 16000
@@ -370,13 +390,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         fmt, Y = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
         y = formantsynt.ffilter(fs, x, fmt)
-        wav.write(self.audio_name + '.wav', fs, y)
-        self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def show_example_i(self):
         self.L = [1, 0.5, 0.5, 0.5, 0.5, 3, 0.5, 0.5, 0.5, 0.5, 1, 4, 1, 1, 0.5, 0.5]
         self.A = [4, 3.2, 1.6, 1.3, 1, 0.65, 1.3, 2.6, 4, 6.5, 8, 10.5, 8, 2, 2.6, 3.2]
-        self.audio_name = 'i'
         self.visualization(self.L, self.A)
         self.visualize_formants()
         fs = 16000
@@ -384,15 +401,12 @@ class AppWindow(QMainWindow, Ui_TubeN):
         fmt, _ = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
         y = formantsynt.ffilter(fs, x, fmt)
-        wav.write(self.audio_name + '.wav', fs, y)
-        self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def show_example_u(self):
         self.L = [1, 1, 0.5, 0.5, 0.5, 2, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5,
                   0.5, 0.5, 0.5, 0.5, 1.5, 0.5, 0.5, 0.5, 0.5, 1, 1.5, 1, 1]
         self.A = [0.65, 0.32, 2, 5, 10.5, 13, 10.5, 8, 6.5, 5, 3.2, 2.6, 2,
                   1.6, 1.3, 2, 1.6, 1, 1.3, 1.6, 3.2, 5, 8, 10.5, 2, 2.6]
-        self.audio_name = 'u'
         self.visualization(self.L, self.A)
         self.visualize_formants()
         fs = 16000
@@ -400,8 +414,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
         fmt, _ = tub.get_formants(self.L, self.A)
         x = formantsynt.impulsetrain(fs, 70.0, 1.5)
         y = formantsynt.ffilter(fs, x, fmt)
-        wav.write(self.audio_name + '.wav', fs, y)
-        self.get_message('Audio ' + self.audio_name + '.wav Created')
 
     def menu_trajectory(self):
         # if it is already shown then nothing happens
@@ -444,16 +456,13 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_alter.setToolTip('This button is for changing the length and/or width '
                                          'of a certain tube section.\n'
                                          'You can click the section and click this button to enter the new parameters')
-        self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.\n'
-                                         'You can click the play button on the left to hear the audio after '
-                                         'generating it')
-        self.play_audio.setToolTip('Click this button to hear the .wav file you created.')
+        self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.')
+        self.play_audio.setToolTip('Click this button to hear the synthesized sound based on given tube parameters.')
         self.pushButton_illustrate.setToolTip('This button is for generating tube related illustration.\n'
-                                              'With Tube model, Peak function plot and Transfer function plot\n'
-                                              'The illustration will be saved automatically as a .png file\n'
-                                              'with the same name of the .wav file')
+                                              'With Tube model, Peak function plot and Transfer function options\n'
+                                              'You can save the plot as a .png file')
         self.pushButton_scale.setToolTip('This button is for changing the entire tube proportionally.\n'
-                                         'You can tye in or click the spinbox on the left to set the proportion\n'
+                                         'You can type in or click the spinbox on the left to set the proportion\n'
                                          'and click this button to get new tube parameters')
         self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
         self.example_a.setToolTip('This button is an example of tube parameters that sounds like /a/.\n'

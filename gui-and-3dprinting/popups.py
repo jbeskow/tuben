@@ -1,7 +1,7 @@
 import sys
 from qt_test import Ui_TubeN
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem, QDialog, QLineEdit, QMainWindow, QFileDialog
+    QTableWidgetItem, QDialog, QLineEdit, QMainWindow, QFileDialog, QListWidget
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -92,6 +92,32 @@ class InputDialogAlter(QDialog):
         return self.input1.text(), self.input2.text()
 
 
+class PlotSelectionDialog(QDialog):
+    def __init__(self, options):
+        super().__init__()
+        self.selected_plots = []
+        self.initUI(options)
+
+    def initUI(self, options):
+        layout = QVBoxLayout()
+
+        self.listWidget = QListWidget()
+        self.listWidget.addItems(options)
+        self.listWidget.setSelectionMode(QListWidget.MultiSelection)
+        layout.addWidget(self.listWidget)
+
+        select_button = QPushButton('Select')
+        select_button.clicked.connect(self.select_plots)
+        layout.addWidget(select_button)
+
+        self.setLayout(layout)
+
+    def select_plots(self):
+        selected_items = self.listWidget.selectedItems()
+        self.selected_plots = [item.text() for item in selected_items]
+        self.accept()
+
+
 class FigIllustration(QDialog):
     def __init__(self, fig, parent=None):
         super().__init__(parent)
@@ -104,11 +130,23 @@ class FigIllustration(QDialog):
         mainLayout = QVBoxLayout()
 
         # 添加一个 QLabel 用于显示提示文本
-        mainLayout.addWidget(QLabel("peak & transfer function"))
+        mainLayout.addWidget(QLabel("Illustration"))
         # 创建一个 FigureCanvas 对象，并将 matplotlib 图像添加到其中
         self.canvas = FigureCanvas(self.fig)
         mainLayout.addWidget(self.canvas)
+        save_button = QPushButton('Save')
+        save_button.clicked.connect(self.save_plot)
+        mainLayout.addWidget(save_button)
         self.setLayout(mainLayout)
+
+    def save_plot(self):
+        # 打开文件保存对话框
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save Plot", "",
+                                                   "PNG Files (*.png);;JPEG Files (*.jpg);;All Files (*)",
+                                                   options=options)
+        if file_path:
+            self.fig.savefig(file_path)
 
 
 class Click3dPrinting(QDialog):
