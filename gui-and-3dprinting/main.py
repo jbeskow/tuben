@@ -55,6 +55,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_3d.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
         self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
+        self.pushButton_explore.clicked.connect(self.menu_explore)
 
         self.setTip()
         self.tub = Tuben()
@@ -464,6 +465,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         canvas = FigureCanvas(fig)
         self.scene2.addWidget(canvas)
         self.graphics_formants.setScene(self.scene2)
+
+    def menu_explore(self):
+        pass
 
     def setTip(self):
         self.pushButton_add.setToolTip('This button is for adding tube parameters in two ways.\n'
