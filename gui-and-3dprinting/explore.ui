@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>913</width>
+    <height>546</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>841</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <row>
+     <property name="text">
+      <string>seg1</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Curr. len</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>min len</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>max len</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>len steps</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Curr. area</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>min area</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>max area</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>area steps</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>440</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>explore</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
