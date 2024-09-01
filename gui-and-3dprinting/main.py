@@ -15,6 +15,7 @@ from tuben_gui import Tuben
 import tube3dmodel
 from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, \
     PlotSelectionDialog, FigIllustration
+from explore import Explore
 import sounddevice as sd
 import pandas as pd
 
@@ -22,8 +23,8 @@ import pandas as pd
 class MyRectItem(QGraphicsRectItem):
     def __init__(self, index, x, y, length, width, la, output_method=None):
         super().__init__(x, y, length, width)
-        self.index = index  # save index for each tube section
-        self.la = la
+        self.index = index  # index for each tube section
+        self.la = la  # [length, area]
         self.setBrush(QColor.fromRgb(200, 0, 0))
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # to be selebtable
         self.isClicked = False
@@ -34,7 +35,6 @@ class MyRectItem(QGraphicsRectItem):
             self.isClicked = True
             if self.output_method:
                 self.output_method('Index {} clicked\nLength:{}\nArea:{}'.format(self.index, self.la[0], self.la[1]))
-        super().mousePressEvent(event)
 
 
 # Create a subclass of QMainWindow to set up the GUI
@@ -467,7 +467,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.graphics_formants.setScene(self.scene2)
 
     def menu_explore(self):
-        pass
+        self.explore_window = Explore()
+        self.explore_window.build_table(self.L, self.A)
+        self.explore_window.show()
 
     def setTip(self):
         self.pushButton_add.setToolTip('This button is for adding tube parameters in two ways.\n'
@@ -497,7 +499,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                              'Name after a spell in Harry Potter')
         self.pushButton_trajectory.setToolTip('This button is for setting the current tube parameters\n'
                                               'as an anchor for vowel sequence synthesis.')
-        self.pushButton_explore.setToolTip('Under Construction')
+        # self.pushButton_explore.setToolTip('Under Construction')
 
 
 # Main entry point of the application
