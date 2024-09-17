@@ -2,8 +2,8 @@ import re
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog
 from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsTextItem, QGraphicsLineItem, QGraphicsScene
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QColor, QPolygonF
+from PyQt5.QtCore import QPointF, Qt, QEvent
+from PyQt5.QtGui import QColor, QPolygonF, QKeyEvent
 import scipy.io.wavfile as wav
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,6 +29,7 @@ class MyRectItem(QGraphicsRectItem):
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # to be selebtable
         self.isClicked = False
         self.output_method = output_method
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -81,6 +82,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.index = None
         # trajectory window
         self.trajectoryWindow = TrajectoryWindow()
+        # 确保 QGraphicsView 可以接收焦点并传递键盘事件
+        self.illustration.setFocusPolicy(Qt.StrongFocus)
+        self.illustration.installEventFilter(self)
+        self.installEventFilter(self)
 
     def get_message(self, message):
         self.input_information_output.clear()
@@ -501,7 +506,58 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                               'as an anchor for vowel sequence synthesis.')
         # self.pushButton_explore.setToolTip('Under Construction')
 
+    '''
+    def keyPressEvent(self, event: QKeyEvent):
+        # 调用 get_index 获取当前选中的矩形
+        self.get_index()
+        # 如果有选中的矩形
+        if self.index is not None:
+            if event.key() == Qt.Key_Up:
+                # 增加选中矩形的面积（A 的值）
+                self.A[self.index] += 1  # 每次加 0.1，您可以调整这个步长
+            elif event.key() == Qt.Key_Down:
+                # 减少选中矩形的面积（A 的值）
+                self.A[self.index] = max(1, self.A[self.index] - 1)  # 保证面积不小于 0.1
+            elif event.key() == Qt.Key_Right:
+                # 增加选中矩形的长度（L 的值）
+                self.L[self.index] += 1  # 每次加 0.1，您可以调整这个步长
+            elif event.key() == Qt.Key_Left:
+                # 减少选中矩形的长度（L 的值）
+                self.L[self.index] = max(1, self.L[self.index] - 1)  # 保证长度不小于 0.1
 
+            # 调用 visualization() 重新绘制矩形
+            self.visualization(self.L, self.A)
+        else:
+            # 如果没有选中的矩形，可以忽略或提示用户
+            self.get_message("请先选择一个矩形进行修改")
+    '''
+    def eventFilter(self, obj, event):
+        # 捕获键盘事件
+        if event.type() == QEvent.KeyPress:
+            if isinstance(event, QKeyEvent):
+                # 调用 get_index 获取当前选中的矩形
+                self.get_index()
+                # 如果有选中的矩形
+                if self.index is not None:
+                    if event.key() == Qt.Key_Up:
+                        # 增加选中矩形的面积（A 的值）
+                        self.A[self.index] += 0.5  # 每次加 1，您可以调整这个步长
+                    elif event.key() == Qt.Key_Down:
+                        # 减少选中矩形的面积（A 的值）
+                        self.A[self.index] = max(0.5, self.A[self.index] - 0.5)  # 保证面积不小于 1
+                    elif event.key() == Qt.Key_Right:
+                        # 增加选中矩形的长度（L 的值）
+                        self.L[self.index] += 0.5  # 每次加 1，您可以调整这个步长
+                    elif event.key() == Qt.Key_Left:
+                        # 减少选中矩形的长度（L 的值）
+                        self.L[self.index] = max(0.5, self.L[self.index] - 0.5)  # 保证长度不小于 1
+
+                    # 调用 visualization() 重新绘制矩形
+                    self.visualization(self.L, self.A)
+                    self.visualize_formants()
+
+                    return True  # 标记为已处理，阻止进一步传播
+        return super().eventFilter(obj, event)
 # Main entry point of the application
 if __name__ == '__main__':
     app = QApplication(sys.argv)

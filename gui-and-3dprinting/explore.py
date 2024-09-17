@@ -8,13 +8,12 @@ import csv
 class Explore(QtWidgets.QMainWindow):
     def __init__(self):
         super(Explore, self).__init__()
-        uic.loadUi('explore.ui', self)  # 加载 .ui 文件
+        uic.loadUi('explore.ui', self)
 
-        # 访问 UI 元素
+        # access UI elements
         self.pushButton = self.findChild(QtWidgets.QPushButton, 'pushButton')
         self.tableWidget = self.findChild(QtWidgets.QTableWidget, 'tableWidget')
 
-        # 绑定按钮点击事件到自定义槽函数
         #self.pushButton.clicked.connect(self.add_table_row)
         self.pushButton.clicked.connect(self.explore)
 
@@ -22,30 +21,30 @@ class Explore(QtWidgets.QMainWindow):
 
 
     def build_table(self, L, A):
-        # 清空表格中的所有行
+        # empty the table
         self.tableWidget.setRowCount(0)
 
-        # 假设表格有至少 5 列
+
         for i in range(len(L)):
-            # 在表格末尾添加一行
+            # add a row at the end
             rowPosition = self.tableWidget.rowCount()
             self.tableWidget.insertRow(rowPosition)
 
-            # 将 L[i] 插入到第 1 列 (索引 0)
+            # insert L[i] column 1  (idx 0)
             #self.tableWidget.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(str(L[i])))
             item_L = QtWidgets.QTableWidgetItem(str(L[i]))
             item_L.setFlags(item_L.flags() & ~QtCore.Qt.ItemIsEditable)
             self.tableWidget.setItem(rowPosition, 0, item_L)
-            # 填充其他列（例如，第 2 到第 4 列）为默认值 "0"
+            # fill in other column
             for col in range(1, 4):
                 self.tableWidget.setItem(rowPosition, col, QtWidgets.QTableWidgetItem("0"))
 
-            # 将 A[i] 插入到第 5 列 (索引 4)
+            # A[i] to column 5 列
             item_A = QtWidgets.QTableWidgetItem(str(A[i]))
             item_A.setFlags(item_A.flags() & ~QtCore.Qt.ItemIsEditable)
             self.tableWidget.setItem(rowPosition, 4, item_A)
 
-            # 填充剩余的列（例如，第 6 到第 9 列）为默认值 "0"
+            # fill in other column
             for col in range(5, self.tableWidget.columnCount()):
                 self.tableWidget.setItem(rowPosition, col, QtWidgets.QTableWidgetItem("0"))
 
@@ -56,7 +55,7 @@ class Explore(QtWidgets.QMainWindow):
         #current = []
         row_count = self.tableWidget.rowCount()
 
-        # 先读取每一行的第 2、3、4 列的值
+        # read in column 2,3,4
         for row in range(row_count):
             current_L = float(self.tableWidget.item(row, 0).text())
             lower_bound = float(self.tableWidget.item(row, 1).text())
@@ -66,7 +65,7 @@ class Explore(QtWidgets.QMainWindow):
             ranges.append(range_tuple)
             #current.append(current_L)
 
-        # 再读取每一行的第 6、7、8 列的值
+        # read in column 6,7,8
         for row in range(row_count):
             current_A = float(self.tableWidget.item(row, 4).text())
             lower_bound = float(self.tableWidget.item(row, 5).text())
@@ -96,21 +95,23 @@ class Explore(QtWidgets.QMainWindow):
         size = int(len(combinations[0]) / 2)
         print(size)
         tub = Tuben()
+
+        #文件
         filename = 'testexplore.csv'
-        # 打开一个 CSV 文件以写入模式
+
         with open(filename, mode='w', newline='') as file:
             writer = csv.writer(file)
 
             # 遍历所有组合
             for comb in combinations:
-                # 获取 formants
+                # get formants
                 L=comb[:size]
                 A=comb[size:]
                 fmts, _ = tub.get_formants(L,A)
 
-                # 将组合及其对应的 formants 写入 CSV 文件
+                # write in
                 #row = [(L[i],A[i]) for i in range(size)] + [int(fmts[0]), int(fmts[1])]
-                row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1])]
+                row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]),int(fmts[2]), int(fmts[3])]
 
                 writer.writerow(row)
 
@@ -122,10 +123,9 @@ class Explore(QtWidgets.QMainWindow):
             yield current
             return
         while start <= stop:
-            yield round(start, 10)  # 使用 round() 防止浮点数精度问题
+            yield round(start, 10)
             start += step
 
-    # 示例调用
 
 
 if __name__ == "__main__":
