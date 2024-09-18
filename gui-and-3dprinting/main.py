@@ -30,7 +30,6 @@ class MyRectItem(QGraphicsRectItem):
         self.isClicked = False
         self.output_method = output_method
 
-
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.isClicked = True
@@ -558,6 +557,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
                     return True  # 标记为已处理，阻止进一步传播
         return super().eventFilter(obj, event)
+
+
 # Main entry point of the application
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -1,5 +1,5 @@
 import sys
-from PyQt5 import QtWidgets, uic,QtCore
+from PyQt5 import QtWidgets, uic, QtCore
 from itertools import product
 from tuben_gui import Tuben  #use get_formants()
 import csv
@@ -19,11 +19,9 @@ class Explore(QtWidgets.QMainWindow):
 
         self.show()
 
-
     def build_table(self, L, A):
         # empty the table
         self.tableWidget.setRowCount(0)
-
 
         for i in range(len(L)):
             # add a row at the end
@@ -96,27 +94,27 @@ class Explore(QtWidgets.QMainWindow):
         print(size)
         tub = Tuben()
 
-        #文件
-        filename = 'testexplore.csv'
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save CSV File", "", "CSV Files (*.csv);;All Files (*)")
+        if filename:
+            if not filename.endswith(".csv"):
+                filename += ".csv"
+            with open(filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                # 遍历所有组合
+                for comb in combinations:
+                    # get formants
+                    L = comb[:size]
+                    A = comb[size:]
+                    fmts, _ = tub.get_formants(L, A)
 
-        with open(filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
+                    # write in
+                    # row = [(L[i],A[i]) for i in range(size)] + [int(fmts[0]), int(fmts[1])]
+                    row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]), int(fmts[2]),
+                                                                           int(fmts[3])]
+                    print(row)
+                    writer.writerow(row)
 
-            # 遍历所有组合
-            for comb in combinations:
-                # get formants
-                L=comb[:size]
-                A=comb[size:]
-                fmts, _ = tub.get_formants(L,A)
-
-                # write in
-                #row = [(L[i],A[i]) for i in range(size)] + [int(fmts[0]), int(fmts[1])]
-                row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]),int(fmts[2]), int(fmts[3])]
-
-                writer.writerow(row)
-
-        print(f"Data written to {filename}")
-
+            print(f"Data written to {filename}")
 
     def frange(self, current, start, stop, step):
         if step == 0 or stop > start:
@@ -125,7 +123,6 @@ class Explore(QtWidgets.QMainWindow):
         while start <= stop:
             yield round(start, 10)
             start += step
-
 
 
 if __name__ == "__main__":
