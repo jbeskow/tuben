@@ -106,12 +106,15 @@ class Explore(QtWidgets.QMainWindow):
                     L = comb[:size]
                     A = comb[size:]
                     fmts, _ = tub.get_formants(L, A)
-
-                    # write in
-                    # row = [(L[i],A[i]) for i in range(size)] + [int(fmts[0]), int(fmts[1])]
-                    row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]), int(fmts[2]),
-                                                                           int(fmts[3])]
-                    print(row)
+                    if len(fmts) == 4:
+                        row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]), int(fmts[2]),
+                                                                               int(fmts[3])]
+                    elif len(fmts) == 3:
+                        row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1]), int(fmts[2])]
+                    elif len(fmts) == 2:
+                        row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0]), int(fmts[1])]
+                    elif len(fmts) == 1:
+                        row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0])]
                     writer.writerow(row)
 
             print(f"Data written to {filename}")
