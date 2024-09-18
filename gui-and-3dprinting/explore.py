@@ -118,7 +118,7 @@ class Explore(QtWidgets.QMainWindow):
         print(f"Data written to {filename}")
 
 
-    def frange(current, start, stop, step):
+    def frange(self, current, start, stop, step):
         if step == 0 or stop > start:
             yield current
             return
