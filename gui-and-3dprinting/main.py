@@ -540,16 +540,16 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if self.index is not None:
                     if event.key() == Qt.Key_Up:
                         # 增加选中矩形的面积（A 的值）
-                        self.A[self.index] += 0.5  # 每次加 1，您可以调整这个步长
+                        self.A[self.index] += 0.1  # 每次加 1，您可以调整这个步长
                     elif event.key() == Qt.Key_Down:
                         # 减少选中矩形的面积（A 的值）
-                        self.A[self.index] = max(0.5, self.A[self.index] - 0.5)  # 保证面积不小于 1
+                        self.A[self.index] = max(0.1, self.A[self.index] - 0.1)  # 保证面积不小于 1
                     elif event.key() == Qt.Key_Right:
                         # 增加选中矩形的长度（L 的值）
-                        self.L[self.index] += 0.5  # 每次加 1，您可以调整这个步长
+                        self.L[self.index] += 0.1  # 每次加 1，您可以调整这个步长
                     elif event.key() == Qt.Key_Left:
                         # 减少选中矩形的长度（L 的值）
-                        self.L[self.index] = max(0.5, self.L[self.index] - 0.5)  # 保证长度不小于 1
+                        self.L[self.index] = max(0.1, self.L[self.index] - 0.1)  # 保证长度不小于 1
 
                     # 调用 visualization() 重新绘制矩形
                     self.visualization(self.L, self.A)
