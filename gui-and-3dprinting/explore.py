@@ -3,12 +3,13 @@ from PyQt5 import QtWidgets, uic, QtCore
 from itertools import product
 from tuben_gui import Tuben  #use get_formants()
 import csv
+from explore_window import Ui_MainWindow
 
 
-class Explore(QtWidgets.QMainWindow):
+class Explore(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super(Explore, self).__init__()
-        uic.loadUi('explore.ui', self)
+        super().__init__()
+        self.setupUi(self)
 
         # access UI elements
         self.pushButton = self.findChild(QtWidgets.QPushButton, 'pushButton')
