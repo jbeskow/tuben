@@ -4,6 +4,13 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLa
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from PyQt5.QtCore import Qt, QPoint
 from formantsynt import synthesize_vowel_sequence
+import base64
+from vowel_chart_png import img
+
+
+tmp = open('vowel_chart.png', 'wb')
+tmp.write(base64.b64decode(img))
+tmp.close()
 
 
 class MyWindow(QWidget):
@@ -112,7 +119,7 @@ class MainWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Main Window")
         self.initUI()
-        self.childWindow = MyWindow("vowel_chart.png")  # Create instance of your child window
+        self.childWindow = MyWindow('vowel_chart.png')  # Create instance of your child window
 
     def initUI(self):
         layout = QVBoxLayout(self)
