@@ -508,9 +508,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                              'Name after a spell in Harry Potter')
         self.pushButton_trajectory.setToolTip('This button sets the current tube parameters\n'
                                               'as an anchor for vowel sequence synthesis.')
-        self.pushButton_explore.setToolTip('This button calculates all possible combinations\n'
-                                           'within specified minimum and maximum thresholds and\n'
-                                           'outputs the results to a CSV file.')
+        self.pushButton_explore.setToolTip('This button calculates all possible combinations within\n'
+                                           'specified minimum and maximum thresholds of tube sections\n'
+                                           'and outputs the results to a CSV file.')
 
     '''
     def keyPressEvent(self, event: QKeyEvent):
