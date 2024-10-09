@@ -291,7 +291,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if not file_path.endswith(".wav"):
                     file_path += ".wav"
                 wav.write(file_path, self.samplerate, y)
-                self.get_message(file_path + '.wav Created')
+                self.get_message(file_path + ' Created')
 
     def play_sound(self):
         fmt, _ = self.tub.get_formants(self.L, self.A)
@@ -398,10 +398,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                                        "All Files (*)",
                                                        options=options)
             if file_path:
-                if not file_path.endswith(".stl"):
-                    file_path += "_con.stl"
                 tube3dmodel.tubemaker_3d(self.L, self.A, file_path)
-                self.get_message(f'STL file created: {file_path}')
+                self.get_message(f'STL file created: {file_path}.stl')
 
     def det3d(self):
         if len(self.L) == 0 or len(self.A) == 0:
@@ -483,34 +481,36 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.explore_window.show()
 
     def setTip(self):
-        self.pushButton_add.setToolTip('This button is for adding tube parameters in two ways.\n'
+        self.pushButton_add.setToolTip('This button adds tube parameters in two ways.\n'
                                        'Load a file or manually type in the parameters')
-        self.pushButton_remove.setToolTip('This button is for deleting a tube section.\n'
+        self.pushButton_remove.setToolTip('This button deletes a tube section.\n'
                                           'You can click the section and click this button to remove it')
-        self.pushButton_alter.setToolTip('This button is for changing the length and/or width '
+        self.pushButton_alter.setToolTip('This button changes the length and/or width '
                                          'of a certain tube section.\n'
                                          'You can click the section and click this button to enter the new parameters')
-        self.pushButton_scale.setToolTip('This button is for changing the entire tube proportionally.\n'
+        self.pushButton_scale.setToolTip('This button changes the entire tube proportionally.\n'
                                          'You can type in or click the spinbox on the left to set the proportion\n'
                                          'and click this button to get new tube parameters')
-        self.pushButton_save.setToolTip('This button is for saving all the changes you have made.')
-        self.pushButton_sound.setToolTip('This button is for generating .wav file with given tube parameters.')
+        self.pushButton_save.setToolTip('This button saves all the changes you have made.')
+        self.pushButton_sound.setToolTip('This button generates .wav file with given tube parameters.')
         self.play_audio.setToolTip('Click this button to hear the synthesized sound based on given tube parameters.')
-        self.pushButton_illustrate.setToolTip('This button is for generating tube related illustration.\n'
+        self.pushButton_illustrate.setToolTip('This button generates tube related illustration.\n'
                                               'With Tube model, Peak function plot and Transfer function options\n'
                                               'You can save the plot as a .png file')
-        self.pushButton_3d.setToolTip('This button is for generating 3D-printable file (.stl)')
+        self.pushButton_3d.setToolTip('This button generates 3D-printable file (.stl)')
         self.example_a.setToolTip('This button is an example of tube parameters that sounds like /a/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
         self.example_i.setToolTip('This button is an example of tube parameters that sounds like /i/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
         self.example_u.setToolTip('This button is an example of tube parameters that sounds like /u/.\n'
                                   'You can click this button to get the parameters then test them with other buttons')
-        self.pushButton_obliviate.setToolTip('This button is for deleting all tube parameters.\n'
+        self.pushButton_obliviate.setToolTip('This button deletes all tube parameters.\n'
                                              'Name after a spell in Harry Potter')
-        self.pushButton_trajectory.setToolTip('This button is for setting the current tube parameters\n'
+        self.pushButton_trajectory.setToolTip('This button sets the current tube parameters\n'
                                               'as an anchor for vowel sequence synthesis.')
-        # self.pushButton_explore.setToolTip('Under Construction')
+        self.pushButton_explore.setToolTip('This button calculates all possible combinations\n'
+                                           'within specified minimum and maximum thresholds and\n'
+                                           'outputs the results to a CSV file.')
 
     '''
     def keyPressEvent(self, event: QKeyEvent):
