@@ -300,9 +300,6 @@ class MainWindow(QMainWindow, Ui_TubeN):
         dialog.setWindowTitle("add")
         if dialog.exec_():
             lengths, areas = dialog.getInputs()
-            print(type(lengths))
-            print("Length(s):", lengths)
-            print("Area(s):", areas)
             le = [float(l) for l in lengths.split(',')]
             ar = [float(a) for a in areas.split(',')]
             self.L.append(le)

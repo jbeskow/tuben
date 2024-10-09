@@ -72,26 +72,27 @@ class Explore(QtWidgets.QMainWindow, Ui_MainWindow):
             range_tuple = (current_A, lower_bound, upper_bound, step)
             ranges.append(range_tuple)
             #current.append(current_A)
-        print(ranges)
+        # print(ranges)
         return ranges
 
     def generate_combinations(self, ranges):
         all_ranges = []
         for i, (current, lower, upper, step) in enumerate(ranges):
-            print(f"Processing range {i}: lower={lower}, upper={upper}, step={step}")
+            # print(f"Processing range {i}: lower={lower}, upper={upper}, step={step}")
             possible_values = self.frange(current, lower, upper, step)
             all_ranges.append(possible_values)
 
         combinations = [list(combination) for combination in product(*all_ranges)]
-        if len(combinations)==0:
-            print(all_ranges)
+        if len(combinations) == 0:
+            pass
+            # print(all_ranges)
         return combinations
 
     def explore(self):
         ranges = self.get_ranges()
         combinations = self.generate_combinations(ranges)
         size = int(len(combinations[0]) / 2)
-        print(size)
+        # print(size)
         tub = Tuben()
 
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save CSV File", "", "CSV Files (*.csv);;All Files (*)")
@@ -117,7 +118,7 @@ class Explore(QtWidgets.QMainWindow, Ui_MainWindow):
                         row = [item for pair in zip(L, A) for item in pair] + [int(fmts[0])]
                     writer.writerow(row)
 
-            print(f"Data written to {filename}")
+            # print(f"Data written to {filename}")
 
     def frange(self, current, start, stop, step):
         if step == 0 or stop > start:

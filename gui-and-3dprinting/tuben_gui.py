@@ -51,7 +51,7 @@ class Tuben:
 
     def set_tube(self, L, A):
         if type(L) != list or type(A) != list:
-            print('bad input')
+            # print('bad input')
             import pdb; pdb.set_trace()
         self.L = L
         self.A = A
@@ -144,18 +144,18 @@ def get_tube():
     A = [float(a) for a in args.areas.split(',')]
 
     if len(L) != len(A):
-        print('the "lengths" and "areas" lists must be of equal length')
+        # print('the "lengths" and "areas" lists must be of equal length')
         exit(1)
 
     fmt, Y = tub.get_formants(L, A)
-    print('formant frequencies (Hz): ', ', '.join([str(x) for x in fmt]))
+    # print('formant frequencies (Hz): ', ', '.join([str(x) for x in fmt]))
 
     if args.output:
         fs = args.samplerate
         x = formantsynt.impulsetrain(fs, args.synt_f0, args.synt_dur)
         y = formantsynt.ffilter(fs, x, fmt)
         wav.write(args.output, fs, y)
-        print('wrote:', args.output)
+        # print('wrote:', args.output)
 
     if args.plot:
         tub.plot()

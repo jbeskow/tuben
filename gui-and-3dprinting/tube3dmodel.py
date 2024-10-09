@@ -9,7 +9,7 @@ def create_detachable_section_mesh(square_length, height, inner_radius, filename
     stl_file_path = filename+'.stl'
     tube_mesh.export(stl_file_path)
 
-    print(f"STL file created: {stl_file_path}")
+    # print(f"STL file created: {stl_file_path}")
     return tube_mesh
 
 
@@ -60,7 +60,7 @@ def create_detachable_section_mesh_lego(square_length, height, inner_radius, hol
     stl_file_path = f'{filename}.stl'
     outer_mesh.export(stl_file_path)
 
-    print(f"STL file created: {stl_file_path}")
+    # print(f"STL file created: {stl_file_path}")
     return outer_mesh
 
 
@@ -158,7 +158,7 @@ def tubemaker_3d(length_list, area_list, file_name, thickness=1):
     stl_file_path = file_name + '.stl'
     combined_mesh.export(stl_file_path)
 
-    print(f"STL file created: {stl_file_path}")
+    # print(f"STL file created: {stl_file_path}")
 
 
 if __name__ == '__main__':
