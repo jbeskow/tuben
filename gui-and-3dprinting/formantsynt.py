@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
+
 # J. Beskow 2023
 # Static vowel formant synthesis
 

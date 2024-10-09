@@ -9,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import sounddevice as sd
+import pandas as pd
 from qt_test import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
@@ -16,8 +18,6 @@ import tube3dmodel
 from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, \
     PlotSelectionDialog, FigIllustration
 from explore import Explore
-import sounddevice as sd
-import pandas as pd
 
 
 class MyRectItem(QGraphicsRectItem):

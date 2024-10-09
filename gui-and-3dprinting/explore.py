@@ -1,7 +1,6 @@
-import sys
-from PyQt5 import QtWidgets, uic, QtCore
+from PyQt5 import QtWidgets, QtCore
 from itertools import product
-from tuben_gui import Tuben  #use get_formants()
+from tuben_gui import Tuben  # use get_formants()
 import csv
 from explore_window import Ui_MainWindow
 
