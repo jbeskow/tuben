@@ -460,20 +460,26 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.scene2.clear()
         F = np.arange(1, 8000)
         fmt, Y = self.tub.get_formants(self.L, self.A)
+        fs = 16000
+        f, h = formantsynt.get_transfer_function(fs, fmt)
         fig, ax = plt.subplots(figsize=(10, 3))
-        ax.plot(F, Y, ':')
-        ax.plot(F[fmt], Y[fmt], '.')
+        #ax.set_xlabel('frequency (Hz)')
+        ax.set_ylabel('dB')
+        ax.plot(f, h)
+        # ax.plot(F, Y, ':')
+        # ax.plot(F[fmt], Y[fmt], '.')
         for idx in fmt:
             x_val = F[idx]
             y_val = Y[idx]
-            ax.axvline(x_val, color='gray', linestyle='--')
+            ax.axvline(x_val, color='pink', linestyle='--')
             ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val + 0.05),
-                        textcoords='data', ha='center', va='bottom', arrowprops=dict(arrowstyle='-', linestyle=':'))
+                        textcoords='data', ha='center', va='top', arrowprops=dict(arrowstyle='-', linestyle=':'))
         ax.annotate('frequency (Hz)', xy=(1.1, 0), xycoords='axes fraction', ha='right', va='bottom')
         fig.patch.set_facecolor((234 / 255, 233 / 255, 255 / 255))
         canvas = FigureCanvas(fig)
         self.scene2.addWidget(canvas)
         self.graphics_formants.setScene(self.scene2)
+        plt.close()
 
     def menu_explore(self):
         self.explore_window = Explore()
