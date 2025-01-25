@@ -472,9 +472,22 @@ class AppWindow(QMainWindow, Ui_TubeN):
             x_val = F[idx]
             y_val = h[idx]
             ax.axvline(x_val, color='pink', linestyle='--')
-            ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val),
-                        textcoords='data', ha='center', va='top', arrowprops=dict(arrowstyle='-', linestyle=':'))
-        ax.annotate('frequency (Hz)', xy=(1.1, 0), xycoords='axes fraction', ha='right', va='bottom')
+            #ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val),
+                        #textcoords='data', ha='center', va='top', arrowprops=dict(arrowstyle='-', linestyle=':'))
+        #ax.annotate('frequency (Hz)', xy=(1.1, 0), xycoords='axes fraction', ha='right', va='bottom')
+        ax_top = ax.twiny()
+
+        ax_top.set_xlim(ax.get_xlim())
+
+        ax_top.set_xticks([F[idx] for idx in fmt])
+        ax_top.set_xticklabels([f'{F[idx]}' for idx in fmt], fontsize=10)
+
+        ax_top.spines['top'].set_visible(False)
+        ax_top.spines['right'].set_visible(False)
+        ax_top.spines['left'].set_visible(False)
+        ax_top.spines['bottom'].set_visible(False)
+
+        ax_top.xaxis.set_tick_params(direction='out', pad=0)
         fig.patch.set_facecolor((234 / 255, 233 / 255, 255 / 255))
         canvas = FigureCanvas(fig)
         self.scene2.addWidget(canvas)
