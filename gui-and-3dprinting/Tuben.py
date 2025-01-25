@@ -470,9 +470,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         # ax.plot(F[fmt], Y[fmt], '.')
         for idx in fmt:
             x_val = F[idx]
-            y_val = Y[idx]
+            y_val = h[idx]
             ax.axvline(x_val, color='pink', linestyle='--')
-            ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val + 0.05),
+            ax.annotate(f'{x_val}', xy=(x_val, y_val), xytext=(x_val, y_val),
                         textcoords='data', ha='center', va='top', arrowprops=dict(arrowstyle='-', linestyle=':'))
         ax.annotate('frequency (Hz)', xy=(1.1, 0), xycoords='axes fraction', ha='right', va='bottom')
         fig.patch.set_facecolor((234 / 255, 233 / 255, 255 / 255))
