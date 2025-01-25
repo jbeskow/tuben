@@ -480,7 +480,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         ax_top.set_xlim(ax.get_xlim())
 
         ax_top.set_xticks([F[idx] for idx in fmt])
-        ax_top.set_xticklabels([f'{F[idx]}' for idx in fmt], fontsize=10)
+        ax_top.set_xticklabels([f'{F[idx]}' for idx in fmt], fontsize=10, fontweight='bold')
 
         ax_top.spines['top'].set_visible(False)
         ax_top.spines['right'].set_visible(False)
