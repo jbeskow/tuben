@@ -112,7 +112,7 @@ class MainWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Main Window")
         self.initUI()
-        self.childWindow = MyWindow("vowel_chart.png")  # Create instance of your child window
+        self.childWindow = MyWindow('vowel_chart.png')  # Create instance of your child window
 
     def initUI(self):
         layout = QVBoxLayout(self)

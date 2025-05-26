@@ -2,7 +2,7 @@
 
 ## Running from souce code
 
-`python main.py`
+`python Tuben.py`
 
 ## Binaries
 
