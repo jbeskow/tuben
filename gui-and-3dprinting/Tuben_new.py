@@ -2,30 +2,23 @@ import re
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog, QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsLineItem, QSizePolicy, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QGraphicsProxyWidget
 from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtGui import QColor, QKeyEvent, QFont
-import scipy.io.wavfile as wav
+from PyQt5.QtGui import QColor, QKeyEvent, QFont, QPen
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import sounddevice as sd
-import pandas as pd
-from new_main_window_2 import Ui_TubeN
+from main_window_ui import Ui_TubeN
 import formantsynt
 from tuben_gui import Tuben
 import tube3dmodel
-from popups import InputDialogAdd, InputDialogAlter, TrajectoryWindow, Click3dPrinting, \
+from popups import InputDialogAdd, InputDialogAlter, Click3dPrinting, \
     PlotSelectionDialog, FigIllustration
-import base64
 import math
-
-# pyinstaller --onefile --icon=icon.ico --noconsole Tuben.py
-
-img = "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"
-tmp = open('vowel_chart.png', 'wb')
-tmp.write(base64.b64decode(img))
-tmp.close()
+# pyuic5 -o main_window_ui.py main_window.ui
+# pyinstaller --onefile --icon=icon.ico --noconsole Tuben_new.py
 
 
 class MyRectItem(QGraphicsRectItem):
@@ -33,7 +26,14 @@ class MyRectItem(QGraphicsRectItem):
         super().__init__(x, y, length, width)
         self.index = index  # index for each tube section
         self.la = la  # [length, area]
-        self.setBrush(QColor.fromRgb(100, 120, 200))
+        # Fill color: light blue with transparency (alpha = 200, range 0–255)
+        brush = QColor(41, 109, 186, 200)
+        self.setBrush(brush)
+        # Outline color: dark gray
+        pen = QPen(QColor(96, 96, 96))
+        pen.setWidth(0)  # very thin border
+        self.setPen(pen)
+
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # to be selectable
         self.isClicked = False
         self.output_method = output_method
@@ -62,13 +62,10 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_add.clicked.connect(self.menu_add)
         self.pushButton_remove.clicked.connect(self.menu_remove)
         self.pushButton_alter.clicked.connect(self.menu_alter)
-        self.pushButton_save.clicked.connect(self.menu_save)
-        self.pushButton_sound.clicked.connect(self.menu_sound)
-        self.play_audio.clicked.connect(self.play_sound)
+        # self.play_audio.clicked.connect(self.play_sound)
         self.pushButton_illustrate.clicked.connect(self.menu_illustrate)
         self.pushButton_3d.clicked.connect(self.menu_3d)
         self.pushButton_obliviate.clicked.connect(self.menu_obliviate)
-        self.pushButton_trajectory.clicked.connect(self.menu_trajectory)
 
         self.setTip()
         self.tub = Tuben()
@@ -83,14 +80,8 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.example_u.clicked.connect(self.show_example_u)
         self.L = []
         self.A = []
-        self.L_all = []
-        self.A_all = []
-        self.action = []
-        self.F_all = []
         self.samplerate = 16000
         self.index = None
-        # trajectory window
-        self.trajectoryWindow = TrajectoryWindow()
         # Ensure that the QGraphicsView can receive focus and handle keyboard events
         self.illustration.setFocusPolicy(Qt.StrongFocus)
         self.illustration.installEventFilter(self)
@@ -144,11 +135,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if len(self.L) == len(self.A):
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
-                    self.action.append('Add')
-                    self.L_all.append(self.L)
-                    self.A_all.append(self.L)
                     fmt, _ = self.tub.get_formants(self.L, self.A)
-                    self.F_all.append(fmt.tolist())
             else:
                 self.get_message('Invalid input, please try again')
 
@@ -163,11 +150,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
                 if len(self.L) == len(self.A) and len(self.L) > 0:
                     self.visualization(self.L, self.A)
                     self.visualize_formants()
-                    self.action.append('Remove')
-                    self.L_all.append(self.L)
-                    self.A_all.append(self.L)
-                    fmt, _ = self.tub.get_formants(self.L, self.A)
-                    self.F_all.append(fmt.tolist())
                 else:
                     self.scene1.clear()
                     self.add_axis()
@@ -194,11 +176,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
                             self.A[self.index] = a
                             self.visualization(self.L, self.A)
                             self.visualize_formants()
-                            self.action.append('Alter')
-                            self.L_all.append(self.L)
-                            self.A_all.append(self.L)
-                            fmt, _ = self.tub.get_formants(self.L, self.A)
-                            self.F_all.append(fmt.tolist())
                         else:
                             self.get_message('Invalid Input: new parameter(s) should be larger than 0')
                         self.index = None
@@ -207,17 +184,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
             else:
                 self.get_message('Select a section first')
 
-    def menu_save(self):
-        history = pd.DataFrame()
-        history['Action'] = self.action
-        history['Length'] = self.L_all
-        history['Area'] = self.A_all
-        history['Predicted Formants'] = self.F_all
-        file_path, _ = QFileDialog.getSaveFileName(self, "Save CSV File", "", "CSV Files (*.csv);;All Files (*)")
-        if file_path:
-            if not file_path.endswith(".csv"):
-                file_path += ".csv"
-            history.to_csv(file_path, encoding='UTF-8', index=False)
 
     def add_axis(self, l, a, scale_x=15, scale_y=8):
         """
@@ -261,16 +227,36 @@ class AppWindow(QMainWindow, Ui_TubeN):
             if cm2 % 2 == 0:  # label every 2 cm2
                 label_value = abs(cm2)
                 label = QGraphicsTextItem(str(label_value))
-                label.setFont(QFont("Arial", 3))
+                label.setFont(QFont("Book Antiqua", 3))
                 text_rect = label.boundingRect()
                 label.setPos(y_axis_x - text_rect.width() - 2, y_pos - text_rect.height() / 2)
                 self.scene1.addItem(label)
         unit_label_y = QGraphicsTextItem("cm²")
-        unit_label_y.setFont(QFont("Arial", 3, QFont.Bold))
+        unit_label_y.setFont(QFont("Book Antiqua", 3, QFont.Bold))
         unit_label_y.setPos(
             y_axis_x - 15,  # shift left by 15
             max_area_int * scale_y + 3)  # at the bottom of y-axis with 3 units further down
         self.scene1.addItem(unit_label_y)
+
+        self.play_button = QPushButton()
+        self.play_button.setFixedSize(35, 25)
+        self.play_button.setStyleSheet("""
+            QPushButton {
+                border: none;
+                background: transparent;
+            }
+        """)
+        self.play_button.setText("▶")
+        font = self.play_button.font()
+        font.setBold(True)
+        font.setPointSize(8)
+        self.play_button.setFont(font)
+        self.play_button.clicked.connect(self.play_sound)
+
+        proxy = QGraphicsProxyWidget()
+        proxy.setWidget(self.play_button)
+        proxy.setPos(-50, -15)
+        self.scene1.addItem(proxy)
 
         # X-axis
         max_length_int = math.ceil(total_length)
@@ -289,26 +275,26 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
             if cm % 2 == 0:  # label every 2 cm
                 label = QGraphicsTextItem(str(cm))
-                label.setFont(QFont("Arial", 3))
+                label.setFont(QFont("Book Antiqua", 3))
                 text_rect = label.boundingRect()
                 text_width = text_rect.width()
                 text_height = text_rect.height()
-                label.setPos(x_pos - text_width / 2, x_axis_y + 2)  # 居中对齐
+                label.setPos(x_pos - text_width / 2, x_axis_y + 2)
                 self.scene1.addItem(label)
         unit_label_x = QGraphicsTextItem("cm")
-        unit_label_x.setFont(QFont("Arial", 3, QFont.Bold))
+        unit_label_x.setFont(QFont("Book Antiqua", 3, QFont.Bold))
         unit_label_x.setPos(max_length_int * scale_x + 2, x_axis_y + 2)
         self.scene1.addItem(unit_label_x)
 
         # add "Lips" at the left end of X-axis
         lips_label = QGraphicsTextItem("lips")
-        lips_label.setFont(QFont("Verdana", 3))
+        lips_label.setFont(QFont("Book Antiqua", 3))
         lips_label.setPos(0, max_area_int * scale_y-5)
         self.scene1.addItem(lips_label)
 
         # add "Glottis" at the right end of X-axis
         glottis_label = QGraphicsTextItem("glottis")
-        glottis_label.setFont(QFont("Verdana", 3))
+        glottis_label.setFont(QFont("Book Antiqua", 3))
         glottis_label.setPos(total_length * scale_x-10, max_area_int * scale_y-5)
         self.scene1.addItem(glottis_label)
 
@@ -387,22 +373,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
                         self.visualize_formants()
                         return True
         return super().eventFilter(obj, event)
-
-    def menu_sound(self):
-        if len(self.L) == 0 or len(self.A) == 0:
-            self.get_message('Empty Input Value')
-        elif len(self.L) != len(self.A):
-            self.get_message('Invalid input: lengths and areas lists must be of equal length')
-        else:
-            fmt, _ = self.tub.get_formants(self.L, self.A)
-            x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
-            y = formantsynt.ffilter(self.samplerate, x, fmt)
-            file_path, _ = QFileDialog.getSaveFileName(self, "Save Audio File", "", "WAV Files (*.wav);;All Files (*)")
-            if file_path:
-                if not file_path.endswith(".wav"):
-                    file_path += ".wav"
-                wav.write(file_path, self.samplerate, y)
-                self.get_message(file_path + ' Created')
 
     def play_sound(self):
         fmt, _ = self.tub.get_formants(self.L, self.A)
@@ -540,18 +510,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.visualization(self.L, self.A)
         self.visualize_formants()
 
-    def menu_trajectory(self):
-        # if it is already shown then nothing happens
-        self.trajectoryWindow.show()
-        if not self.L:
-            return
-        # TODO pick a better one between these two
-        # self.fmt, self.Y = tub.get_formants(self.L, self.A)
-        fmt, _ = self.tub.get_formants(self.L, self.A)
-        self.trajectoryWindow.addEntry(fmt=fmt)
-        self.trajectoryWindow.raise_()
-        self.trajectoryWindow.activateWindow()
-
     def visualize_formants(self):
         # Get the layout of the QWidget; create one if it doesn't exist
         layout = self.graphics_formants.layout()
@@ -567,11 +525,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
             self.formants_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             layout.addWidget(self.formants_canvas)
             self.graphics_formants.setStyleSheet("background-color: white;")
-            # Create top axis only once
-            self.ax_top = self.ax.twiny()
-            for spine in ['top', 'right', 'left', 'bottom']:
-                self.ax_top.spines[spine].set_visible(False)
-            self.ax_top.xaxis.set_tick_params(direction='out', pad=5)
         else:
             # Clear Axes but keep the Canvas
             self.ax.clear()
@@ -586,15 +539,18 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.ax.set_ylabel('dB', fontsize=15, fontweight='bold')
         self.ax.tick_params(axis='both', labelsize=20)
 
-        for idx in fmt:
-            x_val = F[idx]
-            self.ax.axvline(x_val, color='pink', linestyle='--')
-
-        # Update top axis with formant labels
-        self.ax_top.set_xlim(self.ax.get_xlim())
-        self.ax_top.set_xticks([F[idx] for idx in fmt])
-        self.ax_top.set_xticklabels([f'{F[idx]}' for idx in fmt],
-                                    fontsize=15, fontweight='bold')
+        for i, idx in enumerate(fmt, start=1):
+            x_val = F[idx]  # formant frequency
+            self.ax.axvline(x_val, color='pink', linestyle='--')  # draw vertical line
+            # find the nearest index in f to get amplitude (dB)
+            nearest_idx = np.argmin(np.abs(f - x_val))
+            y_val = h[nearest_idx]
+            if i % 2 == 1:  # odd index (1st, 3rd): label above peak
+                self.ax.text(x_val, y_val, f"{x_val}",
+                             ha="center", va="bottom", fontsize=17, fontweight="bold")
+            else:  # even index (2nd, 4th): label below peak
+                self.ax.text(x_val, y_val - 14, f"{x_val}",
+                             ha="center", va="top", fontsize=17, fontweight="bold")
 
         # Refresh the FigureCanvas to display the updated plot
         self.formants_canvas.draw()
@@ -607,9 +563,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.pushButton_alter.setToolTip('This button changes the length and/or width '
                                          'of a certain tube section.\n'
                                          'You can click the section and click this button to enter the new parameters')
-        self.pushButton_save.setToolTip('This button saves all the changes you have made.')
-        self.pushButton_sound.setToolTip('This button generates .wav file with given tube parameters.')
-        self.play_audio.setToolTip('Click this button to hear the synthesized sound based on given tube parameters.')
+        # self.play_audio.setToolTip('Click this button to hear the synthesized sound based on given tube parameters.')
         self.pushButton_illustrate.setToolTip('This button generates tube related illustration.\n'
                                               'With Tube model, Peak function plot and Transfer function options\n'
                                               'You can save the plot as a .png file')
@@ -622,9 +576,6 @@ class AppWindow(QMainWindow, Ui_TubeN):
                                   'You can click this button to get the parameters then test them with other buttons')
         self.pushButton_obliviate.setToolTip('This button deletes all tube parameters.\n'
                                              'Name after a spell in Harry Potter')
-        self.pushButton_trajectory.setToolTip('This button sets the current tube parameters\n'
-                                              'as an anchor for vowel sequence synthesis.')
-
 
 # Main entry point of the application
 if __name__ == '__main__':
