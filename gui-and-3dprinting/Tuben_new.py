@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsRectItem, QFileDialog, QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsLineItem, QSizePolicy, QVBoxLayout
 from PyQt5.QtWidgets import QPushButton, QGraphicsProxyWidget
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent, QTimer
 from PyQt5.QtGui import QColor, QKeyEvent, QFont, QPen
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,7 +35,6 @@ class MyRectItem(QGraphicsRectItem):
         self.setPen(pen)
 
         self.setFlag(QGraphicsRectItem.ItemIsSelectable, True)  # to be selectable
-        self.isClicked = False
         self.output_method = output_method
 
     def mousePressEvent(self, event):
@@ -45,12 +44,19 @@ class MyRectItem(QGraphicsRectItem):
             for item in self.scene().items():
                 # Check if the item is an instance of MyRectItem
                 if isinstance(item, MyRectItem):
-                    item.isClicked = False  # Reset its 'isClicked' state to False
-            self.isClicked = True  # Now this item is 'selected'
-            if self.output_method:
-                self.output_method(
-                    f'Index {self.index} clicked\nLength:{self.la[0]}\nArea:{self.la[1]}'
-                )
+                    item.setSelected(False)  # Reset its selection state
+                self.setSelected(True)  # Now this item is selected
+                # Update index
+                if hasattr(self.scene().views()[0].parent(), "index"):
+                    self.scene().views()[0].parent().index = self.index
+                if self.output_method:
+                    self.output_method(
+                        f'Index {self.index} selected\n'
+                        f'Length:{self.la[0]}\n'
+                        f'Area:{self.la[1]}'
+                    )
+            # Call the base class implementation
+            super().mousePressEvent(event)
 
 # Create a subclass of QMainWindow to set up the GUI
 class AppWindow(QMainWindow, Ui_TubeN):
@@ -85,18 +91,24 @@ class AppWindow(QMainWindow, Ui_TubeN):
         # Ensure that the QGraphicsView can receive focus and handle keyboard events
         self.illustration.setFocusPolicy(Qt.StrongFocus)
         self.illustration.installEventFilter(self)
-        self.installEventFilter(self)  # Install an event filter to capture keyboard events
+        QTimer.singleShot(0, lambda: self.illustration.setFocus())
+        no_tab_widgets = [
+            self.pushButton_add,
+            self.pushButton_remove,
+            self.pushButton_alter,
+            self.pushButton_illustrate,
+            self.pushButton_3d,
+            self.pushButton_obliviate,
+            self.example_a,
+            self.example_i,
+            self.example_u,
+        ]
+        for w in no_tab_widgets:
+            w.setFocusPolicy(Qt.NoFocus)
 
     def get_message(self, message):
         self.input_information_output.clear()
         self.input_information_output.insertPlainText(message)
-
-    def get_index(self):
-        if self.rect_items is not None:
-            for item in self.rect_items:
-                if item.isClicked:
-                    self.index = item.index
-                    item.isClicked = False
 
     def menu_add(self):
         dialog = InputDialogAdd(self)
@@ -104,86 +116,94 @@ class AppWindow(QMainWindow, Ui_TubeN):
         if dialog.exec_():
             lengths, areas = dialog.getInputs()
             match_l = bool(re.match(r'^\d+(\.\d+)?(,\s?\d+(\.\d+)?)*$', lengths))
-            match_a = bool(re.match(r'^\d+(\.\d+)?(,\s?\d+(\.\d+)?)*$', lengths))
+            match_a = bool(re.match(r'^\d+(\.\d+)?(,\s?\d+(\.\d+)?)*$', areas))
             if lengths == '' or areas == '':
                 self.get_message('Empty Input Value')
-            elif match_l and match_a:
-                le = [float(l) for l in lengths.split(',')]
-                ar = [float(a) for a in areas.split(',')]
-                if len(le) == len(ar) and len(le) >= 1:
-                    self.get_index()
-                    if len(self.L) == 0 or len(self.A) == 0:
-                        # create tube sections
-                        self.L = le
-                        self.A = ar
-                    elif self.index is not None:
-                        # add new sections after given index of the tube
-                        if self.index < len(self.L):
-                            self.L[self.index+1:self.index+1] = le
-                            self.A[self.index+1:self.index+1] = ar
-                            self.index = None
-                        else:
-                            self.L += le
-                            self.A += ar
-                            self.index = None
-                    elif self.index is None:
-                        # add new sections after the current tube
-                        self.L += le
-                        self.A += ar
-                else:
-                    self.get_message('Invalid input: lengths and areas lists must be of equal length')
-                if len(self.L) == len(self.A):
-                    self.visualization(self.L, self.A)
-                    self.visualize_formants()
-                    fmt, _ = self.tub.get_formants(self.L, self.A)
+                return
+            if not (match_l and match_a):
+                self.get_message('Invalid input')
+                return
+            le = [float(l) for l in lengths.split(',')]
+            ar = [float(a) for a in areas.split(',')]
+            if len(le) != len(ar):
+                self.get_message('lengths and areas mismatch')
+                return
+
+            selected_items = self.scene1.selectedItems()
+            self.index = None
+            if selected_items:
+                item = selected_items[0]
+                if isinstance(item, MyRectItem):
+                    self.index = item.index
+            if len(self.L) == 0:
+                self.L = le
+                self.A = ar
+            elif self.index is not None:
+                pos = self.index + 1
+                self.L[pos:pos] = le
+                self.A[pos:pos] = ar
             else:
-                self.get_message('Invalid input, please try again')
+                self.L += le
+                self.A += ar
+
+            self.visualization(self.L, self.A)
+            self.visualize_formants()
 
     def menu_remove(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
-        else:
-            self.get_index()
-            if self.index is not None:  # pop the section that has been clicked
-                self.L.pop(self.index)
-                self.A.pop(self.index)
-                if len(self.L) == len(self.A) and len(self.L) > 0:
-                    self.visualization(self.L, self.A)
-                    self.visualize_formants()
-                else:
-                    self.scene1.clear()
-                    self.add_axis()
-                    self.get_message('Empty Input Value')
-                self.index = None
+            return
+        selected_items = self.scene1.selectedItems()
+        self.index = None
+        if selected_items:
+            item = selected_items[0]
+            if isinstance(item, MyRectItem):
+                self.index = item.index
+        if self.index is not None:
+            # remove selected segment
+            self.L.pop(self.index)
+            self.A.pop(self.index)
+            # update visualization
+            if len(self.L) == len(self.A) and len(self.L) > 0:
+                self.visualization(self.L, self.A)
+                self.visualize_formants()
             else:
-                self.get_message('Select a section first')
+                self.scene1.clear()
+                self.get_message('Empty Input Value')
+            self.index = None
+        else:
+            self.get_message('Select a section first')
 
     def menu_alter(self):
         if len(self.L) == 0 or len(self.A) == 0:
             self.get_message('Empty Input Value')
+            return
+        selected_items = self.scene1.selectedItems()
+        self.index = None
+        if selected_items:
+            item = selected_items[0]
+            if isinstance(item, MyRectItem):
+                self.index = item.index
+        if self.index is not None:
+            try:
+                dialog = InputDialogAlter(self)
+                dialog.setWindowTitle("alter")
+                if dialog.exec_():
+                    new_length, new_area = dialog.getInputs()
+                    l = float(new_length)
+                    a = float(new_area)
+                    if l > 0 and a > 0:
+                        self.L[self.index] = l
+                        self.A[self.index] = a
+                        self.visualization(self.L, self.A)
+                        self.visualize_formants()
+                    else:
+                        self.get_message('Invalid Input: new parameter(s) should be larger than 0')
+                    self.index = None
+            except ValueError:
+                self.get_message('Invalid Input: new parameter(s) should be numbers')
         else:
-            self.get_index()
-            if self.index is not None:
-                try:
-                    dialog = InputDialogAlter(self)
-                    dialog.setWindowTitle("alter")
-                    if dialog.exec_():
-                        new_length, new_area = dialog.getInputs()
-                        l = float(new_length)
-                        a = float(new_area)
-                        if l > 0 and a > 0:
-                            self.L[self.index] = l
-                            self.A[self.index] = a
-                            self.visualization(self.L, self.A)
-                            self.visualize_formants()
-                        else:
-                            self.get_message('Invalid Input: new parameter(s) should be larger than 0')
-                        self.index = None
-                except ValueError:
-                    self.get_message('Invalid Input: new parameter(s) should be numbers')
-            else:
-                self.get_message('Select a section first')
-
+            self.get_message('Select a section first')
 
     def add_axis(self, l, a, scale_x=15, scale_y=8):
         """
@@ -312,6 +332,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
     def visualization(self, l, a):
         self.scene1.clear()
+        self.rect_items = []
         x_offset = 0
         scale_x = 15
         scale_y = 8
@@ -355,27 +376,72 @@ class AppWindow(QMainWindow, Ui_TubeN):
 
     def eventFilter(self, obj, event):
         # handle keyboard input for selected Tube
-        if event.type() == QEvent.KeyPress:
-            if isinstance(event, QKeyEvent):
-                self.get_index()
-                if self.index is not None:
-                    step = 0.1  # increment/decrement for length/area
-                    # map keys to actions
-                    key_map = {
-                        Qt.Key_Up: lambda: self._change_area(self.index, step),
-                        Qt.Key_Down: lambda: self._change_area(self.index, -step),
-                        Qt.Key_Right: lambda: self._change_length(self.index, step),
-                        Qt.Key_Left: lambda: self._change_length(self.index, -step)
-                    }
-                    if event.key() in key_map:
-                        key_map[event.key()]()  # apply change
-                        self.visualization(self.L, self.A)
+        if event.type() == QEvent.KeyPress and isinstance(event, QKeyEvent):
+            # TAB move selection
+            if event.key() == Qt.Key_Tab:
+                event.accept()
+                selected_items = self.scene1.selectedItems()
+                if selected_items and isinstance(selected_items[0], MyRectItem):
+                    current_index = selected_items[0].index
+                else:
+                    current_index = -1
+                if len(self.L) == 0:
+                    return True
+                # compute next index
+                if current_index == -1:
+                    next_index = 0
+                else:
+                    next_index = min(current_index + 1, len(self.L) - 1)
+                # update selection
+                selected_item = None
+                for item in self.scene1.items():
+                    if isinstance(item, MyRectItem):
+                        if item.index == next_index:
+                            item.setSelected(True)
+                            selected_item = item
+                        else:
+                            item.setSelected(False)
+                if selected_item and selected_item.output_method:
+                    selected_item.output_method(
+                        f'Index {selected_item.index} selected\n'
+                        f'Length:{selected_item.la[0]}\n'
+                        f'Area:{selected_item.la[1]}'
+                    )
+                return True
+
+            # Keyboard modify selected segment
+            selected_items = self.scene1.selectedItems()
+            if selected_items and isinstance(selected_items[0], MyRectItem):
+                index = selected_items[0].index
+                step = 0.1
+                key_map = {
+                    Qt.Key_Up: lambda: self._change_area(index, step),
+                    Qt.Key_Down: lambda: self._change_area(index, -step),
+                    Qt.Key_Right: lambda: self._change_length(index, step),
+                    Qt.Key_Left: lambda: self._change_length(index, -step)
+                }
+                if event.key() in key_map:
+                    key_map[event.key()]()
+                    # refresh visualization
+                    self.visualization(self.L, self.A)
+                    # restore selection after redraw
+                    for item in self.scene1.items():
+                        if isinstance(item, MyRectItem) and item.index == index:
+                            item.setSelected(True)
+                            break
+                    try:
                         self.visualize_formants()
-                        return True
+                    except Exception as e:
+                        self.get_message(f"Computation error: {e}")
+                    return True
+
         return super().eventFilter(obj, event)
 
     def play_sound(self):
         fmt, _ = self.tub.get_formants(self.L, self.A)
+        if fmt is None or len(fmt) == 0:
+            self.get_message("No formants detected")
+            return
         x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
         y = formantsynt.ffilter(self.samplerate, x, fmt)
         data = np.array(y)
@@ -392,6 +458,9 @@ class AppWindow(QMainWindow, Ui_TubeN):
         plot_index = 0
         F = np.arange(1, 8000)
         fmt, Y = self.tub.get_formants(self.L, self.A)
+        if fmt is None or len(fmt) == 0:
+            self.get_message("No formants detected")
+            return
         fs = 16000
         f, h = formantsynt.get_transfer_function(fs, fmt)
         if 'tube' in self.selected_plots:
@@ -532,7 +601,16 @@ class AppWindow(QMainWindow, Ui_TubeN):
         # Compute formants
         F = np.arange(1, 8000)
         fmt, Y = self.tub.get_formants(self.L, self.A)
+        if fmt is None or len(fmt) == 0:
+            self.get_message("No formants detected")
+            return
+        if not all(np.isfinite(f) for f in fmt):
+            self.get_message("Invalid formants")
+            return
         fs = 16000
+        if np.any(fmt <= 0) or np.any(fmt >= fs / 2):
+            self.get_message("Formants out of valid range (8000Hz)")
+            return
         f, h = formantsynt.get_transfer_function(fs, fmt)
 
         self.ax.plot(f, h)  #
@@ -540,7 +618,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.ax.tick_params(axis='both', labelsize=20)
 
         for i, idx in enumerate(fmt, start=1):
-            x_val = F[idx]  # formant frequency
+            x_val = idx  # formant frequency
             self.ax.axvline(x_val, color='pink', linestyle='--')  # draw vertical line
             # find the nearest index in f to get amplitude (dB)
             nearest_idx = np.argmin(np.abs(f - x_val))
