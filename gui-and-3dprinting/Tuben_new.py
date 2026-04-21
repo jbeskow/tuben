@@ -440,7 +440,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
     def play_sound(self):
         fmt, _ = self.tub.get_formants(self.L, self.A)
         if fmt is None or len(fmt) == 0:
-            self.get_message("No formants detected")
+            self.get_message("No formant detected")
             return
         x = formantsynt.impulsetrain(self.samplerate, 70.0, 1.5)
         y = formantsynt.ffilter(self.samplerate, x, fmt)
@@ -459,7 +459,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         F = np.arange(1, 8000)
         fmt, Y = self.tub.get_formants(self.L, self.A)
         if fmt is None or len(fmt) == 0:
-            self.get_message("No formants detected")
+            self.get_message("No formant detected")
             return
         fs = 16000
         f, h = formantsynt.get_transfer_function(fs, fmt)
@@ -486,6 +486,21 @@ class AppWindow(QMainWindow, Ui_TubeN):
             ax[plot_index].set_xlabel('frequency (Hz)')
             ax[plot_index].set_ylabel('dB')
             ax[plot_index].plot(f, h)
+            for i, x_val in enumerate(fmt, start=1):
+                # Draw vertical line at each formant frequency
+                ax[plot_index].axvline(x_val, color='pink', linestyle='--')
+                # Find the nearest frequency index to get corresponding dB value
+                nearest_idx = np.argmin(np.abs(f - x_val))
+                y_val = h[nearest_idx]
+                # Place labels alternately above and below the curve
+                if i % 2 == 1:
+                    ax[plot_index].text(x_val, y_val, f"{int(x_val)}",
+                                        ha="center", va="bottom",
+                                        fontsize=10, fontweight="bold")
+                else:
+                    ax[plot_index].text(x_val, y_val - 10, f"{int(x_val)}",
+                                        ha="center", va="top",
+                                        fontsize=10, fontweight="bold")
             plot_index += 1
         plt.tight_layout()
         return fig
@@ -557,7 +572,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         self.L = []
         self.A = []
         self.index = None
-        self.get_message('Obliviate! All input has been removed')
+        self.get_message('Obliviate! All input has been cleared')
 
     def show_example_a(self):
         self.L = [1.5, 0.5, 3.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
@@ -602,7 +617,7 @@ class AppWindow(QMainWindow, Ui_TubeN):
         F = np.arange(1, 8000)
         fmt, Y = self.tub.get_formants(self.L, self.A)
         if fmt is None or len(fmt) == 0:
-            self.get_message("No formants detected")
+            self.get_message("No formant detected")
             return
         if not all(np.isfinite(f) for f in fmt):
             self.get_message("Invalid formants")
